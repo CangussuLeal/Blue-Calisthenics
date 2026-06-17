@@ -136,6 +136,54 @@
     let timerRunning = false;
     let currentFilter = 'all';
     let iaGeneratedWorkout = [];
+    let apiKey = localStorage.getItem('calisthenicsBlue_apiKey') || '';
+
+    // ============ AUDIO (som do cronômetro) ============
+    function playBeep(frequency = 880, duration = 0.3, type = 'sine') {
+        try {
+            const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            oscillator.type = type;
+            oscillator.frequency.value = frequency;
+            gainNode.gain.value = 0.3;
+            oscillator.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            oscillator.start();
+            gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+            oscillator.stop(audioCtx.currentTime + duration);
+        } catch (e) {
+            // navegador sem suporte, silenciosamente ignora
+        }
+    }
+
+    function playAlarm() {
+        playBeep(880, 0.2);
+        setTimeout(() => playBeep(880, 0.2), 300);
+        setTimeout(() => playBeep(880, 0.3), 600);
+    }
+
+    // ============ API KEY MANAGEMENT ============
+    function saveApiKey() {
+        apiKey = document.getElementById('apiKey').value.trim();
+        localStorage.setItem('calisthenicsBlue_apiKey', apiKey);
+        showToast('🔑 Chave salva!', 'success');
+    }
+
+    // ============ GEMINI API CALL ============
+    async function callGemini(prompt) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
+        if (!response.ok) throw new Error('Erro na API Gemini');
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text;
+    }
 
     // ============ FUNCTIONS ============
     function getUserLevel() {
@@ -177,31 +225,6 @@
         document.getElementById('savedWorkoutsCount').textContent = savedWorkouts.length;
         updateStreak();
     }
-    // Função para tocar um beep usando Web Audio API
-function playBeep(frequency = 880, duration = 0.3, type = 'sine') {
-    try {
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioCtx.createOscillator();
-        const gainNode = audioCtx.createGain();
-        oscillator.type = type;
-        oscillator.frequency.value = frequency;
-        gainNode.gain.value = 0.3;
-        oscillator.connect(gainNode);
-        gainNode.connect(audioCtx.destination);
-        oscillator.start();
-        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-        oscillator.stop(audioCtx.currentTime + duration);
-    } catch (e) {
-        // fallback caso o navegador não suporte
-    }
-}
-
-// Alarme final: tocar uma sequência de beeps
-function playAlarm() {
-    playBeep(880, 0.2);
-    setTimeout(() => playBeep(880, 0.2), 300);
-    setTimeout(() => playBeep(880, 0.3), 600);
-}
     function updateStreak() {
         const today = new Date().toISOString().split('T')[0];
         let streak = 0;
@@ -321,8 +344,52 @@ function playAlarm() {
         showToast('📅 Google Agenda IA!','success');
     }
 
-    // NOVA VERSÃO: aceita parâmetro de lacunas
-    function generateIATraining(lacunas = null) {
+    // NOVA VERSÃO: IA real com fallback
+    async function generateIATraining(lacunas = null) {
+        if (apiKey) {
+            showToast('🤖 Consultando IA...', 'info');
+            try {
+                const level = document.getElementById('iaLevel').value;
+                const focus = document.getElementById('iaFocus').value;
+                const num = parseInt(document.getElementById('iaNumExercises').value) || 5;
+                
+                let prompt = `Você é um treinador de calistenia. Gere um treino de ${num} exercícios para um atleta nível ${level} com foco em ${focus}.`;
+                if (lacunas && lacunas.length > 0) {
+                    prompt += ` Priorize os seguintes grupos musculares pouco trabalhados: ${lacunas.join(', ')}.`;
+                }
+                prompt += `\nRetorne APENAS uma lista JSON com objetos { "nome": "...", "grupo_principal": "...", "xp": numero }. Escolha exercícios realistas de calistenia. Não use código markdown.`;
+                
+                const text = await callGemini(prompt);
+                const jsonStr = text.replace(/```json|```/g, '').trim();
+                const exercises = JSON.parse(jsonStr);
+                
+                iaGeneratedWorkout = exercises.map(ex => ({
+                    nome: ex.nome,
+                    grupo_principal: ex.grupo_principal || 'Corpo Inteiro',
+                    nivel: level,
+                    tipo: ex.grupo_principal,
+                    xp: ex.xp || 20
+                }));
+                
+                document.getElementById('iaResult').innerHTML = iaGeneratedWorkout.map((e,i) => `
+                    <div class="exercise-item">
+                        <div class="ex-info">
+                            <div class="ex-name">${i+1}. ${e.nome}</div>
+                            <div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div>
+                        </div>
+                    </div>
+                `).join('') + `<p class="mt-2"><strong>XP Total:</strong> ${iaGeneratedWorkout.reduce((s,e)=>s+e.xp,0)} XP</p>`;
+                
+                document.getElementById('iaResultCard').style.display = 'block';
+                showToast('✨ Treino IA gerado com sucesso!', 'success');
+                return;
+            } catch (err) {
+                console.error(err);
+                showToast('⚠️ Falha na IA. Usando método tradicional.', 'error');
+            }
+        }
+        
+        // Fallback: método tradicional
         const level = document.getElementById('iaLevel').value;
         const focus = document.getElementById('iaFocus').value;
         const num = parseInt(document.getElementById('iaNumExercises').value) || 5;
@@ -338,7 +405,6 @@ function playAlarm() {
         
         if (!pool.length) pool = exerciseDB.filter(e => e.nivel === level || e.nivel === 'Iniciante');
         
-        // Priorizar grupos menos trabalhados (lacunas)
         if (lacunas && lacunas.length > 0) {
             pool.sort((a, b) => {
                 const aIsPriority = lacunas.includes(a.grupo_principal) ? 0 : 1;
@@ -394,7 +460,6 @@ function playAlarm() {
             document.getElementById('completeExerciseBtn').disabled=true;
             showToast('🏆 Treino concluído!','success');
             awardXP(w.totalXP);
-            // Salvar histórico com grupos musculares
             const gruposTrabalhados = [...new Set(w.exercises.map(ex => ex.grupo_principal))];
             workoutHistory.push({
                 name: w.name,
@@ -436,7 +501,20 @@ function playAlarm() {
         if(timerRunning) return;
         if(timerRemaining<=0) timerRemaining=parseInt(document.getElementById('timerSeconds').value)||60;
         timerRunning=true; document.getElementById('timerStartBtn').disabled=true; document.getElementById('timerStartBtn').textContent='⏳ Rodando...';
-        timerInterval=setInterval(()=>{ if(timerRemaining>0){ timerRemaining--; updateTimerDisplay(); } if(timerRemaining<=0){ clearInterval(timerInterval); timerRunning=false; document.getElementById('timerStartBtn').disabled=false; document.getElementById('timerStartBtn').textContent='▶️ Iniciar'; showToast('⏰ Tempo esgotado!','info'); playAlarm(); } },1000);
+        timerInterval=setInterval(()=>{ 
+            if(timerRemaining>0){ 
+                timerRemaining--; 
+                updateTimerDisplay(); 
+            } 
+            if(timerRemaining<=0){ 
+                clearInterval(timerInterval); 
+                timerRunning=false; 
+                document.getElementById('timerStartBtn').disabled=false; 
+                document.getElementById('timerStartBtn').textContent='▶️ Iniciar'; 
+                showToast('⏰ Tempo esgotado!','info'); 
+                playAlarm();
+            } 
+        },1000);
     }
     function pauseTimer() { clearInterval(timerInterval); timerRunning=false; document.getElementById('timerStartBtn').disabled=false; document.getElementById('timerStartBtn').textContent='▶️ Iniciar'; }
     function resetTimer() { clearInterval(timerInterval); timerRunning=false; timerRemaining=parseInt(document.getElementById('timerSeconds').value)||60; updateTimerDisplay(); document.getElementById('timerStartBtn').disabled=false; document.getElementById('timerStartBtn').textContent='▶️ Iniciar'; }
@@ -608,6 +686,7 @@ function playAlarm() {
     window.loadMusic = loadMusic;
     window.analyzeAndGenerate = analyzeAndGenerate;
     window.resetAllProgress = resetAllProgress;
+    window.saveApiKey = saveApiKey;
 
     // Init
     document.getElementById('filterTags').addEventListener('click', e => {
@@ -617,6 +696,9 @@ function playAlarm() {
         }
     });
     document.getElementById('timerSeconds').addEventListener('change', function(){ if(!timerRunning){ timerRemaining=parseInt(this.value)||60; updateTimerDisplay(); } });
-    updateXPDisplay(); renderExerciseLibrary('all'); renderChosenExercises(); renderSavedWorkouts(); renderHistory(); updateActiveWorkoutSelect(); updateUpcomingWorkouts(); updateTimerDisplay();
+    const apiKeyField = document.getElementById('apiKey');
+if (apiKeyField && apiKey) {
+    apiKeyField.value = apiKey;
+}eXPDisplay(); renderExerciseLibrary('all'); renderChosenExercises(); renderSavedWorkouts(); renderHistory(); updateActiveWorkoutSelect(); updateUpcomingWorkouts(); updateTimerDisplay();
     console.log('💪 Calisthenics Blue pronto!');
 })();

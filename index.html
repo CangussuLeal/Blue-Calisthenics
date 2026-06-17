@@ -28,7 +28,6 @@
         <!-- Home -->
         <div class="page active" id="page-home">
             <h2>🏠 Dashboard</h2>
-            <div class="grid-2">
                 <div class="card"><h3>📋 Treinos Salvos</h3><p id="savedWorkoutsCount" style="font-size:2rem;font-weight:800;color:var(--primary-light);">0</p><p style="color:var(--text2);">Treinos no seu plano</p><button class="btn btn-primary mt-2" onclick="navigateTo('build', document.querySelector('[data-page=build]'))">➕ Criar Novo Treino</button></div>
                 <div class="card"><h3>🔥 Streak Atual</h3><p style="font-size:2rem;font-weight:800;color:var(--gold);" id="streakDays">0</p><p style="color:var(--text2);">Dias consecutivos treinando</p><button class="btn btn-outline btn-sm mt-2" onclick="registerTrainingDay()">✅ Registrar Treino Hoje</button></div>
                 <div class="card"><h3>🏆 Total de Exercícios</h3><p style="font-size:2rem;font-weight:800;color:var(--xp);" id="totalExercisesDone">0</p><p style="color:var(--text2);">Exercícios concluídos</p></div>
@@ -40,6 +39,19 @@
         <!-- Build -->
         <div class="page" id="page-build">
             <h2>🔧 Montar Treino Manual</h2>
+            <div class="card">
+    <div class="grid-2">
+        <!-- ... selects existentes ... -->
+    </div>
+    <!-- NOVO: Campo de chave (visível apenas para você) -->
+    <div class="mt-2">
+        <label for="apiKey">🔑 Chave da API (Google Gemini):</label>
+        <input type="password" id="apiKey" placeholder="Cole sua chave para IA generativa" onchange="saveApiKey()">
+        <small style="color:var(--text2);">Sua chave fica salva apenas neste navegador. Deixe vazio para usar o método tradicional.</small>
+    </div>
+    <button class="btn btn-primary btn-lg mt-2" onclick="generateIATraining()">✨ Gerar Treino com IA</button>
+    <button class="btn btn-outline btn-lg mt-2" onclick="analyzeAndGenerate()">🧠 Analisar Lacunas e Gerar Treino</button>
+</div>
             <div class="grid-2">
                 <div class="card"><h3>📚 Biblioteca de Exercícios</h3><div class="filter-tags" id="filterTags"><button class="filter-tag active" data-filter="all">Todos</button><button class="filter-tag" data-filter="Pull">Pull</button><button class="filter-tag" data-filter="Push">Push</button><button class="filter-tag" data-filter="Ombros">Ombros</button><button class="filter-tag" data-filter="Tríceps">Tríceps</button><button class="filter-tag" data-filter="Core">Core</button><button class="filter-tag" data-filter="Pernas">Pernas</button><button class="filter-tag" data-filter="Front Lever">Front Lever</button><button class="filter-tag" data-filter="Planche">Planche</button><button class="filter-tag" data-filter="Handstand">Handstand</button><button class="filter-tag" data-filter="Human Flag">Human Flag</button><button class="filter-tag" data-filter="Corpo Inteiro">Corpo Inteiro</button></div><div style="max-height:450px;overflow-y:auto;" id="exerciseLibrary"></div></div>
                 <div class="card"><h3>🏗️ Seu Treino (arraste para cá)</h3><div class="drop-zone" id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"><div class="placeholder" id="dropPlaceholder">Arraste exercícios aqui</div><div id="chosenExercises"></div></div><div class="mt-2"><label for="workoutName">Nome do Treino:</label><input type="text" id="workoutName" placeholder="Ex: Treino de Costas Intenso"></div><div class="flex gap-2 mt-2 flex-wrap"><button class="btn btn-primary" onclick="saveWorkout()">💾 Salvar Treino</button><button class="btn btn-outline" onclick="exportToGoogleCalendar()">📅 Google Agenda</button><button class="btn btn-danger btn-sm" onclick="clearWorkout()">🗑️ Limpar</button></div></div>
