@@ -171,19 +171,99 @@
     }
 
     // ============ GEMINI API CALL ============
-    async function callGemini(prompt) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }]
-            })
-        });
-        if (!response.ok) throw new Error('Erro na API Gemini');
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text;
+   async function generateIATraining(lacunas = null) {
+    const btn = document.querySelector('#page-ia .btn-primary'); // ou o botão de gerar
+    if (btn) btn.disabled = true; // evita duplo clique
+
+    if (apiKey) {
+        try {
+            const level = document.getElementById('iaLevel').value;
+            const focus = document.getElementById('iaFocus').value;
+            const num = parseInt(document.getElementById('iaNumExercises').value) || 5;
+            
+            let prompt = `Você é um treinador de calistenia. Gere um treino de ${num} exercícios para um atleta nível ${level} com foco em ${focus}.`;
+            if (lacunas && lacunas.length > 0) {
+                prompt += ` Priorize os seguintes grupos musculares pouco trabalhados: ${lacunas.join(', ')}.`;
+            }
+            prompt += `\nRetorne APENAS uma lista JSON com objetos { "nome": "...", "grupo_principal": "...", "xp": numero }. Escolha exercícios realistas de calistenia. Não use código markdown.`;
+            
+            const text = await callGemini(prompt);
+            const jsonStr = text.replace(/```json|```/g, '').trim();
+            const exercises = JSON.parse(jsonStr);
+            
+            iaGeneratedWorkout = exercises.map(ex => ({
+                nome: ex.nome,
+                grupo_principal: ex.grupo_principal || 'Corpo Inteiro',
+                nivel: level,
+                tipo: ex.grupo_principal,
+                xp: ex.xp || 20
+            }));
+            
+            document.getElementById('iaResult').innerHTML = iaGeneratedWorkout.map((e,i) => `
+                <div class="exercise-item">
+                    <div class="ex-info">
+                        <div class="ex-name">${i+1}. ${e.nome}</div>
+                        <div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div>
+                    </div>
+                </div>
+            `).join('') + `<p class="mt-2"><strong>XP Total:</strong> ${iaGeneratedWorkout.reduce((s,e)=>s+e.xp,0)} XP</p>`;
+            
+            document.getElementById('iaResultCard').style.display = 'block';
+            showToast('✨ Treino gerado pela IA com sucesso!', 'success');
+            if (btn) btn.disabled = false;
+            return;
+        } catch (err) {
+            console.error(err);
+            // Silenciosamente cai para o fallback
+        }
     }
+    
+    // Fallback (método tradicional) – executado se não houver chave ou se a IA falhar
+    const level = document.getElementById('iaLevel').value;
+    const focus = document.getElementById('iaFocus').value;
+    const num = parseInt(document.getElementById('iaNumExercises').value) || 5;
+    
+    let pool = exerciseDB.filter(e => {
+        const order = ['Iniciante','Intermediário','Avançado','Elite'];
+        return order.indexOf(e.nivel) <= order.indexOf(level);
+    });
+    
+    if (focus !== 'Full Body') {
+        pool = pool.filter(e => e.grupo_principal === focus || e.tipo === focus || (e.grupos_secundarios || []).includes(focus));
+    }
+    
+    if (!pool.length) pool = exerciseDB.filter(e => e.nivel === level || e.nivel === 'Iniciante');
+    
+    if (lacunas && lacunas.length > 0) {
+        pool.sort((a, b) => {
+            const aIsPriority = lacunas.includes(a.grupo_principal) ? 0 : 1;
+            const bIsPriority = lacunas.includes(b.grupo_principal) ? 0 : 1;
+            return aIsPriority - bIsPriority;
+        });
+    }
+    
+    iaGeneratedWorkout = [...pool].sort(() => Math.random() - 0.5).slice(0, num);
+    
+    document.getElementById('iaResult').innerHTML = iaGeneratedWorkout.map((e, i) => `
+        <div class="exercise-item">
+            <div class="ex-info">
+                <div class="ex-name">${i+1}. ${e.nome}</div>
+                <div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div>
+            </div>
+        </div>
+    `).join('') + `<p class="mt-2"><strong>XP Total:</strong> ${iaGeneratedWorkout.reduce((s,e)=>s+e.xp,0)} XP</p>`;
+    
+    document.getElementById('iaResultCard').style.display = 'block';
+    
+    // Mensagem única de fallback
+    if (apiKey) {
+        showToast('⚠️ IA indisponível no momento. Treino gerado pelo método tradicional.', 'warning');
+    } else {
+        showToast('✨ Treino gerado com sucesso!', 'success');
+    }
+    
+    if (btn) btn.disabled = false;
+}
 
     // ============ FUNCTIONS ============
     function getUserLevel() {
