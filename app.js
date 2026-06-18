@@ -102,7 +102,7 @@
         { nome: "Full Front Lever (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Corpo inteiro"], tipo: "Corpo Inteiro", xp: 75 }
     ];
 
-    // Atribuir duração padrão para cada exercício (em segundos)
+    // Durações padrão (segundos)
     exerciseDB.forEach(ex => {
         if (!ex.duracao) {
             if (ex.nome.toLowerCase().includes('hold') || ex.nome.toLowerCase().includes('flag') ||
@@ -132,13 +132,18 @@
     let activeWorkoutIndex = -1;
     let currentExerciseIndex = 0;
     let timerInterval = null;
-    let timerRemaining = 60;
+    let timerRemaining = 60;         // segundos (regressivo) ou contador (progressivo)
     let timerRunning = false;
+    let timerMode = 'regressivo';    // 'regressivo' ou 'progressivo'
+    let stopwatchInterval = null;
+    let stopwatchSeconds = 0;
+    let stopwatchRunning = false;
     let currentFilter = 'all';
     let iaGeneratedWorkout = [];
     let apiKey = localStorage.getItem('calisthenicsBlue_apiKey') || '';
+    let editingWorkoutIndex = -1;
 
-    // ============ AUDIO (som do cronômetro) ============
+    // ============ AUDIO ============
     function playBeep(frequency = 880, duration = 0.3, type = 'sine') {
         try {
             const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -152,9 +157,7 @@
             oscillator.start();
             gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
             oscillator.stop(audioCtx.currentTime + duration);
-        } catch (e) {
-            // navegador sem suporte, silenciosamente ignora
-        }
+        } catch (e) {}
     }
 
     function playAlarm() {
@@ -170,102 +173,39 @@
         showToast('🔑 Chave salva!', 'success');
     }
 
-    // ============ GEMINI API CALL ============
-   async function generateIATraining(lacunas = null) {
-    const btn = document.querySelector('#page-ia .btn-primary'); // ou o botão de gerar
-    if (btn) btn.disabled = true; // evita duplo clique
-
-    if (apiKey) {
-        try {
-            const level = document.getElementById('iaLevel').value;
-            const focus = document.getElementById('iaFocus').value;
-            const num = parseInt(document.getElementById('iaNumExercises').value) || 5;
-            
-            let prompt = `Você é um treinador de calistenia. Gere um treino de ${num} exercícios para um atleta nível ${level} com foco em ${focus}.`;
-            if (lacunas && lacunas.length > 0) {
-                prompt += ` Priorize os seguintes grupos musculares pouco trabalhados: ${lacunas.join(', ')}.`;
-            }
-            prompt += `\nRetorne APENAS uma lista JSON com objetos { "nome": "...", "grupo_principal": "...", "xp": numero }. Escolha exercícios realistas de calistenia. Não use código markdown.`;
-            
-            const text = await callGemini(prompt);
-            const jsonStr = text.replace(/```json|```/g, '').trim();
-            const exercises = JSON.parse(jsonStr);
-            
-            iaGeneratedWorkout = exercises.map(ex => ({
-                nome: ex.nome,
-                grupo_principal: ex.grupo_principal || 'Corpo Inteiro',
-                nivel: level,
-                tipo: ex.grupo_principal,
-                xp: ex.xp || 20
-            }));
-            
-            document.getElementById('iaResult').innerHTML = iaGeneratedWorkout.map((e,i) => `
-                <div class="exercise-item">
-                    <div class="ex-info">
-                        <div class="ex-name">${i+1}. ${e.nome}</div>
-                        <div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div>
-                    </div>
-                </div>
-            `).join('') + `<p class="mt-2"><strong>XP Total:</strong> ${iaGeneratedWorkout.reduce((s,e)=>s+e.xp,0)} XP</p>`;
-            
-            document.getElementById('iaResultCard').style.display = 'block';
-            showToast('✨ Treino gerado pela IA com sucesso!', 'success');
-            if (btn) btn.disabled = false;
+    async function testGemini() {
+        if (!apiKey) {
+            showToast('⚠️ Primeiro insira a chave da API.', 'error');
             return;
+        }
+        try {
+            const response = await callGemini('Diga "funcionando" em português.');
+            showToast(`Gemini respondeu: ${response}`, 'success');
         } catch (err) {
+            showToast(`Falha: ${err.message}`, 'error');
             console.error(err);
-            // Silenciosamente cai para o fallback
         }
     }
-    
-    // Fallback (método tradicional) – executado se não houver chave ou se a IA falhar
-    const level = document.getElementById('iaLevel').value;
-    const focus = document.getElementById('iaFocus').value;
-    const num = parseInt(document.getElementById('iaNumExercises').value) || 5;
-    
-    let pool = exerciseDB.filter(e => {
-        const order = ['Iniciante','Intermediário','Avançado','Elite'];
-        return order.indexOf(e.nivel) <= order.indexOf(level);
-    });
-    
-    if (focus !== 'Full Body') {
-        pool = pool.filter(e => e.grupo_principal === focus || e.tipo === focus || (e.grupos_secundarios || []).includes(focus));
-    }
-    
-    if (!pool.length) pool = exerciseDB.filter(e => e.nivel === level || e.nivel === 'Iniciante');
-    
-    if (lacunas && lacunas.length > 0) {
-        pool.sort((a, b) => {
-            const aIsPriority = lacunas.includes(a.grupo_principal) ? 0 : 1;
-            const bIsPriority = lacunas.includes(b.grupo_principal) ? 0 : 1;
-            return aIsPriority - bIsPriority;
-        });
-    }
-    
-    iaGeneratedWorkout = [...pool].sort(() => Math.random() - 0.5).slice(0, num);
-    
-    document.getElementById('iaResult').innerHTML = iaGeneratedWorkout.map((e, i) => `
-        <div class="exercise-item">
-            <div class="ex-info">
-                <div class="ex-name">${i+1}. ${e.nome}</div>
-                <div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div>
-            </div>
-        </div>
-    `).join('') + `<p class="mt-2"><strong>XP Total:</strong> ${iaGeneratedWorkout.reduce((s,e)=>s+e.xp,0)} XP</p>`;
-    
-    document.getElementById('iaResultCard').style.display = 'block';
-    
-    // Mensagem única de fallback
-    if (apiKey) {
-        showToast('⚠️ IA indisponível no momento. Treino gerado pelo método tradicional.', 'warning');
-    } else {
-        showToast('✨ Treino gerado com sucesso!', 'success');
-    }
-    
-    if (btn) btn.disabled = false;
-}
 
-    // ============ FUNCTIONS ============
+    // ============ GEMINI API CALL ============
+    async function callGemini(prompt) {
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
+        });
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Erro ${response.status}: ${errorText}`);
+        }
+        const data = await response.json();
+        return data.candidates[0].content.parts[0].text;
+    }
+
+    // ============ UTILITÁRIOS ============
     function getUserLevel() {
         if (userXP >= 3000) return 'Elite';
         if (userXP >= 1500) return 'Avançado';
@@ -354,6 +294,8 @@
     function getBadgeClass(nivel) {
         return { 'Iniciante':'badge-iniciante', 'Intermediário':'badge-intermediario', 'Avançado':'badge-avancado', 'Elite':'badge-elite' }[nivel] || 'badge-iniciante';
     }
+
+    // ============ RENDERIZAÇÃO ============
     function renderExerciseLibrary(filter='all') {
         const container = document.getElementById('exerciseLibrary');
         let exs = exerciseDB;
@@ -385,64 +327,143 @@
         const idx = parseInt(e.dataTransfer.getData('text/plain'));
         if (!isNaN(idx) && exerciseDB[idx]) { currentWorkout.push({...exerciseDB[idx]}); renderChosenExercises(); showToast(`➕ ${exerciseDB[idx].nome} adicionado!`,'success'); }
     }
-    function clearWorkout() { currentWorkout=[]; renderChosenExercises(); document.getElementById('workoutName').value=''; showToast('Treino limpo!','info'); }
+    function clearWorkout() {
+        editingWorkoutIndex = -1;
+        currentWorkout = [];
+        renderChosenExercises();
+        document.getElementById('workoutName').value = '';
+        document.getElementById('saveWorkoutBtn').textContent = '💾 Salvar Treino';
+        document.getElementById('cancelEditBtn').style.display = 'none';
+        showToast('Treino limpo!','info');
+    }
+
+    // ============ GERENCIAMENTO DE TREINOS ============
     function saveWorkout() {
         if (!currentWorkout.length) return showToast('⚠️ Adicione exercícios.','error');
-        const name = document.getElementById('workoutName').value.trim() || 'Treino '+(savedWorkouts.length+1);
-        savedWorkouts.push({ id: Date.now(), name, exercises: [...currentWorkout], createdAt: new Date().toISOString(), totalXP: currentWorkout.reduce((s,e)=>s+e.xp,0) });
-        saveAllState(); currentWorkout=[]; document.getElementById('workoutName').value=''; renderChosenExercises(); renderSavedWorkouts(); updateXPDisplay();
-        showToast(`💾 "${name}" salvo!`,'success');
+        const name = document.getElementById('workoutName').value.trim() || 'Treino ' + (savedWorkouts.length + 1);
+        if (editingWorkoutIndex >= 0) {
+            savedWorkouts[editingWorkoutIndex] = {
+                ...savedWorkouts[editingWorkoutIndex],
+                name: name,
+                exercises: [...currentWorkout],
+                totalXP: currentWorkout.reduce((s, e) => s + e.xp, 0)
+            };
+            showToast(`✏️ "${name}" atualizado!`, 'success');
+            editingWorkoutIndex = -1;
+            document.getElementById('saveWorkoutBtn').textContent = '💾 Salvar Treino';
+            document.getElementById('cancelEditBtn').style.display = 'none';
+        } else {
+            savedWorkouts.push({ id: Date.now(), name, exercises: [...currentWorkout], createdAt: new Date().toISOString(), totalXP: currentWorkout.reduce((s, e) => s + e.xp, 0) });
+            showToast(`💾 "${name}" salvo!`, 'success');
+        }
+        saveAllState();
+        currentWorkout = [];
+        document.getElementById('workoutName').value = '';
+        renderChosenExercises();
+        renderSavedWorkouts();
+        updateXPDisplay();
     }
+
+    function loadWorkoutForEditing(i) {
+        editingWorkoutIndex = i;
+        currentWorkout = [...savedWorkouts[i].exercises];
+        document.getElementById('workoutName').value = savedWorkouts[i].name;
+        renderChosenExercises();
+        document.getElementById('saveWorkoutBtn').textContent = '💾 Atualizar Treino';
+        document.getElementById('cancelEditBtn').style.display = 'inline-flex';
+        navigateTo('build', document.querySelector('[data-page=build]'));
+    }
+
+    function cancelEditWorkout() {
+        editingWorkoutIndex = -1;
+        currentWorkout = [];
+        document.getElementById('workoutName').value = '';
+        renderChosenExercises();
+        document.getElementById('saveWorkoutBtn').textContent = '💾 Salvar Treino';
+        document.getElementById('cancelEditBtn').style.display = 'none';
+        showToast('Edição cancelada.', 'info');
+    }
+
+    function renameWorkout(index) {
+        const oldName = savedWorkouts[index].name;
+        const newName = prompt('Renomear treino:', oldName);
+        if (newName && newName.trim() !== '') {
+            savedWorkouts[index].name = newName.trim();
+            saveAllState();
+            renderSavedWorkouts();
+            updateActiveWorkoutSelect();
+            updateUpcomingWorkouts();
+            showToast(`✏️ Treino renomeado para "${newName.trim()}"`, 'success');
+        }
+    }
+
+    function deleteWorkout(i) {
+        if (confirm(`Deletar "${savedWorkouts[i].name}"?`)) {
+            savedWorkouts.splice(i, 1);
+            saveAllState();
+            renderSavedWorkouts();
+            updateXPDisplay();
+        }
+    }
+
     function renderSavedWorkouts() {
         const c = document.getElementById('savedWorkoutsList');
-        c.innerHTML = savedWorkouts.length ? savedWorkouts.map((w,i)=>`<div class="exercise-item" style="cursor:default;justify-content:space-between;"><div><strong>${w.name}</strong><div class="ex-meta">${w.exercises.length} ex. • ${w.totalXP} XP</div></div><div class="flex gap-2"><button class="btn btn-outline btn-sm" onclick="loadWorkoutForEditing(${i})">📋</button><button class="btn btn-danger btn-sm" onclick="deleteWorkout(${i})">🗑️</button></div></div>`).join('') : '<p style="color:var(--text2);">Nenhum treino salvo.</p>';
-        updateActiveWorkoutSelect(); updateUpcomingWorkouts();
+        c.innerHTML = savedWorkouts.length ? savedWorkouts.map((w,i) => `
+        <div class="exercise-item" style="cursor:default;justify-content:space-between;">
+            <div><strong>${w.name}</strong><div class="ex-meta">${w.exercises.length} ex. • ${w.totalXP} XP</div></div>
+            <div class="flex gap-2">
+                <button class="btn btn-outline btn-sm" onclick="loadWorkoutForEditing(${i})">📋</button>
+                <button class="btn btn-outline btn-sm" onclick="renameWorkout(${i})">✏️</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteWorkout(${i})">🗑️</button>
+            </div>
+        </div>`).join('') : '<p style="color:var(--text2);">Nenhum treino salvo.</p>';
+        updateActiveWorkoutSelect();
+        updateUpcomingWorkouts();
     }
-    function loadWorkoutForEditing(i) { currentWorkout=[...savedWorkouts[i].exercises]; document.getElementById('workoutName').value=savedWorkouts[i].name; renderChosenExercises(); navigateTo('build', document.querySelector('[data-page=build]')); }
-    function deleteWorkout(i) { if(confirm(`Deletar "${savedWorkouts[i].name}"?`)) { savedWorkouts.splice(i,1); saveAllState(); renderSavedWorkouts(); updateXPDisplay(); } }
+
     function updateActiveWorkoutSelect() {
-        document.getElementById('activeWorkoutSelect').innerHTML = '<option value="">-- Selecione --</option>' + savedWorkouts.map((w,i)=>`<option value="${i}">${w.name} (${w.exercises.length} ex.)</option>`).join('');
+        document.getElementById('activeWorkoutSelect').innerHTML = '<option value="">-- Selecione --</option>' + savedWorkouts.map((w,i) => `<option value="${i}">${w.name} (${w.exercises.length} ex.)</option>`).join('');
     }
     function updateUpcomingWorkouts() {
-        document.getElementById('upcomingWorkouts').innerHTML = savedWorkouts.length ? savedWorkouts.slice(-3).reverse().map(w=>`<div style="padding:6px 0;border-bottom:1px solid var(--border);">📋 <strong>${w.name}</strong> - ${w.totalXP} XP</div>`).join('')+'<button class="btn btn-outline btn-sm mt-2" onclick="navigateTo(\'build\', document.querySelector(\'[data-page=build]\'))">Ver Todos</button>' : 'Nenhum treino agendado.';
+        document.getElementById('upcomingWorkouts').innerHTML = savedWorkouts.length ? savedWorkouts.slice(-3).reverse().map(w => `<div style="padding:6px 0;border-bottom:1px solid var(--border);">📋 <strong>${w.name}</strong> - ${w.totalXP} XP</div>`).join('') + '<button class="btn btn-outline btn-sm mt-2" onclick="navigateTo(\'build\', document.querySelector(\'[data-page=build]\'))">Ver Todos</button>' : 'Nenhum treino agendado.';
     }
     function exportToGoogleCalendar() {
-        if(!currentWorkout.length) return showToast('⚠️ Monte um treino antes.','error');
-        const name = document.getElementById('workoutName').value.trim()||'Treino Calisthenics Blue';
-        const desc = currentWorkout.map((e,i)=>`${i+1}. ${e.nome} (${e.xp} XP)`).join('\n');
+        if (!currentWorkout.length) return showToast('⚠️ Monte um treino antes.','error');
+        const name = document.getElementById('workoutName').value.trim() || 'Treino Calisthenics Blue';
+        const desc = currentWorkout.map((e,i) => `${i+1}. ${e.nome} (${e.xp} XP)`).join('\n');
         const now = new Date(); const start = new Date(now.getTime()+3600000).toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
         const end = new Date(now.getTime()+7200000).toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
         window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(name)}&details=${encodeURIComponent(desc)}&dates=${start}/${end}`, '_blank');
         showToast('📅 Abrindo Google Agenda...','success');
     }
     function exportIAToCalendar() {
-        if(!iaGeneratedWorkout.length) return showToast('⚠️ Gere um treino IA primeiro.','error');
-        const desc = iaGeneratedWorkout.map((e,i)=>`${i+1}. ${e.nome} (${e.xp} XP)`).join('\n');
+        if (!iaGeneratedWorkout.length) return showToast('⚠️ Gere um treino IA primeiro.','error');
+        const desc = iaGeneratedWorkout.map((e,i) => `${i+1}. ${e.nome} (${e.xp} XP)`).join('\n');
         const now = new Date(); const start = new Date(now.getTime()+3600000).toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
         const end = new Date(now.getTime()+7200000).toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
         window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Treino IA Calisthenics')}&details=${encodeURIComponent(desc)}&dates=${start}/${end}`, '_blank');
         showToast('📅 Google Agenda IA!','success');
     }
 
-    // NOVA VERSÃO: IA real com fallback
+    // ============ IA (GEMINI + FALLBACK) ============
     async function generateIATraining(lacunas = null) {
+        const btn = document.querySelector('#page-ia .btn-primary');
+        if (btn) btn.disabled = true;
+
         if (apiKey) {
-            showToast('🤖 Consultando IA...', 'info');
             try {
                 const level = document.getElementById('iaLevel').value;
                 const focus = document.getElementById('iaFocus').value;
                 const num = parseInt(document.getElementById('iaNumExercises').value) || 5;
-                
                 let prompt = `Você é um treinador de calistenia. Gere um treino de ${num} exercícios para um atleta nível ${level} com foco em ${focus}.`;
                 if (lacunas && lacunas.length > 0) {
-                    prompt += ` Priorize os seguintes grupos musculares pouco trabalhados: ${lacunas.join(', ')}.`;
+                    prompt += ` Priorize os grupos pouco trabalhados: ${lacunas.join(', ')}.`;
                 }
-                prompt += `\nRetorne APENAS uma lista JSON com objetos { "nome": "...", "grupo_principal": "...", "xp": numero }. Escolha exercícios realistas de calistenia. Não use código markdown.`;
-                
+                prompt += `\nRetorne APENAS uma lista JSON com objetos { "nome": "...", "grupo_principal": "...", "xp": numero }. Exercícios realistas de calistenia. Sem markdown.`;
+
                 const text = await callGemini(prompt);
                 const jsonStr = text.replace(/```json|```/g, '').trim();
                 const exercises = JSON.parse(jsonStr);
-                
                 iaGeneratedWorkout = exercises.map(ex => ({
                     nome: ex.nome,
                     grupo_principal: ex.grupo_principal || 'Corpo Inteiro',
@@ -450,41 +471,30 @@
                     tipo: ex.grupo_principal,
                     xp: ex.xp || 20
                 }));
-                
                 document.getElementById('iaResult').innerHTML = iaGeneratedWorkout.map((e,i) => `
-                    <div class="exercise-item">
-                        <div class="ex-info">
-                            <div class="ex-name">${i+1}. ${e.nome}</div>
-                            <div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div>
-                        </div>
-                    </div>
+                    <div class="exercise-item"><div class="ex-info"><div class="ex-name">${i+1}. ${e.nome}</div><div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div></div></div>
                 `).join('') + `<p class="mt-2"><strong>XP Total:</strong> ${iaGeneratedWorkout.reduce((s,e)=>s+e.xp,0)} XP</p>`;
-                
                 document.getElementById('iaResultCard').style.display = 'block';
-                showToast('✨ Treino IA gerado com sucesso!', 'success');
+                showToast('✨ Treino gerado pela IA com sucesso!', 'success');
+                if (btn) btn.disabled = false;
                 return;
             } catch (err) {
-                console.error(err);
-                showToast('⚠️ Falha na IA. Usando método tradicional.', 'error');
+                console.error('IA falhou, usando fallback:', err);
             }
         }
-        
-        // Fallback: método tradicional
+
+        // Fallback tradicional
         const level = document.getElementById('iaLevel').value;
         const focus = document.getElementById('iaFocus').value;
         const num = parseInt(document.getElementById('iaNumExercises').value) || 5;
-        
         let pool = exerciseDB.filter(e => {
             const order = ['Iniciante','Intermediário','Avançado','Elite'];
             return order.indexOf(e.nivel) <= order.indexOf(level);
         });
-        
         if (focus !== 'Full Body') {
             pool = pool.filter(e => e.grupo_principal === focus || e.tipo === focus || (e.grupos_secundarios || []).includes(focus));
         }
-        
         if (!pool.length) pool = exerciseDB.filter(e => e.nivel === level || e.nivel === 'Iniciante');
-        
         if (lacunas && lacunas.length > 0) {
             pool.sort((a, b) => {
                 const aIsPriority = lacunas.includes(a.grupo_principal) ? 0 : 1;
@@ -492,52 +502,96 @@
                 return aIsPriority - bIsPriority;
             });
         }
-        
         iaGeneratedWorkout = [...pool].sort(() => Math.random() - 0.5).slice(0, num);
-        
-        document.getElementById('iaResult').innerHTML = iaGeneratedWorkout.map((e, i) => `
-            <div class="exercise-item">
-                <div class="ex-info">
-                    <div class="ex-name">${i+1}. ${e.nome}</div>
-                    <div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div>
-                </div>
-            </div>
+        document.getElementById('iaResult').innerHTML = iaGeneratedWorkout.map((e,i) => `
+            <div class="exercise-item"><div class="ex-info"><div class="ex-name">${i+1}. ${e.nome}</div><div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div></div></div>
         `).join('') + `<p class="mt-2"><strong>XP Total:</strong> ${iaGeneratedWorkout.reduce((s,e)=>s+e.xp,0)} XP</p>`;
-        
         document.getElementById('iaResultCard').style.display = 'block';
-        showToast('✨ Treino IA gerado!', 'success');
+
+        if (apiKey) {
+            showToast('⚠️ IA indisponível no momento. Treino gerado pelo método tradicional.', 'warning');
+        } else {
+            showToast('✨ Treino gerado com sucesso!', 'success');
+        }
+        if (btn) btn.disabled = false;
     }
 
     function useIATraining() {
-        if(!iaGeneratedWorkout.length) return showToast('⚠️ Gere um treino IA.','error');
-        currentWorkout=[...iaGeneratedWorkout]; document.getElementById('workoutName').value='Treino IA'; renderChosenExercises(); navigateTo('build', document.querySelector('[data-page=build]'));
+        if (!iaGeneratedWorkout.length) return showToast('⚠️ Gere um treino IA.','error');
+        currentWorkout = [...iaGeneratedWorkout];
+        document.getElementById('workoutName').value = 'Treino IA';
+        renderChosenExercises();
+        navigateTo('build', document.querySelector('[data-page=build]'));
     }
 
+    // ============ ANÁLISE DE LACUNAS ============
+    function analyzeAndGenerate() {
+        if (workoutHistory.length === 0) {
+            showToast('⚠️ Nenhum histórico encontrado. Faça alguns treinos primeiro.', 'error');
+            return;
+        }
+        const diasAnalise = 14;
+        const dataLimite = new Date();
+        dataLimite.setDate(dataLimite.getDate() - diasAnalise);
+        const frequencia = {};
+        let totalTreinos = 0;
+        workoutHistory.forEach(h => {
+            const treinoDate = new Date(h.date);
+            if (treinoDate >= dataLimite) {
+                totalTreinos++;
+                (h.groups || []).forEach(grupo => {
+                    frequencia[grupo] = (frequencia[grupo] || 0) + 1;
+                });
+            }
+        });
+        const todosGrupos = [...new Set(exerciseDB.map(ex => ex.grupo_principal))];
+        const media = totalTreinos > 0 ? Object.values(frequencia).reduce((a,b)=>a+b,0) / todosGrupos.length : 0;
+        const lacunas = todosGrupos.filter(grupo => !frequencia[grupo] || frequencia[grupo] < Math.max(1, Math.floor(media * 0.5)));
+        if (lacunas.length === 0) {
+            showToast('✅ Seus treinos estão bem equilibrados! Gerando treino normal.', 'info');
+            generateIATraining();
+            return;
+        }
+        const mensagem = lacunas.length === 1
+            ? `🔍 Grupo mais negligenciado: ${lacunas[0]}.`
+            : `🔍 Grupos pouco trabalhados: ${lacunas.join(', ')}.`;
+        showToast(mensagem, 'info');
+        generateIATraining(lacunas);
+    }
+
+    // ============ TREINO ATIVO ============
     function loadActiveWorkout() {
         const idx = parseInt(document.getElementById('activeWorkoutSelect').value);
-        if(isNaN(idx)||!savedWorkouts[idx]) { document.getElementById('activeWorkoutDisplay').innerHTML='<p style="color:var(--text2);">Selecione um treino.</p>'; document.getElementById('completeExerciseBtn').disabled=true; activeWorkoutIndex=-1; return; }
-        activeWorkoutIndex=idx; currentExerciseIndex=0; renderActiveWorkout(); document.getElementById('completeExerciseBtn').disabled=false;
+        if (isNaN(idx) || !savedWorkouts[idx]) {
+            document.getElementById('activeWorkoutDisplay').innerHTML = '<p style="color:var(--text2);">Selecione um treino.</p>';
+            document.getElementById('completeExerciseBtn').disabled = true;
+            activeWorkoutIndex = -1;
+            return;
+        }
+        activeWorkoutIndex = idx;
+        currentExerciseIndex = 0;
+        renderActiveWorkout();
+        document.getElementById('completeExerciseBtn').disabled = false;
     }
 
     function renderActiveWorkout() {
-        if(activeWorkoutIndex<0) return;
+        if (activeWorkoutIndex < 0) return;
         const w = savedWorkouts[activeWorkoutIndex];
-        document.getElementById('activeWorkoutDisplay').innerHTML = w.exercises.map((e,i)=>`<div class="exercise-item" style="cursor:default;${i===currentExerciseIndex?'border:2px solid var(--primary-light);background:var(--primary-dark);':''}"><div class="ex-info"><div class="ex-name">${i+1}. ${e.nome} ${i===currentExerciseIndex?'⬅️ ATUAL':''}</div><div class="ex-meta">${e.xp} XP</div></div>${i<currentExerciseIndex?'<span style="color:var(--success);">✅</span>':''}</div>`).join('');
+        document.getElementById('activeWorkoutDisplay').innerHTML = w.exercises.map((e,i) => `
+            <div class="exercise-item" style="cursor:default;${i===currentExerciseIndex?'border:2px solid var(--primary-light);background:var(--primary-dark);':''}">
+                <div class="ex-info"><div class="ex-name">${i+1}. ${e.nome} ${i===currentExerciseIndex?'⬅️ ATUAL':''}</div><div class="ex-meta">${e.xp} XP</div></div>
+                ${i<currentExerciseIndex?'<span style="color:var(--success);">✅</span>':''}
+            </div>`).join('');
 
         if (currentExerciseIndex < w.exercises.length) {
             const currentEx = w.exercises[currentExerciseIndex];
-            const duracao = currentEx.duracao || 45;
-            document.getElementById('timerSeconds').value = duracao;
-            resetTimer();
-        }
-
-        if(currentExerciseIndex < w.exercises.length) {
-            const cur = w.exercises[currentExerciseIndex];
-            document.getElementById('currentExerciseHighlight').style.display='block';
-            document.getElementById('currentExerciseHighlight').innerHTML = `<strong>🏋️ Executando:</strong> ${cur.nome} (${cur.xp} XP)`;
+            document.getElementById('timerSeconds').value = currentEx.duracao || 45;
+            resetTimer(); // reset adapta conforme timerMode
+            document.getElementById('currentExerciseHighlight').style.display = 'block';
+            document.getElementById('currentExerciseHighlight').innerHTML = `<strong>🏋️ Executando:</strong> ${currentEx.nome} (${currentEx.xp} XP)`;
         } else {
-            document.getElementById('currentExerciseHighlight').style.display='none';
-            document.getElementById('completeExerciseBtn').disabled=true;
+            document.getElementById('currentExerciseHighlight').style.display = 'none';
+            document.getElementById('completeExerciseBtn').disabled = true;
             showToast('🏆 Treino concluído!','success');
             awardXP(w.totalXP);
             const gruposTrabalhados = [...new Set(w.exercises.map(ex => ex.grupo_principal))];
@@ -554,12 +608,23 @@
     }
 
     function completeCurrentExercise() {
-        if(activeWorkoutIndex<0) return;
+        if (activeWorkoutIndex < 0) return;
         const w = savedWorkouts[activeWorkoutIndex];
-        if(currentExerciseIndex < w.exercises.length) { awardXP(w.exercises[currentExerciseIndex].xp); currentExerciseIndex++; renderActiveWorkout(); resetTimer(); }
+        if (currentExerciseIndex < w.exercises.length) {
+            awardXP(w.exercises[currentExerciseIndex].xp);
+            currentExerciseIndex++;
+            renderActiveWorkout();
+            resetTimer();
+        }
     }
 
-    function skipExercise() { if(activeWorkoutIndex>=0) { currentExerciseIndex++; renderActiveWorkout(); resetTimer(); } }
+    function skipExercise() {
+        if (activeWorkoutIndex >= 0) {
+            currentExerciseIndex++;
+            renderActiveWorkout();
+            resetTimer();
+        }
+    }
 
     function renderHistory() {
         const container = document.getElementById('historyList');
@@ -576,35 +641,130 @@
         }).join('');
     }
 
-    function updateTimerDisplay() { const m=Math.floor(timerRemaining/60), s=timerRemaining%60; document.getElementById('timerDisplay').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0'); }
-    function startTimer() {
-        if(timerRunning) return;
-        if(timerRemaining<=0) timerRemaining=parseInt(document.getElementById('timerSeconds').value)||60;
-        timerRunning=true; document.getElementById('timerStartBtn').disabled=true; document.getElementById('timerStartBtn').textContent='⏳ Rodando...';
-        timerInterval=setInterval(()=>{ 
-            if(timerRemaining>0){ 
-                timerRemaining--; 
-                updateTimerDisplay(); 
-            } 
-            if(timerRemaining<=0){ 
-                clearInterval(timerInterval); 
-                timerRunning=false; 
-                document.getElementById('timerStartBtn').disabled=false; 
-                document.getElementById('timerStartBtn').textContent='▶️ Iniciar'; 
-                showToast('⏰ Tempo esgotado!','info'); 
-                playAlarm();
-            } 
-        },1000);
+    // ============ CRONÔMETROS ============
+    function updateTimerDisplay() {
+        const totalSeconds = timerRemaining;
+        const m = Math.floor(totalSeconds / 60);
+        const s = totalSeconds % 60;
+        document.getElementById('timerDisplay').textContent = 
+            String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
     }
-    function pauseTimer() { clearInterval(timerInterval); timerRunning=false; document.getElementById('timerStartBtn').disabled=false; document.getElementById('timerStartBtn').textContent='▶️ Iniciar'; }
-    function resetTimer() { clearInterval(timerInterval); timerRunning=false; timerRemaining=parseInt(document.getElementById('timerSeconds').value)||60; updateTimerDisplay(); document.getElementById('timerStartBtn').disabled=false; document.getElementById('timerStartBtn').textContent='▶️ Iniciar'; }
+
+    function startTimer() {
+        if (timerRunning) return;
+        if (timerMode === 'regressivo') {
+            if (timerRemaining <= 0) timerRemaining = parseInt(document.getElementById('timerSeconds').value) || 60;
+            timerInterval = setInterval(regressiveTick, 1000);
+        } else {
+            timerInterval = setInterval(progressiveTick, 1000);
+        }
+        timerRunning = true;
+        document.getElementById('timerStartBtn').disabled = true;
+        document.getElementById('timerStartBtn').textContent = '⏳ Rodando...';
+    }
+
+    function regressiveTick() {
+        if (timerRemaining > 0) {
+            timerRemaining--;
+            updateTimerDisplay();
+        }
+        if (timerRemaining <= 0) {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            document.getElementById('timerStartBtn').disabled = false;
+            document.getElementById('timerStartBtn').textContent = '▶️ Iniciar';
+            showToast('⏰ Tempo esgotado!', 'info');
+            playAlarm();
+        }
+    }
+
+    function progressiveTick() {
+        timerRemaining++;
+        updateTimerDisplay();
+    }
+
+    function pauseTimer() {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        document.getElementById('timerStartBtn').disabled = false;
+        document.getElementById('timerStartBtn').textContent = '▶️ Iniciar';
+    }
+
+    function resetTimer() {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        if (timerMode === 'regressivo') {
+            timerRemaining = parseInt(document.getElementById('timerSeconds').value) || 60;
+        } else {
+            timerRemaining = 0;
+        }
+        updateTimerDisplay();
+        document.getElementById('timerStartBtn').disabled = false;
+        document.getElementById('timerStartBtn').textContent = '▶️ Iniciar';
+    }
+
+    function toggleTimerMode() {
+        if (timerMode === 'regressivo') {
+            timerMode = 'progressivo';
+            document.getElementById('timerModeToggle').textContent = '⬆️ Progressivo';
+            document.getElementById('timerSeconds').style.display = 'none';
+        } else {
+            timerMode = 'regressivo';
+            document.getElementById('timerModeToggle').textContent = '⬇️ Regressivo';
+            document.getElementById('timerSeconds').style.display = 'inline-block';
+        }
+        resetTimer();
+    }
+
+    // Cronômetro progressivo total (stopwatch)
+    function updateStopwatchDisplay() {
+        const h = Math.floor(stopwatchSeconds / 3600);
+        const m = Math.floor((stopwatchSeconds % 3600) / 60);
+        const s = stopwatchSeconds % 60;
+        const display = document.getElementById('stopwatchDisplay');
+        if (display) {
+            display.textContent = 
+                (h > 0 ? String(h).padStart(2,'0') + ':' : '') +
+                String(m).padStart(2,'0') + ':' +
+                String(s).padStart(2,'0');
+        }
+    }
+    function startStopwatch() {
+        if (stopwatchRunning) return;
+        stopwatchRunning = true;
+        document.getElementById('stopwatchStartBtn').disabled = true;
+        document.getElementById('stopwatchStartBtn').textContent = '⏳ Rodando...';
+        stopwatchInterval = setInterval(() => {
+            stopwatchSeconds++;
+            updateStopwatchDisplay();
+        }, 1000);
+    }
+    function pauseStopwatch() {
+        clearInterval(stopwatchInterval);
+        stopwatchRunning = false;
+        const btn = document.getElementById('stopwatchStartBtn');
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '▶️ Iniciar';
+        }
+    }
+    function resetStopwatch() {
+        clearInterval(stopwatchInterval);
+        stopwatchRunning = false;
+        stopwatchSeconds = 0;
+        updateStopwatchDisplay();
+        const btn = document.getElementById('stopwatchStartBtn');
+        if (btn) {
+            btn.disabled = false;
+            btn.textContent = '▶️ Iniciar';
+        }
+    }
 
     // ============ MÚSICA UNIFICADA ============
     function loadMusic() {
         const url = document.getElementById('musicUrl').value.trim();
         const container = document.getElementById('musicPlayerContainer');
         if (!url) { container.innerHTML = ''; return; }
-
         if (url.includes('soundcloud.com')) {
             fetch(`https://soundcloud.com/oembed?url=${encodeURIComponent(url)}&format=json`)
                 .then(res => res.ok ? res.json() : Promise.reject())
@@ -612,7 +772,6 @@
                 .catch(() => showFallback(url, container));
             return;
         }
-
         if (url.includes('youtube.com') || url.includes('youtu.be')) {
             let id = null;
             try {
@@ -623,123 +782,120 @@
                 else if (u.pathname.startsWith('/shorts/')) id = u.pathname.split('/')[2];
             } catch (e) {}
             if (id) {
-                container.innerHTML = `
-                    <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
-                        <iframe style="position:absolute; top:0; left:0; width:100%; height:100%;"
-                            src="https://www.youtube.com/embed/${id}?rel=0"
-                            allowfullscreen></iframe>
-                    </div>
-                `;
+                container.innerHTML = `<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;"><iframe style="position:absolute; top:0; left:0; width:100%; height:100%;" src="https://www.youtube.com/embed/${id}?rel=0" allowfullscreen></iframe></div>`;
                 return;
             }
         }
-
         if (url.includes('open.spotify.com')) {
             try {
                 const u = new URL(url);
                 const parts = u.pathname.split('/').filter(Boolean);
                 if (parts.length >= 2 && ['track','album','playlist'].includes(parts[0])) {
-                    container.innerHTML = `
-                        <iframe style="border-radius:12px;" src="https://open.spotify.com/embed/${parts[0]}/${parts[1]}"
-                            width="100%" height="152" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-                    `;
+                    container.innerHTML = `<iframe style="border-radius:12px;" src="https://open.spotify.com/embed/${parts[0]}/${parts[1]}" width="100%" height="152" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
                     return;
                 }
             } catch (e) {}
         }
-
         const audioExts = ['.mp3','.wav','.ogg','.m4a','.aac','.flac'];
         const videoExts = ['.mp4','.webm','.mov'];
         const isDirectMedia = [...audioExts, ...videoExts].some(ext => url.toLowerCase().endsWith(ext));
         if (isDirectMedia) {
             const isVideo = videoExts.some(ext => url.toLowerCase().endsWith(ext));
-            if (isVideo) {
-                container.innerHTML = `<video controls style="width:100%; border-radius:var(--radius-sm);"><source src="${url}">Seu navegador não suporta vídeo.</video>`;
-            } else {
-                container.innerHTML = `<audio controls style="width:100%;"><source src="${url}" type="audio/mpeg">Seu navegador não suporta áudio.</audio>`;
-            }
+            if (isVideo) container.innerHTML = `<video controls style="width:100%; border-radius:var(--radius-sm);"><source src="${url}">Seu navegador não suporta vídeo.</video>`;
+            else container.innerHTML = `<audio controls style="width:100%;"><source src="${url}" type="audio/mpeg">Seu navegador não suporta áudio.</audio>`;
             return;
         }
-
         showFallback(url, container);
     }
-
     function showFallback(url, container) {
-        container.innerHTML = `
-            <div style="text-align:center; padding:20px; background:var(--surface2); border-radius:var(--radius-sm);">
-                <p style="color:var(--text2);">Não foi possível incorporar este link.</p>
-                <a href="${url}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="margin-top:8px;">
-                    ▶️ Ouvir no site original
-                </a>
-            </div>
-        `;
+        container.innerHTML = `<div style="text-align:center; padding:20px; background:var(--surface2); border-radius:var(--radius-sm);"><p style="color:var(--text2);">Não foi possível incorporar este link.</p><a href="${url}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="margin-top:8px;">▶️ Ouvir no site original</a></div>`;
     }
 
-    // ============ ANÁLISE DE LACUNAS ============
-    function analyzeAndGenerate() {
-        if (workoutHistory.length === 0) {
-            showToast('⚠️ Nenhum histórico encontrado. Faça alguns treinos primeiro.', 'error');
-            return;
+    // ============ CARROSSEL ============
+    let carrosselIndex = 0;
+    let carrosselTimer = null;
+    const totalSlides = 4; // mesmo número de slides do HTML
+
+    function slideAtual(index) {
+        carrosselIndex = index;
+        atualizarCarrossel();
+        resetarAutoPlay();
+    }
+
+    function mudarSlide(direcao) {
+        carrosselIndex = (carrosselIndex + direcao + totalSlides) % totalSlides;
+        atualizarCarrossel();
+        resetarAutoPlay();
+    }
+
+    function atualizarCarrossel() {
+        const slidesContainer = document.querySelector('.carrossel-slides');
+        if (slidesContainer) {
+            slidesContainer.style.transform = `translateX(-${carrosselIndex * 100}%)`;
         }
-        
-        const diasAnalise = 14;
-        const dataLimite = new Date();
-        dataLimite.setDate(dataLimite.getDate() - diasAnalise);
-        
-        const frequencia = {};
-        let totalTreinos = 0;
-        
-        workoutHistory.forEach(h => {
-            const treinoDate = new Date(h.date);
-            if (treinoDate >= dataLimite) {
-                totalTreinos++;
-                (h.groups || []).forEach(grupo => {
-                    frequencia[grupo] = (frequencia[grupo] || 0) + 1;
-                });
-            }
+        document.querySelectorAll('.dot').forEach((dot, i) => {
+            dot.classList.toggle('active', i === carrosselIndex);
         });
-        
-        const todosGrupos = [...new Set(exerciseDB.map(ex => ex.grupo_principal))];
-        const media = totalTreinos > 0 ? Object.values(frequencia).reduce((a,b)=>a+b,0) / todosGrupos.length : 0;
-        const lacunas = todosGrupos.filter(grupo => !frequencia[grupo] || frequencia[grupo] < Math.max(1, Math.floor(media * 0.5)));
-        
-        if (lacunas.length === 0) {
-            showToast('✅ Seus treinos estão bem equilibrados! Gerando treino normal.', 'info');
-            generateIATraining();
-            return;
-        }
-        
-        const mensagem = lacunas.length === 1 
-            ? `🔍 Grupo mais negligenciado: ${lacunas[0]}.` 
-            : `🔍 Grupos pouco trabalhados: ${lacunas.join(', ')}.`;
-        showToast(mensagem, 'info');
-        
-        generateIATraining(lacunas);
     }
 
+    function autoPlay() {
+        carrosselTimer = setInterval(() => {
+            carrosselIndex = (carrosselIndex + 1) % totalSlides;
+            atualizarCarrossel();
+        }, 5000);
+    }
+
+    function resetarAutoPlay() {
+        clearInterval(carrosselTimer);
+        autoPlay();
+    }
+
+    // Iniciar carrossel automaticamente
+    autoPlay();
+
+    // ============ NAVEGAÇÃO ============
     function navigateTo(page, btn) {
-        document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-        document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-        const p = document.getElementById('page-'+page); if(p) p.classList.add('active');
-        if(btn) btn.classList.add('active');
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        const p = document.getElementById('page-' + page);
+        if (p) p.classList.add('active');
+        if (btn) btn.classList.add('active');
         document.getElementById('sidebar').classList.remove('open');
-        if(page==='build'){ renderExerciseLibrary(currentFilter); renderChosenExercises(); renderSavedWorkouts(); }
-        if(page==='workout'){ updateActiveWorkoutSelect(); loadActiveWorkout(); }
-        if(page==='progress'){ updateXPDisplay(); renderHistory(); }
-        if(page==='home'){ updateXPDisplay(); updateUpcomingWorkouts(); }
+        if (page === 'build') { renderExerciseLibrary(currentFilter); renderChosenExercises(); renderSavedWorkouts(); }
+        if (page === 'workout') { updateActiveWorkoutSelect(); loadActiveWorkout(); }
+        if (page === 'progress') { updateXPDisplay(); renderHistory(); }
+        if (page === 'home') { updateXPDisplay(); updateUpcomingWorkouts(); }
     }
-
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
 
     function resetAllProgress() {
-        if(confirm('⚠️ Apagar TODO progresso?')) {
-            localStorage.clear(); userXP=0; totalExercisesDone=0; trainingDays=[]; workoutHistory=[]; savedWorkouts=[]; currentWorkout=[]; iaGeneratedWorkout=[];
-            activeWorkoutIndex=-1; currentExerciseIndex=0; saveAllState(); updateXPDisplay(); renderExerciseLibrary('all'); renderChosenExercises(); renderSavedWorkouts(); renderHistory(); updateActiveWorkoutSelect(); updateUpcomingWorkouts();
-            document.getElementById('iaResultCard').style.display='none'; showToast('🔄 Progresso resetado.','info');
+        if (confirm('⚠️ Apagar TODO progresso?')) {
+            localStorage.clear();
+            userXP = 0; totalExercisesDone = 0; trainingDays = []; workoutHistory = []; savedWorkouts = []; currentWorkout = []; iaGeneratedWorkout = [];
+            activeWorkoutIndex = -1; currentExerciseIndex = 0; apiKey = ''; editingWorkoutIndex = -1;
+            stopwatchSeconds = 0; clearInterval(stopwatchInterval); stopwatchRunning = false;
+            clearInterval(timerInterval); timerRunning = false; timerRemaining = 60; timerMode = 'regressivo';
+            saveAllState();
+            updateXPDisplay();
+            renderExerciseLibrary('all');
+            renderChosenExercises();
+            renderSavedWorkouts();
+            renderHistory();
+            updateActiveWorkoutSelect();
+            updateUpcomingWorkouts();
+            updateTimerDisplay();
+            updateStopwatchDisplay();
+            document.getElementById('iaResultCard').style.display = 'none';
+            const apiKeyField = document.getElementById('apiKey');
+            if (apiKeyField) apiKeyField.value = '';
+            const toggleBtn = document.getElementById('timerModeToggle');
+            if (toggleBtn) toggleBtn.textContent = '⬇️ Regressivo';
+            document.getElementById('timerSeconds').style.display = 'inline-block';
+            showToast('🔄 Progresso resetado.', 'info');
         }
     }
 
-    // Expose to global scope
+    // ============ EXPOSIÇÃO GLOBAL ============
     window.navigateTo = navigateTo;
     window.toggleSidebar = toggleSidebar;
     window.registerTrainingDay = registerTrainingDay;
@@ -753,6 +909,8 @@
     window.handleDrop = handleDrop;
     window.removeFromWorkout = removeFromWorkout;
     window.loadWorkoutForEditing = loadWorkoutForEditing;
+    window.cancelEditWorkout = cancelEditWorkout;
+    window.renameWorkout = renameWorkout;
     window.deleteWorkout = deleteWorkout;
     window.generateIATraining = generateIATraining;
     window.useIATraining = useIATraining;
@@ -763,22 +921,42 @@
     window.startTimer = startTimer;
     window.pauseTimer = pauseTimer;
     window.resetTimer = resetTimer;
+    window.toggleTimerMode = toggleTimerMode;
+    window.startStopwatch = startStopwatch;
+    window.pauseStopwatch = pauseStopwatch;
+    window.resetStopwatch = resetStopwatch;
     window.loadMusic = loadMusic;
     window.analyzeAndGenerate = analyzeAndGenerate;
     window.resetAllProgress = resetAllProgress;
     window.saveApiKey = saveApiKey;
+    window.testGemini = testGemini;
+    window.slideAtual = slideAtual;
+    window.mudarSlide = mudarSlide;
 
-    // Init
+    // ============ INIT ============
     document.getElementById('filterTags').addEventListener('click', e => {
-        if(e.target.classList.contains('filter-tag')) {
-            document.querySelectorAll('#filterTags .filter-tag').forEach(t=>t.classList.remove('active'));
-            e.target.classList.add('active'); currentFilter = e.target.dataset.filter; renderExerciseLibrary(currentFilter);
+        if (e.target.classList.contains('filter-tag')) {
+            document.querySelectorAll('#filterTags .filter-tag').forEach(t => t.classList.remove('active'));
+            e.target.classList.add('active');
+            currentFilter = e.target.dataset.filter;
+            renderExerciseLibrary(currentFilter);
         }
     });
-    document.getElementById('timerSeconds').addEventListener('change', function(){ if(!timerRunning){ timerRemaining=parseInt(this.value)||60; updateTimerDisplay(); } });
+    document.getElementById('timerSeconds').addEventListener('change', function() {
+        if (!timerRunning && timerMode === 'regressivo') { timerRemaining = parseInt(this.value) || 60; updateTimerDisplay(); }
+    });
     const apiKeyField = document.getElementById('apiKey');
-if (apiKeyField && apiKey) {
-    apiKeyField.value = apiKey;
-}eXPDisplay(); renderExerciseLibrary('all'); renderChosenExercises(); renderSavedWorkouts(); renderHistory(); updateActiveWorkoutSelect(); updateUpcomingWorkouts(); updateTimerDisplay();
+    if (apiKeyField && apiKey) {
+        apiKeyField.value = apiKey;
+    }
+    updateXPDisplay();
+    renderExerciseLibrary('all');
+    renderChosenExercises();
+    renderSavedWorkouts();
+    renderHistory();
+    updateActiveWorkoutSelect();
+    updateUpcomingWorkouts();
+    updateTimerDisplay();
+    updateStopwatchDisplay();
     console.log('💪 Calisthenics Blue pronto!');
 })();
