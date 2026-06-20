@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calisthenics Blue - Monte Seus Treinos</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="styles.css?v=2">
 </head>
 <body>
     <button class="mobile-menu-btn" onclick="toggleSidebar()" title="Menu">☰</button>
@@ -14,7 +13,7 @@
         <div class="logo"><span class="logo-icon"></span> CALISTHENICS BLUE</div>
         <button class="nav-btn active" data-page="home" onclick="navigateTo('home', this)"><span class="icon">🏠</span> Dashboard</button>
         <button class="nav-btn" data-page="build" onclick="navigateTo('build', this)"><span class="icon">🔧</span> Montar Treino</button>
-        <button class="nav-btn" data-page="ia" onclick="navigateTo('ia', this)"><span class="icon">🤖</span> IA Trainer</button>
+        <button class="nav-btn" data-page="ia" onclick="navigateTo('ia', this)"><span class="icon">🤖</span> Auto Treino</button>
         <button class="nav-btn" data-page="workout" onclick="navigateTo('workout', this)"><span class="icon">⏱️</span> Treinar Agora</button>
         <button class="nav-btn" data-page="progress" onclick="navigateTo('progress', this)"><span class="icon">📊</span> Progresso</button>
         <div class="xp-badge">
@@ -41,7 +40,6 @@
             <div class="card mt-2" style="padding:0; overflow:hidden;">
                 <div class="carrossel-container">
                     <div class="carrossel-slides" id="carrosselSlides">
-                        <!-- Slide 1 -->
                         <div class="carrossel-slide active">
                             <img src="https://images3.alphacoders.com/132/thumbbig-1323165.webp" alt="Anime treino 1">
                             <div class="carrossel-overlay">
@@ -49,7 +47,6 @@
                                 <p>Seu treino, sua jornada</p>
                             </div>
                         </div>
-                        <!-- Slide 2 -->
                         <div class="carrossel-slide">
                             <img src="https://images.alphacoders.com/135/thumbbig-1352220.webp" alt="Anime treino 2">
                             <div class="carrossel-overlay">
@@ -57,7 +54,6 @@
                                 <p>Calistenia é arte</p>
                             </div>
                         </div>
-                        <!-- Slide 3 -->
                         <div class="carrossel-slide">
                             <img src="https://images8.alphacoders.com/135/thumbbig-1352217.webp" alt="Anime treino 3">
                             <div class="carrossel-overlay">
@@ -65,7 +61,6 @@
                                 <p>Evolua um pouco a cada dia</p>
                             </div>
                         </div>
-                        <!-- Slide 4 -->
                         <div class="carrossel-slide">
                             <img src="https://images2.alphacoders.com/135/thumbbig-1359482.webp" alt="Anime treino 4">
                             <div class="carrossel-overlay">
@@ -91,33 +86,83 @@
         <div class="page" id="page-build">
             <h2>🔧 Montar Treino Manual</h2>
             <div class="grid-2">
-                <div class="card"><h3>📚 Biblioteca de Exercícios</h3><div class="filter-tags" id="filterTags"><button class="filter-tag active" data-filter="all">Todos</button><button class="filter-tag" data-filter="Pull">Pull</button><button class="filter-tag" data-filter="Push">Push</button><button class="filter-tag" data-filter="Ombros">Ombros</button><button class="filter-tag" data-filter="Tríceps">Tríceps</button><button class="filter-tag" data-filter="Core">Core</button><button class="filter-tag" data-filter="Pernas">Pernas</button><button class="filter-tag" data-filter="Front Lever">Front Lever</button><button class="filter-tag" data-filter="Planche">Planche</button><button class="filter-tag" data-filter="Handstand">Handstand</button><button class="filter-tag" data-filter="Human Flag">Human Flag</button><button class="filter-tag" data-filter="Corpo Inteiro">Corpo Inteiro</button></div><div style="max-height:450px;overflow-y:auto;" id="exerciseLibrary"></div></div>
-                <div class="card"><h3>🏗️ Seu Treino (arraste para cá)</h3><div class="drop-zone" id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)"><div class="placeholder" id="dropPlaceholder">Arraste exercícios aqui</div><div id="chosenExercises"></div></div><div class="mt-2"><label for="workoutName">Nome do Treino:</label><input type="text" id="workoutName" placeholder="Ex: Treino de Costas Intenso"></div><div class="flex gap-2 mt-2 flex-wrap"><button class="btn btn-primary" id="saveWorkoutBtn" onclick="saveWorkout()">💾 Salvar Treino</button><button class="btn btn-outline btn-sm" id="cancelEditBtn" onclick="cancelEditWorkout()" style="display:none;">✖ Cancelar Edição</button><button class="btn btn-outline" onclick="exportToGoogleCalendar()">📅 Google Agenda</button><button class="btn btn-danger btn-sm" onclick="clearWorkout()">🗑️ Limpar</button></div></div>
+                <!-- Card da Biblioteca (com barra de pesquisa e filtros DENTRO) -->
+                <div class="card">
+                    <h3>📚 Biblioteca de Exercícios</h3>
+                    <!-- Filtros -->
+                    <div class="filter-tags" id="filterTags">
+                        <button class="filter-tag active" data-filter="all">Todos</button>
+                        <button class="filter-tag" data-filter="Pull">Pull</button>
+                        <button class="filter-tag" data-filter="Push">Push</button>
+                        <button class="filter-tag" data-filter="Ombros">Ombros</button>
+                        <button class="filter-tag" data-filter="Tríceps">Tríceps</button>
+                        <button class="filter-tag" data-filter="Core">Core</button>
+                        <button class="filter-tag" data-filter="Pernas">Pernas</button>
+                        <button class="filter-tag" data-filter="Front Lever">Front Lever</button>
+                        <button class="filter-tag" data-filter="Planche">Planche</button>
+                        <button class="filter-tag" data-filter="Handstand">Handstand</button>
+                        <button class="filter-tag" data-filter="Human Flag">Human Flag</button>
+                        <button class="filter-tag" data-filter="Corpo Inteiro">Corpo Inteiro</button>
+                        <button class="filter-tag" data-filter="Alongamento"> Alongamento</button>
+                        <button class="filter-tag" data-filter="Yoga"> Yoga</button>
+                    </div>
+                    <!-- Barra de pesquisa -->
+                    <div class="search-bar">
+                        <input type="text" id="exerciseSearch" placeholder="🔍 Pesquisar exercícios..." oninput="filterExercises()">
+                    </div>
+                    <div style="max-height:450px;overflow-y:auto;" id="exerciseLibrary"></div>
+                </div>
+
+                <!-- Card de Montagem -->
+                <div class="card">
+                    <h3>🏗️ Seu Treino (arraste ou clique)</h3>
+                    <div class="drop-zone" id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
+                        <div class="placeholder" id="dropPlaceholder">Arraste exercícios ou clique neles</div>
+                        <div id="chosenExercises"></div>
+                    </div>
+                    <div class="mt-2"><label for="workoutName">Nome do Treino:</label><input type="text" id="workoutName" placeholder="Ex: Treino de Costas Intenso"></div>
+                    <div class="flex gap-2 mt-2 flex-wrap">
+                        <button class="btn btn-primary" id="saveWorkoutBtn" onclick="saveWorkout()">💾 Salvar Treino</button>
+                        <button class="btn btn-outline btn-sm" id="cancelEditBtn" onclick="cancelEditWorkout()" style="display:none;">✖ Cancelar Edição</button>
+                        <button class="btn btn-outline" onclick="exportToGoogleCalendar()">📅 Google Agenda</button>
+                        <button class="btn btn-danger btn-sm" onclick="clearWorkout()">🗑️ Limpar</button>
+                    </div>
+                </div>
             </div>
+
+            <!-- Card de análise do treino -->
+            <div class="card mt-2" id="workoutAnalysisCard" style="display:none;">
+                <h3>📊 Análise do Treino</h3>
+                <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
+                    <div style="position:relative; width:120px; height:120px;">
+                        <canvas id="gaugeCanvas" width="120" height="120"></canvas>
+                        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
+                            <span id="gaugeScore" style="font-size:2rem; font-weight:800; color:var(--text);">0</span>
+                            <span style="font-size:0.7rem; color:var(--text2);">/100</span>
+                        </div>
+                    </div>
+                    <div id="analysisFeedback" style="flex:1; min-width:200px;"></div>
+                </div>
+            </div>
+
             <div class="card mt-2" id="savedWorkoutsSection"><h3>💾 Treinos Salvos</h3><div id="savedWorkoutsList" style="color:var(--text2);">Nenhum treino salvo ainda.</div></div>
         </div>
 
-        <!-- ========== IA ========== -->
+        <!-- ========== AUTO TREINO ========== -->
         <div class="page" id="page-ia">
-            <h2>🤖 IA Trainer</h2>
+            <h2>🤖 Criação de Treino Automatizado</h2>
             <div class="card">
                 <div class="grid-2">
                     <div><label for="iaLevel">Seu Nível:</label><select id="iaLevel"><option value="Iniciante">Iniciante</option><option value="Intermediário" selected>Intermediário</option><option value="Avançado">Avançado</option><option value="Elite">Elite</option></select></div>
-                    <div><label for="iaFocus">Foco do Treino:</label><select id="iaFocus"><option value="Costas">Costas (Pull)</option><option value="Peitoral">Peitoral (Push)</option><option value="Ombros">Ombros</option><option value="Tríceps">Tríceps</option><option value="Core">Core / Abdômen</option><option value="Pernas">Pernas</option><option value="Full Body">Corpo Inteiro</option><option value="Front Lever">Front Lever</option><option value="Planche">Planche</option><option value="Handstand">Handstand</option><option value="Human Flag">Human Flag</option></select></div>
+                    <div><label for="iaFocus">Foco do Treino:</label><select id="iaFocus"><option value="Costas">Costas (Pull)</option><option value="Peitoral">Peitoral (Push)</option><option value="Ombros">Ombros</option><option value="Tríceps">Tríceps</option><option value="Core">Core / Abdômen</option><option value="Pernas">Pernas</option><option value="Full Body">Corpo Inteiro</option><option value="Flexibilidade">Flexibilidade/Mobilidade</option><option value="Front Lever">Front Lever</option><option value="Planche">Planche</option><option value="Handstand">Handstand</option><option value="Human Flag">Human Flag</option></select></div>
                     <div><label for="iaDuration">Duração (minutos):</label><input type="number" id="iaDuration" value="30" min="10" max="120"></div>
                     <div><label for="iaNumExercises">Nº de Exercícios:</label><input type="number" id="iaNumExercises" value="5" min="3" max="10"></div>
                 </div>
-                <div class="mt-2">
-                    <label for="apiKey">🔑 Chave da API (Google Gemini):</label>
-                    <input type="password" id="apiKey" placeholder="Cole sua chave aqui" onchange="saveApiKey()">
-                    <button class="btn btn-sm btn-outline mt-2" onclick="testGemini()">🧪 Testar Conexão Gemini</button>
-                    <small style="color:var(--text2);">Sua chave fica salva apenas neste navegador. Deixe vazio para usar o método tradicional.</small>
-                </div>
-                <button class="btn btn-primary btn-lg mt-2" onclick="generateIATraining()">✨ Gerar Treino com IA</button>
-                <button class="btn btn-outline btn-lg mt-2" onclick="analyzeAndGenerate()">🧠 Analisar Lacunas e Gerar Treino</button>
+                <button class="btn btn-primary btn-lg mt-2" onclick="generateIATraining()">✨ Gerar Treino Automático</button>
+                <button class="btn btn-outline btn-lg mt-2" onclick="analyzeAndGenerate()">🧠 Analisar Lacunas e Gerar</button>
             </div>
             <div class="card" id="iaResultCard" style="display:none;">
-                <h3>📋 Treino Gerado pela IA</h3>
+                <h3>📋 Treino Gerado</h3>
                 <div id="iaResult"></div>
                 <div class="flex gap-2 mt-2 flex-wrap">
                     <button class="btn btn-success" onclick="useIATraining()">✅ Usar Este Treino</button>
@@ -137,7 +182,6 @@
             </div>
             <div class="card">
                 <h3>⏱️ Cronômetros</h3>
-                <!-- Regressivo / Progressivo (exercício) -->
                 <div style="margin-bottom:12px;">
                     <label style="font-weight:600;font-size:0.8rem;color:var(--primary-light);">⏳ Exercício Atual</label>
                     <div style="display:flex; align-items:center; gap:8px; margin:6px 0;">
@@ -153,7 +197,6 @@
                     </div>
                 </div>
                 <hr style="border-color:var(--border); margin:12px 0;">
-                <!-- Progressivo total (resistência) -->
                 <div>
                     <label style="font-weight:600;font-size:0.8rem;color:var(--xp);">🕒 Tempo Total de Treino</label>
                     <div class="timer-display" id="stopwatchDisplay" style="color:var(--xp);">00:00</div>

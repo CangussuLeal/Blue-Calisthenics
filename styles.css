@@ -538,6 +538,28 @@ hr { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
     font-size: 0.95rem;
     opacity: 0.9;
 }
+// Barra de pesquisa
+.search-bar {
+    margin-bottom: 25px;
+}
+#exerciseLibrary {
+    margin-top: 8px;
+}
+.search-bar input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
 
 /* Botões de navegação */
 .carrossel-btn {

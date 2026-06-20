@@ -21,106 +21,135 @@
         }
     }
 
-    // ============ DATABASE ============
+    // ============ DATABASE EXPANDIDO ============
     const exerciseDB = [
-        { nome: "Australian Pull Up", nivel: "Iniciante", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Core"], tipo: "Pull", xp: 15 },
-        { nome: "Pull Up", nivel: "Iniciante", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Antebraço"], tipo: "Pull", xp: 20 },
-        { nome: "Chin Up", nivel: "Iniciante", grupo_principal: "Bíceps", grupos_secundarios: ["Dorsal", "Core"], tipo: "Pull", xp: 20 },
-        { nome: "Archer Pull Up", nivel: "Intermediário", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Ombro"], tipo: "Pull", xp: 35 },
-        { nome: "Typewriter Pull Up", nivel: "Intermediário", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Core"], tipo: "Pull", xp: 35 },
-        { nome: "Chest-to-Bar Pull Up", nivel: "Intermediário", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Trapézio"], tipo: "Pull", xp: 35 },
-        { nome: "Explosive Pull Up", nivel: "Intermediário", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Ombro"], tipo: "Pull", xp: 40 },
-        { nome: "Muscle Up", nivel: "Avançado", grupo_principal: "Costas", grupos_secundarios: ["Peitoral", "Tríceps", "Core"], tipo: "Pull", xp: 70 },
-        { nome: "One Arm Pull Up", nivel: "Avançado", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Core"], tipo: "Pull", xp: 80 },
-        { nome: "Incline Push Up", nivel: "Iniciante", grupo_principal: "Peitoral", grupos_secundarios: ["Ombro", "Tríceps"], tipo: "Push", xp: 10 },
-        { nome: "Push Up", nivel: "Iniciante", grupo_principal: "Peitoral", grupos_secundarios: ["Ombro", "Tríceps"], tipo: "Push", xp: 12 },
-        { nome: "Diamond Push Up", nivel: "Iniciante", grupo_principal: "Tríceps", grupos_secundarios: ["Peitoral"], tipo: "Push", xp: 15 },
-        { nome: "Decline Push Up", nivel: "Intermediário", grupo_principal: "Peitoral Superior", grupos_secundarios: ["Ombro"], tipo: "Push", xp: 25 },
-        { nome: "Archer Push Up", nivel: "Intermediário", grupo_principal: "Peitoral", grupos_secundarios: ["Ombro", "Core"], tipo: "Push", xp: 30 },
-        { nome: "Ring Push Up", nivel: "Intermediário", grupo_principal: "Peitoral", grupos_secundarios: ["Core", "Ombro"], tipo: "Push", xp: 30 },
-        { nome: "Pseudo Planche Push Up", nivel: "Avançado", grupo_principal: "Ombro", grupos_secundarios: ["Peitoral", "Core"], tipo: "Push", xp: 55 },
-        { nome: "Planche Push Up", nivel: "Avançado", grupo_principal: "Ombro", grupos_secundarios: ["Peitoral", "Core"], tipo: "Push", xp: 75 },
-        { nome: "Pike Hold", nivel: "Iniciante", grupo_principal: "Ombros", grupos_secundarios: ["Core"], tipo: "Ombros", xp: 12 },
-        { nome: "Pike Push Up", nivel: "Iniciante", grupo_principal: "Ombros", grupos_secundarios: ["Tríceps"], tipo: "Ombros", xp: 18 },
-        { nome: "Elevated Pike Push Up", nivel: "Intermediário", grupo_principal: "Ombros", grupos_secundarios: ["Core"], tipo: "Ombros", xp: 28 },
-        { nome: "Wall Handstand Hold", nivel: "Intermediário", grupo_principal: "Ombros", grupos_secundarios: ["Core"], tipo: "Ombros", xp: 25 },
-        { nome: "Handstand Push Up Negativa", nivel: "Intermediário", grupo_principal: "Ombros", grupos_secundarios: ["Tríceps"], tipo: "Ombros", xp: 32 },
-        { nome: "Handstand Push Up", nivel: "Avançado", grupo_principal: "Ombros", grupos_secundarios: ["Core", "Tríceps"], tipo: "Ombros", xp: 60 },
-        { nome: "Freestanding HSPU", nivel: "Avançado", grupo_principal: "Ombros", grupos_secundarios: ["Core"], tipo: "Ombros", xp: 70 },
-        { nome: "Bench Dip", nivel: "Iniciante", grupo_principal: "Tríceps", grupos_secundarios: ["Peitoral"], tipo: "Tríceps", xp: 10 },
-        { nome: "Parallel Bar Dip", nivel: "Intermediário", grupo_principal: "Tríceps", grupos_secundarios: ["Peitoral"], tipo: "Tríceps", xp: 28 },
-        { nome: "Korean Dip", nivel: "Intermediário", grupo_principal: "Tríceps", grupos_secundarios: ["Ombro"], tipo: "Tríceps", xp: 32 },
-        { nome: "Ring Dip", nivel: "Avançado", grupo_principal: "Tríceps", grupos_secundarios: ["Core"], tipo: "Tríceps", xp: 50 },
-        { nome: "Straight Bar Dip", nivel: "Avançado", grupo_principal: "Tríceps", grupos_secundarios: ["Peitoral"], tipo: "Tríceps", xp: 55 },
-        { nome: "Hollow Body Hold", nivel: "Iniciante", grupo_principal: "Abdômen", grupos_secundarios: ["Lombar"], tipo: "Core", xp: 10 },
-        { nome: "Dead Bug", nivel: "Iniciante", grupo_principal: "Abdômen", grupos_secundarios: ["Lombar"], tipo: "Core", xp: 10 },
-        { nome: "Knee Raise", nivel: "Iniciante", grupo_principal: "Abdômen", grupos_secundarios: ["Flexores do Quadril"], tipo: "Core", xp: 12 },
-        { nome: "Leg Raise", nivel: "Intermediário", grupo_principal: "Abdômen", grupos_secundarios: ["Core"], tipo: "Core", xp: 22 },
-        { nome: "Toes to Bar", nivel: "Intermediário", grupo_principal: "Abdômen", grupos_secundarios: ["Costas"], tipo: "Core", xp: 28 },
-        { nome: "Dragon Flag", nivel: "Avançado", grupo_principal: "Core", grupos_secundarios: ["Lombar"], tipo: "Core", xp: 55 },
-        { nome: "Windshield Wiper", nivel: "Avançado", grupo_principal: "Core", grupos_secundarios: ["Ombros"], tipo: "Core", xp: 60 },
-        { nome: "Agachamento Livre", nivel: "Iniciante", grupo_principal: "Quadríceps", grupos_secundarios: ["Glúteos"], tipo: "Pernas", xp: 12 },
-        { nome: "Afundo", nivel: "Iniciante", grupo_principal: "Quadríceps", grupos_secundarios: ["Glúteos"], tipo: "Pernas", xp: 12 },
-        { nome: "Step Up", nivel: "Iniciante", grupo_principal: "Quadríceps", grupos_secundarios: ["Panturrilha"], tipo: "Pernas", xp: 10 },
-        { nome: "Bulgarian Split Squat", nivel: "Intermediário", grupo_principal: "Quadríceps", grupos_secundarios: ["Glúteos"], tipo: "Pernas", xp: 25 },
-        { nome: "Jump Squat", nivel: "Intermediário", grupo_principal: "Quadríceps", grupos_secundarios: ["Panturrilha"], tipo: "Pernas", xp: 22 },
-        { nome: "Pistol Squat Assistido", nivel: "Intermediário", grupo_principal: "Quadríceps", grupos_secundarios: ["Core"], tipo: "Pernas", xp: 28 },
-        { nome: "Pistol Squat", nivel: "Avançado", grupo_principal: "Quadríceps", grupos_secundarios: ["Core"], tipo: "Pernas", xp: 50 },
-        { nome: "Shrimp Squat", nivel: "Avançado", grupo_principal: "Quadríceps", grupos_secundarios: ["Core"], tipo: "Pernas", xp: 52 },
-        { nome: "Scapula Pull", nivel: "Iniciante", grupo_principal: "Front Lever", grupos_secundarios: ["Costas"], tipo: "Front Lever", xp: 15 },
-        { nome: "Tuck Front Lever Hold", nivel: "Iniciante", grupo_principal: "Front Lever", grupos_secundarios: ["Core"], tipo: "Front Lever", xp: 20 },
-        { nome: "Advanced Tuck Front Lever", nivel: "Intermediário", grupo_principal: "Front Lever", grupos_secundarios: ["Core"], tipo: "Front Lever", xp: 35 },
-        { nome: "One Leg Front Lever", nivel: "Intermediário", grupo_principal: "Front Lever", grupos_secundarios: ["Core"], tipo: "Front Lever", xp: 40 },
-        { nome: "Straddle Front Lever", nivel: "Avançado", grupo_principal: "Front Lever", grupos_secundarios: ["Core"], tipo: "Front Lever", xp: 60 },
-        { nome: "Full Front Lever", nivel: "Avançado", grupo_principal: "Front Lever", grupos_secundarios: ["Corpo inteiro"], tipo: "Front Lever", xp: 75 },
-        { nome: "Front Lever Pull Up", nivel: "Elite", grupo_principal: "Front Lever", grupos_secundarios: ["Bíceps", "Core"], tipo: "Front Lever", xp: 100 },
-        { nome: "Frog Stand", nivel: "Iniciante", grupo_principal: "Planche", grupos_secundarios: ["Ombros"], tipo: "Planche", xp: 15 },
-        { nome: "Planche Lean", nivel: "Iniciante", grupo_principal: "Planche", grupos_secundarios: ["Ombros", "Core"], tipo: "Planche", xp: 18 },
-        { nome: "Tuck Planche", nivel: "Intermediário", grupo_principal: "Planche", grupos_secundarios: ["Ombros", "Core"], tipo: "Planche", xp: 35 },
-        { nome: "Advanced Tuck Planche", nivel: "Intermediário", grupo_principal: "Planche", grupos_secundarios: ["Ombros", "Core"], tipo: "Planche", xp: 40 },
-        { nome: "Straddle Planche", nivel: "Avançado", grupo_principal: "Planche", grupos_secundarios: ["Ombros", "Core"], tipo: "Planche", xp: 65 },
-        { nome: "Full Planche", nivel: "Avançado", grupo_principal: "Planche", grupos_secundarios: ["Corpo inteiro"], tipo: "Planche", xp: 85 },
-        { nome: "Planche Push Up (Elite)", nivel: "Elite", grupo_principal: "Planche", grupos_secundarios: ["Ombros", "Peitoral", "Core"], tipo: "Planche", xp: 110 },
-        { nome: "Wall Walk", nivel: "Iniciante", grupo_principal: "Handstand", grupos_secundarios: ["Ombros", "Core"], tipo: "Handstand", xp: 15 },
-        { nome: "Wall Handstand", nivel: "Iniciante", grupo_principal: "Handstand", grupos_secundarios: ["Ombros", "Core"], tipo: "Handstand", xp: 18 },
-        { nome: "Shoulder Tap", nivel: "Intermediário", grupo_principal: "Handstand", grupos_secundarios: ["Ombros", "Core"], tipo: "Handstand", xp: 30 },
-        { nome: "Freestanding Handstand", nivel: "Intermediário", grupo_principal: "Handstand", grupos_secundarios: ["Core"], tipo: "Handstand", xp: 40 },
-        { nome: "Handstand Press", nivel: "Avançado", grupo_principal: "Handstand", grupos_secundarios: ["Ombros", "Core"], tipo: "Handstand", xp: 65 },
-        { nome: "One Arm Handstand", nivel: "Elite", grupo_principal: "Handstand", grupos_secundarios: ["Core", "Ombros"], tipo: "Handstand", xp: 120 },
-        { nome: "Vertical Flag Hold", nivel: "Iniciante", grupo_principal: "Human Flag", grupos_secundarios: ["Ombros", "Core"], tipo: "Human Flag", xp: 20 },
-        { nome: "Tuck Flag", nivel: "Intermediário", grupo_principal: "Human Flag", grupos_secundarios: ["Core", "Ombros"], tipo: "Human Flag", xp: 35 },
-        { nome: "Advanced Tuck Flag", nivel: "Intermediário", grupo_principal: "Human Flag", grupos_secundarios: ["Core", "Ombros"], tipo: "Human Flag", xp: 40 },
-        { nome: "Straddle Flag", nivel: "Avançado", grupo_principal: "Human Flag", grupos_secundarios: ["Core", "Ombros"], tipo: "Human Flag", xp: 60 },
-        { nome: "Full Human Flag", nivel: "Avançado", grupo_principal: "Human Flag", grupos_secundarios: ["Corpo inteiro"], tipo: "Human Flag", xp: 80 },
-        { nome: "Human Flag Pull Up", nivel: "Elite", grupo_principal: "Human Flag", grupos_secundarios: ["Costas", "Core", "Ombros"], tipo: "Human Flag", xp: 130 },
-        { nome: "Muscle Up (Full Body)", nivel: "Avançado", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Costas","Peitoral","Ombros","Tríceps","Core"], tipo: "Corpo Inteiro", xp: 70 },
-        { nome: "Front Lever Pull Up (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Costas","Bíceps","Core"], tipo: "Corpo Inteiro", xp: 100 },
-        { nome: "Planche Push Up (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Ombros","Peitoral","Core","Tríceps"], tipo: "Corpo Inteiro", xp: 110 },
-        { nome: "Human Flag (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Ombros","Costas","Core"], tipo: "Corpo Inteiro", xp: 80 },
-        { nome: "One Arm Pull Up (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Costas","Bíceps","Core"], tipo: "Corpo Inteiro", xp: 80 },
-        { nome: "Full Planche (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Corpo inteiro"], tipo: "Corpo Inteiro", xp: 85 },
-        { nome: "Full Front Lever (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Corpo inteiro"], tipo: "Corpo Inteiro", xp: 75 }
-    ];
+        // ========== FORÇA (ORIGINAIS) ==========
+        { nome: "Australian Pull Up", nivel: "Iniciante", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Core"], tipo: "Pull", xp: 15, duracao: 45 },
+        { nome: "Pull Up", nivel: "Iniciante", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Antebraço"], tipo: "Pull", xp: 20, duracao: 45 },
+        { nome: "Chin Up", nivel: "Iniciante", grupo_principal: "Bíceps", grupos_secundarios: ["Dorsal", "Core"], tipo: "Pull", xp: 20, duracao: 45 },
+        { nome: "Archer Pull Up", nivel: "Intermediário", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Ombro"], tipo: "Pull", xp: 35, duracao: 45 },
+        { nome: "Typewriter Pull Up", nivel: "Intermediário", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Core"], tipo: "Pull", xp: 35, duracao: 45 },
+        { nome: "Chest-to-Bar Pull Up", nivel: "Intermediário", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Trapézio"], tipo: "Pull", xp: 35, duracao: 45 },
+        { nome: "Explosive Pull Up", nivel: "Intermediário", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Ombro"], tipo: "Pull", xp: 40, duracao: 45 },
+        { nome: "Muscle Up", nivel: "Avançado", grupo_principal: "Costas", grupos_secundarios: ["Peitoral", "Tríceps", "Core"], tipo: "Pull", xp: 70, duracao: 45 },
+        { nome: "One Arm Pull Up", nivel: "Avançado", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Core"], tipo: "Pull", xp: 80, duracao: 45 },
+        { nome: "Incline Push Up", nivel: "Iniciante", grupo_principal: "Peitoral", grupos_secundarios: ["Ombro", "Tríceps"], tipo: "Push", xp: 10, duracao: 45 },
+        { nome: "Push Up", nivel: "Iniciante", grupo_principal: "Peitoral", grupos_secundarios: ["Ombro", "Tríceps"], tipo: "Push", xp: 12, duracao: 45 },
+        { nome: "Diamond Push Up", nivel: "Iniciante", grupo_principal: "Tríceps", grupos_secundarios: ["Peitoral"], tipo: "Push", xp: 15, duracao: 45 },
+        { nome: "Decline Push Up", nivel: "Intermediário", grupo_principal: "Peitoral Superior", grupos_secundarios: ["Ombro"], tipo: "Push", xp: 25, duracao: 45 },
+        { nome: "Archer Push Up", nivel: "Intermediário", grupo_principal: "Peitoral", grupos_secundarios: ["Ombro", "Core"], tipo: "Push", xp: 30, duracao: 45 },
+        { nome: "Ring Push Up", nivel: "Intermediário", grupo_principal: "Peitoral", grupos_secundarios: ["Core", "Ombro"], tipo: "Push", xp: 30, duracao: 45 },
+        { nome: "Pseudo Planche Push Up", nivel: "Avançado", grupo_principal: "Ombro", grupos_secundarios: ["Peitoral", "Core"], tipo: "Push", xp: 55, duracao: 45 },
+        { nome: "Planche Push Up", nivel: "Avançado", grupo_principal: "Ombro", grupos_secundarios: ["Peitoral", "Core"], tipo: "Push", xp: 75, duracao: 45 },
+        { nome: "Pike Hold", nivel: "Iniciante", grupo_principal: "Ombros", grupos_secundarios: ["Core"], tipo: "Ombros", xp: 12, duracao: 30 },
+        { nome: "Pike Push Up", nivel: "Iniciante", grupo_principal: "Ombros", grupos_secundarios: ["Tríceps"], tipo: "Ombros", xp: 18, duracao: 45 },
+        { nome: "Elevated Pike Push Up", nivel: "Intermediário", grupo_principal: "Ombros", grupos_secundarios: ["Core"], tipo: "Ombros", xp: 28, duracao: 45 },
+        { nome: "Wall Handstand Hold", nivel: "Intermediário", grupo_principal: "Ombros", grupos_secundarios: ["Core"], tipo: "Ombros", xp: 25, duracao: 30 },
+        { nome: "Handstand Push Up Negativa", nivel: "Intermediário", grupo_principal: "Ombros", grupos_secundarios: ["Tríceps"], tipo: "Ombros", xp: 32, duracao: 45 },
+        { nome: "Handstand Push Up", nivel: "Avançado", grupo_principal: "Ombros", grupos_secundarios: ["Core", "Tríceps"], tipo: "Ombros", xp: 60, duracao: 45 },
+        { nome: "Freestanding HSPU", nivel: "Avançado", grupo_principal: "Ombros", grupos_secundarios: ["Core"], tipo: "Ombros", xp: 70, duracao: 45 },
+        { nome: "Bench Dip", nivel: "Iniciante", grupo_principal: "Tríceps", grupos_secundarios: ["Peitoral"], tipo: "Tríceps", xp: 10, duracao: 45 },
+        { nome: "Parallel Bar Dip", nivel: "Intermediário", grupo_principal: "Tríceps", grupos_secundarios: ["Peitoral"], tipo: "Tríceps", xp: 28, duracao: 45 },
+        { nome: "Korean Dip", nivel: "Intermediário", grupo_principal: "Tríceps", grupos_secundarios: ["Ombro"], tipo: "Tríceps", xp: 32, duracao: 45 },
+        { nome: "Ring Dip", nivel: "Avançado", grupo_principal: "Tríceps", grupos_secundarios: ["Core"], tipo: "Tríceps", xp: 50, duracao: 45 },
+        { nome: "Straight Bar Dip", nivel: "Avançado", grupo_principal: "Tríceps", grupos_secundarios: ["Peitoral"], tipo: "Tríceps", xp: 55, duracao: 45 },
+        { nome: "Hollow Body Hold", nivel: "Iniciante", grupo_principal: "Abdômen", grupos_secundarios: ["Lombar"], tipo: "Core", xp: 10, duracao: 30 },
+        { nome: "Dead Bug", nivel: "Iniciante", grupo_principal: "Abdômen", grupos_secundarios: ["Lombar"], tipo: "Core", xp: 10, duracao: 45 },
+        { nome: "Knee Raise", nivel: "Iniciante", grupo_principal: "Abdômen", grupos_secundarios: ["Flexores do Quadril"], tipo: "Core", xp: 12, duracao: 45 },
+        { nome: "Leg Raise", nivel: "Intermediário", grupo_principal: "Abdômen", grupos_secundarios: ["Core"], tipo: "Core", xp: 22, duracao: 45 },
+        { nome: "Toes to Bar", nivel: "Intermediário", grupo_principal: "Abdômen", grupos_secundarios: ["Costas"], tipo: "Core", xp: 28, duracao: 45 },
+        { nome: "Dragon Flag", nivel: "Avançado", grupo_principal: "Core", grupos_secundarios: ["Lombar"], tipo: "Core", xp: 55, duracao: 30 },
+        { nome: "Windshield Wiper", nivel: "Avançado", grupo_principal: "Core", grupos_secundarios: ["Ombros"], tipo: "Core", xp: 60, duracao: 30 },
+        { nome: "Agachamento Livre", nivel: "Iniciante", grupo_principal: "Quadríceps", grupos_secundarios: ["Glúteos"], tipo: "Pernas", xp: 12, duracao: 45 },
+        { nome: "Afundo", nivel: "Iniciante", grupo_principal: "Quadríceps", grupos_secundarios: ["Glúteos"], tipo: "Pernas", xp: 12, duracao: 45 },
+        { nome: "Step Up", nivel: "Iniciante", grupo_principal: "Quadríceps", grupos_secundarios: ["Panturrilha"], tipo: "Pernas", xp: 10, duracao: 45 },
+        { nome: "Bulgarian Split Squat", nivel: "Intermediário", grupo_principal: "Quadríceps", grupos_secundarios: ["Glúteos"], tipo: "Pernas", xp: 25, duracao: 45 },
+        { nome: "Jump Squat", nivel: "Intermediário", grupo_principal: "Quadríceps", grupos_secundarios: ["Panturrilha"], tipo: "Pernas", xp: 22, duracao: 45 },
+        { nome: "Pistol Squat Assistido", nivel: "Intermediário", grupo_principal: "Quadríceps", grupos_secundarios: ["Core"], tipo: "Pernas", xp: 28, duracao: 45 },
+        { nome: "Pistol Squat", nivel: "Avançado", grupo_principal: "Quadríceps", grupos_secundarios: ["Core"], tipo: "Pernas", xp: 50, duracao: 45 },
+        { nome: "Shrimp Squat", nivel: "Avançado", grupo_principal: "Quadríceps", grupos_secundarios: ["Core"], tipo: "Pernas", xp: 52, duracao: 45 },
+        { nome: "Scapula Pull", nivel: "Iniciante", grupo_principal: "Front Lever", grupos_secundarios: ["Costas"], tipo: "Front Lever", xp: 15, duracao: 45 },
+        { nome: "Tuck Front Lever Hold", nivel: "Iniciante", grupo_principal: "Front Lever", grupos_secundarios: ["Core"], tipo: "Front Lever", xp: 20, duracao: 30 },
+        { nome: "Advanced Tuck Front Lever", nivel: "Intermediário", grupo_principal: "Front Lever", grupos_secundarios: ["Core"], tipo: "Front Lever", xp: 35, duracao: 30 },
+        { nome: "One Leg Front Lever", nivel: "Intermediário", grupo_principal: "Front Lever", grupos_secundarios: ["Core"], tipo: "Front Lever", xp: 40, duracao: 30 },
+        { nome: "Straddle Front Lever", nivel: "Avançado", grupo_principal: "Front Lever", grupos_secundarios: ["Core"], tipo: "Front Lever", xp: 60, duracao: 30 },
+        { nome: "Full Front Lever", nivel: "Avançado", grupo_principal: "Front Lever", grupos_secundarios: ["Corpo inteiro"], tipo: "Front Lever", xp: 75, duracao: 30 },
+        { nome: "Front Lever Pull Up", nivel: "Elite", grupo_principal: "Front Lever", grupos_secundarios: ["Bíceps", "Core"], tipo: "Front Lever", xp: 100, duracao: 45 },
+        { nome: "Frog Stand", nivel: "Iniciante", grupo_principal: "Planche", grupos_secundarios: ["Ombros"], tipo: "Planche", xp: 15, duracao: 30 },
+        { nome: "Planche Lean", nivel: "Iniciante", grupo_principal: "Planche", grupos_secundarios: ["Ombros", "Core"], tipo: "Planche", xp: 18, duracao: 30 },
+        { nome: "Tuck Planche", nivel: "Intermediário", grupo_principal: "Planche", grupos_secundarios: ["Ombros", "Core"], tipo: "Planche", xp: 35, duracao: 30 },
+        { nome: "Advanced Tuck Planche", nivel: "Intermediário", grupo_principal: "Planche", grupos_secundarios: ["Ombros", "Core"], tipo: "Planche", xp: 40, duracao: 30 },
+        { nome: "Straddle Planche", nivel: "Avançado", grupo_principal: "Planche", grupos_secundarios: ["Ombros", "Core"], tipo: "Planche", xp: 65, duracao: 30 },
+        { nome: "Full Planche", nivel: "Avançado", grupo_principal: "Planche", grupos_secundarios: ["Corpo inteiro"], tipo: "Planche", xp: 85, duracao: 30 },
+        { nome: "Planche Push Up (Elite)", nivel: "Elite", grupo_principal: "Planche", grupos_secundarios: ["Ombros", "Peitoral", "Core"], tipo: "Planche", xp: 110, duracao: 45 },
+        { nome: "Wall Walk", nivel: "Iniciante", grupo_principal: "Handstand", grupos_secundarios: ["Ombros", "Core"], tipo: "Handstand", xp: 15, duracao: 45 },
+        { nome: "Wall Handstand", nivel: "Iniciante", grupo_principal: "Handstand", grupos_secundarios: ["Ombros", "Core"], tipo: "Handstand", xp: 18, duracao: 30 },
+        { nome: "Shoulder Tap", nivel: "Intermediário", grupo_principal: "Handstand", grupos_secundarios: ["Ombros", "Core"], tipo: "Handstand", xp: 30, duracao: 45 },
+        { nome: "Freestanding Handstand", nivel: "Intermediário", grupo_principal: "Handstand", grupos_secundarios: ["Core"], tipo: "Handstand", xp: 40, duracao: 30 },
+        { nome: "Handstand Press", nivel: "Avançado", grupo_principal: "Handstand", grupos_secundarios: ["Ombros", "Core"], tipo: "Handstand", xp: 65, duracao: 45 },
+        { nome: "One Arm Handstand", nivel: "Elite", grupo_principal: "Handstand", grupos_secundarios: ["Core", "Ombros"], tipo: "Handstand", xp: 120, duracao: 30 },
+        { nome: "Vertical Flag Hold", nivel: "Iniciante", grupo_principal: "Human Flag", grupos_secundarios: ["Ombros", "Core"], tipo: "Human Flag", xp: 20, duracao: 30 },
+        { nome: "Tuck Flag", nivel: "Intermediário", grupo_principal: "Human Flag", grupos_secundarios: ["Core", "Ombros"], tipo: "Human Flag", xp: 35, duracao: 30 },
+        { nome: "Advanced Tuck Flag", nivel: "Intermediário", grupo_principal: "Human Flag", grupos_secundarios: ["Core", "Ombros"], tipo: "Human Flag", xp: 40, duracao: 30 },
+        { nome: "Straddle Flag", nivel: "Avançado", grupo_principal: "Human Flag", grupos_secundarios: ["Core", "Ombros"], tipo: "Human Flag", xp: 60, duracao: 30 },
+        { nome: "Full Human Flag", nivel: "Avançado", grupo_principal: "Human Flag", grupos_secundarios: ["Corpo inteiro"], tipo: "Human Flag", xp: 80, duracao: 30 },
+        { nome: "Human Flag Pull Up", nivel: "Elite", grupo_principal: "Human Flag", grupos_secundarios: ["Costas", "Core", "Ombros"], tipo: "Human Flag", xp: 130, duracao: 45 },
+        { nome: "Muscle Up (Full Body)", nivel: "Avançado", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Costas","Peitoral","Ombros","Tríceps","Core"], tipo: "Corpo Inteiro", xp: 70, duracao: 45 },
+        { nome: "Front Lever Pull Up (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Costas","Bíceps","Core"], tipo: "Corpo Inteiro", xp: 100, duracao: 45 },
+        { nome: "Planche Push Up (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Ombros","Peitoral","Core","Tríceps"], tipo: "Corpo Inteiro", xp: 110, duracao: 45 },
+        { nome: "Human Flag (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Ombros","Costas","Core"], tipo: "Corpo Inteiro", xp: 80, duracao: 30 },
+        { nome: "One Arm Pull Up (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Costas","Bíceps","Core"], tipo: "Corpo Inteiro", xp: 80, duracao: 45 },
+        { nome: "Full Planche (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Corpo inteiro"], tipo: "Corpo Inteiro", xp: 85, duracao: 30 },
+        { nome: "Full Front Lever (Full)", nivel: "Elite", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Corpo inteiro"], tipo: "Corpo Inteiro", xp: 75, duracao: 30 },
 
-    // Durações padrão (segundos)
-    exerciseDB.forEach(ex => {
-        if (!ex.duracao) {
-            if (ex.nome.toLowerCase().includes('hold') || ex.nome.toLowerCase().includes('flag') ||
-                ex.tipo === 'Front Lever' || ex.tipo === 'Planche' || ex.tipo === 'Human Flag') {
-                ex.duracao = 30;
-            } else if (ex.tipo === 'Handstand' || ex.nome.toLowerCase().includes('handstand')) {
-                ex.duracao = 30;
-            } else if (ex.tipo === 'Core' && (ex.nome.includes('Hold') || ex.nome.includes('Flag'))) {
-                ex.duracao = 30;
-            } else if (ex.tipo === 'Pernas' || ex.tipo === 'Push' || ex.tipo === 'Pull' || ex.tipo === 'Ombros' || ex.tipo === 'Tríceps') {
-                ex.duracao = 45;
-            } else if (ex.tipo === 'Corpo Inteiro') {
-                ex.duracao = 60;
-            } else {
-                ex.duracao = 45;
-            }
-        }
-    });
+        // ========== ALONGAMENTOS ==========
+        { nome: "Alongamento de Pescoço", nivel: "Iniciante", grupo_principal: "Cervical", grupos_secundarios: [], tipo: "Alongamento", xp: 10, duracao: 30 },
+        { nome: "Alongamento de Trapézio", nivel: "Iniciante", grupo_principal: "Pescoço/Ombros", grupos_secundarios: [], tipo: "Alongamento", xp: 10, duracao: 30 },
+        { nome: "Alongamento de Ombros Cruzado", nivel: "Iniciante", grupo_principal: "Ombros", grupos_secundarios: [], tipo: "Alongamento", xp: 10, duracao: 30 },
+        { nome: "Alongamento de Tríceps", nivel: "Iniciante", grupo_principal: "Braços", grupos_secundarios: [], tipo: "Alongamento", xp: 10, duracao: 30 },
+        { nome: "Alongamento de Punhos", nivel: "Iniciante", grupo_principal: "Punhos", grupos_secundarios: [], tipo: "Alongamento", xp: 10, duracao: 30 },
+        { nome: "Alongamento de Peitoral na Parede", nivel: "Iniciante", grupo_principal: "Peitoral", grupos_secundarios: [], tipo: "Alongamento", xp: 10, duracao: 30 },
+        { nome: "Alongamento de Panturrilha", nivel: "Iniciante", grupo_principal: "Panturrilhas", grupos_secundarios: [], tipo: "Alongamento", xp: 10, duracao: 30 },
+        { nome: "Alongamento de Quadríceps em Pé", nivel: "Iniciante", grupo_principal: "Coxas", grupos_secundarios: [], tipo: "Alongamento", xp: 10, duracao: 30 },
+        { nome: "Alongamento Borboleta", nivel: "Iniciante", grupo_principal: "Adutores", grupos_secundarios: [], tipo: "Alongamento", xp: 10, duracao: 30 },
+        { nome: "Alongamento Sentado para Isquiotibiais", nivel: "Iniciante", grupo_principal: "Posterior da Coxa", grupos_secundarios: [], tipo: "Alongamento", xp: 10, duracao: 30 },
+        { nome: "Pancake Stretch", nivel: "Intermediário", grupo_principal: "Adutores", grupos_secundarios: ["Quadril"], tipo: "Alongamento", xp: 20, duracao: 45 },
+        { nome: "Alongamento de Flexores do Quadril", nivel: "Intermediário", grupo_principal: "Quadril", grupos_secundarios: [], tipo: "Alongamento", xp: 20, duracao: 45 },
+        { nome: "Alongamento de Costas Sentado", nivel: "Intermediário", grupo_principal: "Lombar", grupos_secundarios: [], tipo: "Alongamento", xp: 20, duracao: 45 },
+        { nome: "Jefferson Curl Leve", nivel: "Intermediário", grupo_principal: "Cadeia Posterior", grupos_secundarios: [], tipo: "Alongamento", xp: 20, duracao: 45 },
+        { nome: "Alongamento de Ombros com Bastão", nivel: "Intermediário", grupo_principal: "Ombros", grupos_secundarios: [], tipo: "Alongamento", xp: 20, duracao: 45 },
+        { nome: "Frog Stretch", nivel: "Intermediário", grupo_principal: "Quadril", grupos_secundarios: ["Adutores"], tipo: "Alongamento", xp: 20, duracao: 45 },
+        { nome: "Couch Stretch", nivel: "Intermediário", grupo_principal: "Quadríceps", grupos_secundarios: [], tipo: "Alongamento", xp: 20, duracao: 45 },
+        { nome: "Alongamento de Pulso Avançado", nivel: "Intermediário", grupo_principal: "Punhos", grupos_secundarios: [], tipo: "Alongamento", xp: 20, duracao: 45 },
+        { nome: "Middle Split", nivel: "Avançado", grupo_principal: "Adutores", grupos_secundarios: ["Quadril"], tipo: "Alongamento", xp: 40, duracao: 60 },
+        { nome: "Front Split", nivel: "Avançado", grupo_principal: "Pernas", grupos_secundarios: ["Quadril"], tipo: "Alongamento", xp: 40, duracao: 60 },
+        { nome: "Ponte Completa", nivel: "Avançado", grupo_principal: "Ombros e Coluna", grupos_secundarios: ["Peitoral"], tipo: "Alongamento", xp: 40, duracao: 60 },
+        { nome: "German Hang", nivel: "Avançado", grupo_principal: "Ombros", grupos_secundarios: ["Costas"], tipo: "Alongamento", xp: 40, duracao: 45 },
+        { nome: "Pancake Avançado", nivel: "Avançado", grupo_principal: "Quadril", grupos_secundarios: ["Adutores"], tipo: "Alongamento", xp: 40, duracao: 60 },
+        { nome: "Oversplit", nivel: "Elite", grupo_principal: "Flexibilidade Extrema", grupos_secundarios: ["Pernas"], tipo: "Alongamento", xp: 60, duracao: 60 },
+
+        // ========== YOGA ==========
+        { nome: "Mountain Pose", nivel: "Iniciante", grupo_principal: "Postura", grupos_secundarios: [], tipo: "Yoga", xp: 10, duracao: 30 },
+        { nome: "Child's Pose", nivel: "Iniciante", grupo_principal: "Costas", grupos_secundarios: ["Quadril"], tipo: "Yoga", xp: 10, duracao: 30 },
+        { nome: "Cat-Cow", nivel: "Iniciante", grupo_principal: "Coluna", grupos_secundarios: [], tipo: "Yoga", xp: 10, duracao: 30 },
+        { nome: "Cobra Pose", nivel: "Iniciante", grupo_principal: "Lombar", grupos_secundarios: ["Abdômen"], tipo: "Yoga", xp: 10, duracao: 30 },
+        { nome: "Downward Dog", nivel: "Iniciante", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Ombros", "Posterior da Coxa"], tipo: "Yoga", xp: 15, duracao: 45 },
+        { nome: "Seated Forward Fold", nivel: "Iniciante", grupo_principal: "Posterior da Coxa", grupos_secundarios: ["Lombar"], tipo: "Yoga", xp: 10, duracao: 30 },
+        { nome: "Happy Baby", nivel: "Iniciante", grupo_principal: "Quadril", grupos_secundarios: [], tipo: "Yoga", xp: 10, duracao: 30 },
+        { nome: "Warrior I", nivel: "Intermediário", grupo_principal: "Pernas", grupos_secundarios: ["Quadril"], tipo: "Yoga", xp: 20, duracao: 45 },
+        { nome: "Warrior II", nivel: "Intermediário", grupo_principal: "Pernas e Core", grupos_secundarios: ["Quadril"], tipo: "Yoga", xp: 20, duracao: 45 },
+        { nome: "Triangle Pose", nivel: "Intermediário", grupo_principal: "Pernas e Quadril", grupos_secundarios: ["Ombros"], tipo: "Yoga", xp: 20, duracao: 45 },
+        { nome: "Crow Pose", nivel: "Intermediário", grupo_principal: "Core e Braços", grupos_secundarios: ["Ombros", "Punhos"], tipo: "Yoga", xp: 30, duracao: 30 },
+        { nome: "Dolphin Pose", nivel: "Intermediário", grupo_principal: "Ombros", grupos_secundarios: ["Core"], tipo: "Yoga", xp: 25, duracao: 45 },
+        { nome: "Half Moon Pose", nivel: "Intermediário", grupo_principal: "Equilíbrio", grupos_secundarios: ["Pernas"], tipo: "Yoga", xp: 25, duracao: 45 },
+        { nome: "Boat Pose", nivel: "Intermediário", grupo_principal: "Core", grupos_secundarios: ["Flexores do Quadril"], tipo: "Yoga", xp: 25, duracao: 30 },
+        { nome: "Headstand", nivel: "Avançado", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Ombros", "Core"], tipo: "Yoga", xp: 50, duracao: 60 },
+        { nome: "Forearm Stand", nivel: "Avançado", grupo_principal: "Ombros", grupos_secundarios: ["Core"], tipo: "Yoga", xp: 50, duracao: 60 },
+        { nome: "Scorpion Pose", nivel: "Avançado", grupo_principal: "Ombros e Coluna", grupos_secundarios: ["Core"], tipo: "Yoga", xp: 50, duracao: 60 },
+        { nome: "Wheel Pose", nivel: "Avançado", grupo_principal: "Coluna", grupos_secundarios: ["Ombros", "Peitoral"], tipo: "Yoga", xp: 50, duracao: 60 },
+        { nome: "Firefly Pose", nivel: "Avançado", grupo_principal: "Core e Braços", grupos_secundarios: ["Ombros"], tipo: "Yoga", xp: 50, duracao: 60 },
+        { nome: "Eight-Angle Pose", nivel: "Avançado", grupo_principal: "Corpo Inteiro", grupos_secundarios: ["Core", "Braços"], tipo: "Yoga", xp: 50, duracao: 60 }
+    ];
 
     // ============ STATE ============
     let currentWorkout = [];
@@ -132,15 +161,18 @@
     let activeWorkoutIndex = -1;
     let currentExerciseIndex = 0;
     let timerInterval = null;
-    let timerRemaining = 60;         // segundos (regressivo) ou contador (progressivo)
+    let timerRemaining = 60;
     let timerRunning = false;
-    let timerMode = 'regressivo';    // 'regressivo' ou 'progressivo'
+    let timerMode = 'regressivo';
+    let timerStartedAt = null;
+    let timerTargetValue = null;
     let stopwatchInterval = null;
     let stopwatchSeconds = 0;
     let stopwatchRunning = false;
+    let stopwatchStartedAt = null;
     let currentFilter = 'all';
+    let currentSearch = '';
     let iaGeneratedWorkout = [];
-    let apiKey = localStorage.getItem('calisthenicsBlue_apiKey') || '';
     let editingWorkoutIndex = -1;
 
     // ============ AUDIO ============
@@ -164,45 +196,6 @@
         playBeep(880, 0.2);
         setTimeout(() => playBeep(880, 0.2), 300);
         setTimeout(() => playBeep(880, 0.3), 600);
-    }
-
-    // ============ API KEY MANAGEMENT ============
-    function saveApiKey() {
-        apiKey = document.getElementById('apiKey').value.trim();
-        localStorage.setItem('calisthenicsBlue_apiKey', apiKey);
-        showToast('🔑 Chave salva!', 'success');
-    }
-
-    async function testGemini() {
-        if (!apiKey) {
-            showToast('⚠️ Primeiro insira a chave da API.', 'error');
-            return;
-        }
-        try {
-            const response = await callGemini('Diga "funcionando" em português.');
-            showToast(`Gemini respondeu: ${response}`, 'success');
-        } catch (err) {
-            showToast(`Falha: ${err.message}`, 'error');
-            console.error(err);
-        }
-    }
-
-    // ============ GEMINI API CALL ============
-    async function callGemini(prompt) {
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                contents: [{ parts: [{ text: prompt }] }]
-            })
-        });
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`Erro ${response.status}: ${errorText}`);
-        }
-        const data = await response.json();
-        return data.candidates[0].content.parts[0].text;
     }
 
     // ============ UTILITÁRIOS ============
@@ -295,17 +288,44 @@
         return { 'Iniciante':'badge-iniciante', 'Intermediário':'badge-intermediario', 'Avançado':'badge-avancado', 'Elite':'badge-elite' }[nivel] || 'badge-iniciante';
     }
 
-    // ============ RENDERIZAÇÃO ============
-    function renderExerciseLibrary(filter='all') {
+    // ============ RENDERIZAÇÃO (com pesquisa) ============
+    function renderExerciseLibrary(filter = 'all', search = '') {
         const container = document.getElementById('exerciseLibrary');
         let exs = exerciseDB;
-        if (filter !== 'all') exs = exs.filter(e => e.tipo===filter || e.grupo_principal===filter || (e.grupos_secundarios||[]).includes(filter));
-        container.innerHTML = exs.map((ex,i) => `
-        <div class="exercise-item" draggable="true" data-exercise-index="${exerciseDB.indexOf(ex)}" ondragstart="handleDragStart(event,${exerciseDB.indexOf(ex)})" ondragend="handleDragEnd(event)">
-          <div class="ex-info"><div class="ex-name">${ex.nome}</div><div class="ex-meta">${ex.grupo_principal} • <span class="badge ${getBadgeClass(ex.nivel)}">${ex.nivel}</span> • ${ex.xp} XP</div></div>
-          <span style="font-size:1.2rem;">⋮⋮</span>
-        </div>`).join('');
+        // Filtro por categoria
+        if (filter !== 'all') {
+            exs = exs.filter(e => e.tipo === filter || e.grupo_principal === filter || (e.grupos_secundarios || []).includes(filter));
+        }
+        // Filtro por texto (pesquisa)
+        if (search.trim() !== '') {
+            const term = search.trim().toLowerCase();
+            exs = exs.filter(e => e.nome.toLowerCase().includes(term));
+        }
+        container.innerHTML = exs.map((ex, i) => {
+            const realIndex = exerciseDB.indexOf(ex);
+            return `
+            <div class="exercise-item" draggable="true" data-exercise-index="${realIndex}" 
+                 ondragstart="handleDragStart(event,${realIndex})" ondragend="handleDragEnd(event)"
+                 onclick="addExerciseByClick(${realIndex})">
+              <div class="ex-info"><div class="ex-name">${ex.nome}</div><div class="ex-meta">${ex.grupo_principal} • <span class="badge ${getBadgeClass(ex.nivel)}">${ex.nivel}</span> • ${ex.xp} XP</div></div>
+              <span style="font-size:1.2rem;">⋮⋮</span>
+            </div>`;
+        }).join('');
     }
+
+    function filterExercises() {
+        currentSearch = document.getElementById('exerciseSearch').value;
+        renderExerciseLibrary(currentFilter, currentSearch);
+    }
+
+    function addExerciseByClick(idx) {
+        if (exerciseDB[idx]) {
+            currentWorkout.push({...exerciseDB[idx]});
+            renderChosenExercises();
+            showToast(`➕ ${exerciseDB[idx].nome} adicionado!`, 'success');
+        }
+    }
+
     function renderChosenExercises() {
         const container = document.getElementById('chosenExercises');
         document.getElementById('dropPlaceholder').style.display = currentWorkout.length ? 'none' : 'block';
@@ -315,7 +335,9 @@
           <button class="btn btn-danger btn-sm" onclick="removeFromWorkout(${i})">✕</button>
         </div>`).join('');
         updateActiveWorkoutSelect();
+        if (typeof atualizarAnalise === 'function') atualizarAnalise();
     }
+
     function removeFromWorkout(i) { currentWorkout.splice(i,1); renderChosenExercises(); }
     function handleDragStart(e, idx) { e.dataTransfer.setData('text/plain', idx.toString()); e.target.classList.add('dragging'); }
     function handleDragEnd(e) { e.target.classList.remove('dragging'); }
@@ -437,94 +459,122 @@
         showToast('📅 Abrindo Google Agenda...','success');
     }
     function exportIAToCalendar() {
-        if (!iaGeneratedWorkout.length) return showToast('⚠️ Gere um treino IA primeiro.','error');
+        if (!iaGeneratedWorkout.length) return showToast('⚠️ Gere um treino primeiro.','error');
         const desc = iaGeneratedWorkout.map((e,i) => `${i+1}. ${e.nome} (${e.xp} XP)`).join('\n');
         const now = new Date(); const start = new Date(now.getTime()+3600000).toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
         const end = new Date(now.getTime()+7200000).toISOString().replace(/[-:]/g,'').split('.')[0]+'Z';
-        window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Treino IA Calisthenics')}&details=${encodeURIComponent(desc)}&dates=${start}/${end}`, '_blank');
-        showToast('📅 Google Agenda IA!','success');
+        window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Treino Automático Calisthenics')}&details=${encodeURIComponent(desc)}&dates=${start}/${end}`, '_blank');
+        showToast('📅 Google Agenda!','success');
     }
 
-    // ============ IA (GEMINI + FALLBACK) ============
-    async function generateIATraining(lacunas = null) {
-        const btn = document.querySelector('#page-ia .btn-primary');
-        if (btn) btn.disabled = true;
+    // ============ GERADOR INTELIGENTE ============
+    function foiFeitoRecentemente(exercise, ultimos = 2) {
+        const recentes = workoutHistory.slice(-ultimos);
+        return recentes.some(h => (h.groups || []).includes(exercise.grupo_principal));
+    }
 
-        if (apiKey) {
-            try {
-                const level = document.getElementById('iaLevel').value;
-                const focus = document.getElementById('iaFocus').value;
-                const num = parseInt(document.getElementById('iaNumExercises').value) || 5;
-                let prompt = `Você é um treinador de calistenia. Gere um treino de ${num} exercícios para um atleta nível ${level} com foco em ${focus}.`;
-                if (lacunas && lacunas.length > 0) {
-                    prompt += ` Priorize os grupos pouco trabalhados: ${lacunas.join(', ')}.`;
-                }
-                prompt += `\nRetorne APENAS uma lista JSON com objetos { "nome": "...", "grupo_principal": "...", "xp": numero }. Exercícios realistas de calistenia. Sem markdown.`;
-
-                const text = await callGemini(prompt);
-                const jsonStr = text.replace(/```json|```/g, '').trim();
-                const exercises = JSON.parse(jsonStr);
-                iaGeneratedWorkout = exercises.map(ex => ({
-                    nome: ex.nome,
-                    grupo_principal: ex.grupo_principal || 'Corpo Inteiro',
-                    nivel: level,
-                    tipo: ex.grupo_principal,
-                    xp: ex.xp || 20
-                }));
-                document.getElementById('iaResult').innerHTML = iaGeneratedWorkout.map((e,i) => `
-                    <div class="exercise-item"><div class="ex-info"><div class="ex-name">${i+1}. ${e.nome}</div><div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div></div></div>
-                `).join('') + `<p class="mt-2"><strong>XP Total:</strong> ${iaGeneratedWorkout.reduce((s,e)=>s+e.xp,0)} XP</p>`;
-                document.getElementById('iaResultCard').style.display = 'block';
-                showToast('✨ Treino gerado pela IA com sucesso!', 'success');
-                if (btn) btn.disabled = false;
-                return;
-            } catch (err) {
-                console.error('IA falhou, usando fallback:', err);
-            }
+    function calcularScore(ex, nivel, foco, lacunas) {
+        let score = 0;
+        const niveis = ['Iniciante','Intermediário','Avançado','Elite'];
+        const idxEx = niveis.indexOf(ex.nivel);
+        const idxAtleta = niveis.indexOf(nivel);
+        if (idxEx === idxAtleta) score += 3;
+        else if (Math.abs(idxEx - idxAtleta) === 1) score += 1;
+        else score -= 5;
+        if (lacunas && lacunas.includes(ex.grupo_principal)) score += 5;
+        if (!foiFeitoRecentemente(ex, 2)) score += 2;
+        else score -= 10;
+        if (foco === 'Full Body' && ex.grupos_secundarios && ex.grupos_secundarios.length >= 3) score += 2;
+        if (foco === 'Flexibilidade') {
+            if (ex.tipo === 'Alongamento' || ex.tipo === 'Yoga') score += 4;
+        } else if (foco !== 'Full Body') {
+            if (ex.grupo_principal === foco) score += 4;
+            else if (ex.grupos_secundarios && ex.grupos_secundarios.includes(foco)) score += 2;
         }
+        return score;
+    }
 
-        // Fallback tradicional
+    function getAquecimento() {
+        const pool = exerciseDB.filter(ex => 
+            (ex.tipo === 'Alongamento' && ex.nivel === 'Iniciante') ||
+            (ex.tipo === 'Yoga' && ex.nivel === 'Iniciante') ||
+            ex.nome === 'Agachamento Livre'
+        );
+        const selecionados = pool.sort(() => Math.random() - 0.5).slice(0, 3);
+        return selecionados.map(ex => ({...ex, tipo: 'Aquecimento'}));
+    }
+
+    function getResfriamento(gruposTrabalhados) {
+        const pool = exerciseDB.filter(ex => 
+            ex.tipo === 'Alongamento' || ex.tipo === 'Yoga'
+        );
+        const relevantes = pool.filter(ex => 
+            gruposTrabalhados.some(g => 
+                g === ex.grupo_principal || 
+                (ex.grupos_secundarios && ex.grupos_secundarios.includes(g))
+            )
+        );
+        if (relevantes.length === 0) {
+            return [
+                { nome: "Child's Pose", nivel: "Iniciante", grupo_principal: "Costas", tipo: "Resfriamento", xp: 10, duracao: 30 },
+                { nome: "Alongamento de Pescoço", nivel: "Iniciante", grupo_principal: "Cervical", tipo: "Resfriamento", xp: 10, duracao: 30 }
+            ];
+        }
+        const selecionados = relevantes.sort(() => Math.random() - 0.5).slice(0, 2);
+        return selecionados.map(ex => ({...ex, tipo: 'Resfriamento'}));
+    }
+
+    function generateIATraining(lacunas = null) {
         const level = document.getElementById('iaLevel').value;
         const focus = document.getElementById('iaFocus').value;
         const num = parseInt(document.getElementById('iaNumExercises').value) || 5;
+        
         let pool = exerciseDB.filter(e => {
             const order = ['Iniciante','Intermediário','Avançado','Elite'];
             return order.indexOf(e.nivel) <= order.indexOf(level);
         });
-        if (focus !== 'Full Body') {
+        
+        if (focus === 'Flexibilidade') {
+            pool = pool.filter(e => e.tipo === 'Alongamento' || e.tipo === 'Yoga');
+        } else if (focus !== 'Full Body') {
             pool = pool.filter(e => e.grupo_principal === focus || e.tipo === focus || (e.grupos_secundarios || []).includes(focus));
         }
         if (!pool.length) pool = exerciseDB.filter(e => e.nivel === level || e.nivel === 'Iniciante');
-        if (lacunas && lacunas.length > 0) {
-            pool.sort((a, b) => {
-                const aIsPriority = lacunas.includes(a.grupo_principal) ? 0 : 1;
-                const bIsPriority = lacunas.includes(b.grupo_principal) ? 0 : 1;
-                return aIsPriority - bIsPriority;
-            });
+        
+        pool.forEach(ex => { ex.score = calcularScore(ex, level, focus, lacunas); });
+        pool.sort((a,b) => b.score - a.score);
+        
+        let selecionados = [];
+        for (let ex of pool) {
+            if (selecionados.length >= num) break;
+            const countNoGrupo = selecionados.filter(s => s.grupo_principal === ex.grupo_principal).length;
+            if (countNoGrupo < 2) selecionados.push(ex);
         }
-        iaGeneratedWorkout = [...pool].sort(() => Math.random() - 0.5).slice(0, num);
+        
+        const aquecimento = getAquecimento().slice(0, 2 + (Math.random() > 0.5 ? 1 : 0));
+        const resfriamento = getResfriamento([...new Set(selecionados.map(e => e.grupo_principal))]).slice(0, 2);
+        iaGeneratedWorkout = [...aquecimento, ...selecionados, ...resfriamento];
+        
         document.getElementById('iaResult').innerHTML = iaGeneratedWorkout.map((e,i) => `
-            <div class="exercise-item"><div class="ex-info"><div class="ex-name">${i+1}. ${e.nome}</div><div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div></div></div>
+            <div class="exercise-item">
+                <div class="ex-info">
+                    <div class="ex-name">${i+1}. ${e.nome}${e.tipo==='Aquecimento'?' 🔥':''}${e.tipo==='Resfriamento'?' ❄️':''}</div>
+                    <div class="ex-meta">${e.grupo_principal} • ${e.xp} XP</div>
+                </div>
+            </div>
         `).join('') + `<p class="mt-2"><strong>XP Total:</strong> ${iaGeneratedWorkout.reduce((s,e)=>s+e.xp,0)} XP</p>`;
         document.getElementById('iaResultCard').style.display = 'block';
-
-        if (apiKey) {
-            showToast('⚠️ IA indisponível no momento. Treino gerado pelo método tradicional.', 'warning');
-        } else {
-            showToast('✨ Treino gerado com sucesso!', 'success');
-        }
-        if (btn) btn.disabled = false;
+        showToast('✨ Treino automático gerado com aquecimento e resfriamento!', 'success');
     }
 
     function useIATraining() {
-        if (!iaGeneratedWorkout.length) return showToast('⚠️ Gere um treino IA.','error');
+        if (!iaGeneratedWorkout.length) return showToast('⚠️ Gere um treino primeiro.','error');
         currentWorkout = [...iaGeneratedWorkout];
-        document.getElementById('workoutName').value = 'Treino IA';
+        document.getElementById('workoutName').value = 'Treino Automático';
         renderChosenExercises();
         navigateTo('build', document.querySelector('[data-page=build]'));
     }
 
-    // ============ ANÁLISE DE LACUNAS ============
     function analyzeAndGenerate() {
         if (workoutHistory.length === 0) {
             showToast('⚠️ Nenhum histórico encontrado. Faça alguns treinos primeiro.', 'error');
@@ -586,7 +636,7 @@
         if (currentExerciseIndex < w.exercises.length) {
             const currentEx = w.exercises[currentExerciseIndex];
             document.getElementById('timerSeconds').value = currentEx.duracao || 45;
-            resetTimer(); // reset adapta conforme timerMode
+            resetTimer();
             document.getElementById('currentExerciseHighlight').style.display = 'block';
             document.getElementById('currentExerciseHighlight').innerHTML = `<strong>🏋️ Executando:</strong> ${currentEx.nome} (${currentEx.xp} XP)`;
         } else {
@@ -643,7 +693,7 @@
 
     // ============ CRONÔMETROS ============
     function updateTimerDisplay() {
-        const totalSeconds = timerRemaining;
+        const totalSeconds = Math.round(timerRemaining);
         const m = Math.floor(totalSeconds / 60);
         const s = totalSeconds % 60;
         document.getElementById('timerDisplay').textContent = 
@@ -652,11 +702,14 @@
 
     function startTimer() {
         if (timerRunning) return;
+        timerStartedAt = Date.now();
         if (timerMode === 'regressivo') {
             if (timerRemaining <= 0) timerRemaining = parseInt(document.getElementById('timerSeconds').value) || 60;
-            timerInterval = setInterval(regressiveTick, 1000);
+            timerTargetValue = timerRemaining;
+            timerInterval = setInterval(regressiveTick, 200);
         } else {
-            timerInterval = setInterval(progressiveTick, 1000);
+            timerTargetValue = timerRemaining;
+            timerInterval = setInterval(progressiveTick, 200);
         }
         timerRunning = true;
         document.getElementById('timerStartBtn').disabled = true;
@@ -664,10 +717,10 @@
     }
 
     function regressiveTick() {
-        if (timerRemaining > 0) {
-            timerRemaining--;
-            updateTimerDisplay();
-        }
+        const now = Date.now();
+        const elapsed = (now - timerStartedAt) / 1000;
+        timerRemaining = Math.max(0, timerTargetValue - elapsed);
+        updateTimerDisplay();
         if (timerRemaining <= 0) {
             clearInterval(timerInterval);
             timerRunning = false;
@@ -679,7 +732,9 @@
     }
 
     function progressiveTick() {
-        timerRemaining++;
+        const now = Date.now();
+        const elapsed = (now - timerStartedAt) / 1000;
+        timerRemaining = timerTargetValue + elapsed;
         updateTimerDisplay();
     }
 
@@ -716,7 +771,6 @@
         resetTimer();
     }
 
-    // Cronômetro progressivo total (stopwatch)
     function updateStopwatchDisplay() {
         const h = Math.floor(stopwatchSeconds / 3600);
         const m = Math.floor((stopwatchSeconds % 3600) / 60);
@@ -729,16 +783,20 @@
                 String(s).padStart(2,'0');
         }
     }
+
     function startStopwatch() {
         if (stopwatchRunning) return;
+        stopwatchStartedAt = Date.now();
         stopwatchRunning = true;
         document.getElementById('stopwatchStartBtn').disabled = true;
         document.getElementById('stopwatchStartBtn').textContent = '⏳ Rodando...';
         stopwatchInterval = setInterval(() => {
-            stopwatchSeconds++;
+            const elapsed = (Date.now() - stopwatchStartedAt) / 1000;
+            stopwatchSeconds = Math.floor(elapsed);
             updateStopwatchDisplay();
-        }, 1000);
+        }, 200);
     }
+
     function pauseStopwatch() {
         clearInterval(stopwatchInterval);
         stopwatchRunning = false;
@@ -748,6 +806,7 @@
             btn.textContent = '▶️ Iniciar';
         }
     }
+
     function resetStopwatch() {
         clearInterval(stopwatchInterval);
         stopwatchRunning = false;
@@ -811,46 +870,98 @@
         container.innerHTML = `<div style="text-align:center; padding:20px; background:var(--surface2); border-radius:var(--radius-sm);"><p style="color:var(--text2);">Não foi possível incorporar este link.</p><a href="${url}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="margin-top:8px;">▶️ Ouvir no site original</a></div>`;
     }
 
+    // ============ ANÁLISE DO TREINO ============
+    function analisarWorkout(workout) {
+        if (!workout.length) return null;
+        const aquecimento = workout.filter(ex => ex.tipo === 'Aquecimento').length;
+        const resfriamento = workout.filter(ex => ex.tipo === 'Resfriamento').length;
+        const numExercicios = workout.length;
+        const grupos = workout.map(ex => ex.grupo_principal);
+        const repeticoes = grupos.reduce((acc, g) => { acc[g] = (acc[g] || 0) + 1; return acc; }, {});
+        const maxRep = Math.max(...Object.values(repeticoes), 0);
+        const historicoRecente = workoutHistory.slice(-2).flatMap(h => h.exercises?.map(e => e.nome) || []);
+        const nivelAtleta = getUserLevel();
+        const scoresNivel = workout.map(ex => {
+            const idx = ['Iniciante','Intermediário','Avançado','Elite'].indexOf(ex.nivel);
+            const idxAtleta = ['Iniciante','Intermediário','Avançado','Elite'].indexOf(nivelAtleta);
+            const diff = idxAtleta - idx;
+            if (diff === 0) return 3;
+            else if (diff === 1) return 2;
+            else if (diff >= 2) return 1;
+            else if (diff === -1) return 1;
+            else return 0;
+        });
+        const mediaNivel = scoresNivel.reduce((a,b)=>a+b,0) / scoresNivel.length;
+        const scoreAquecimento = Math.min(15, aquecimento >= 2 ? 15 : aquecimento * 7);
+        const scoreResfriamento = Math.min(10, resfriamento >= 1 ? 10 : 0);
+        const scoreNivel = Math.round((mediaNivel / 3) * 20);
+        let scoreEquilibrio = 25;
+        if (maxRep > 3) scoreEquilibrio = 0;
+        else if (maxRep === 3) scoreEquilibrio = 10;
+        else if (maxRep === 2) scoreEquilibrio = 20;
+        const repetidosRecentes = workout.filter(ex => historicoRecente.includes(ex.nome)).length;
+        const scoreVariedade = Math.max(0, 15 - repetidosRecentes * 5);
+        let scoreVolume = 15;
+        if (numExercicios < 3) scoreVolume = 5;
+        else if (numExercicios < 4) scoreVolume = 10;
+        else if (numExercicios > 10) scoreVolume = 5;
+        const total = Math.min(100, scoreAquecimento + scoreResfriamento + scoreNivel + scoreEquilibrio + scoreVariedade + scoreVolume);
+        const feedback = [];
+        if (aquecimento < 2) feedback.push('🔥 Adicione mais aquecimento (2-3 exercícios).');
+        if (resfriamento < 1) feedback.push('❄️ Inclua um alongamento no final.');
+        if (maxRep > 3) feedback.push('⚖️ Muitos exercícios do mesmo grupo.');
+        if (repetidosRecentes > 0) feedback.push('🔄 Alguns exercícios foram feitos recentemente.');
+        if (numExercicios < 3) feedback.push('📉 Volume muito baixo.');
+        if (total >= 80) feedback.push('💪 Treino excelente!');
+        return { total, feedback };
+    }
+
+    function atualizarAnalise() {
+        const card = document.getElementById('workoutAnalysisCard');
+        if (!card) return;
+        if (!currentWorkout.length) {
+            card.style.display = 'none';
+            return;
+        }
+        card.style.display = 'block';
+        const analise = analisarWorkout(currentWorkout);
+        if (!analise) return;
+        const canvas = document.getElementById('gaugeCanvas');
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width, h = canvas.height;
+            ctx.clearRect(0,0,w,h);
+            ctx.beginPath();
+            ctx.arc(60,60,50,0.75*Math.PI, 2.25*Math.PI);
+            ctx.strokeStyle = 'var(--surface2)';
+            ctx.lineWidth = 12;
+            ctx.stroke();
+            const angulo = (analise.total / 100) * 1.5 * Math.PI + 0.75*Math.PI;
+            const cor = analise.total >= 80 ? 'var(--success)' : analise.total >= 50 ? 'var(--gold)' : 'var(--danger)';
+            ctx.beginPath();
+            ctx.arc(60,60,50,0.75*Math.PI, angulo);
+            ctx.strokeStyle = cor;
+            ctx.stroke();
+        }
+        document.getElementById('gaugeScore').textContent = analise.total;
+        document.getElementById('gaugeScore').style.color = analise.total >= 80 ? 'var(--success)' : analise.total >= 50 ? 'var(--gold)' : 'var(--danger)';
+        const fbDiv = document.getElementById('analysisFeedback');
+        fbDiv.innerHTML = analise.feedback.map(msg => `<div style="font-size:0.9rem; color:var(--text2); margin-bottom:4px;">${msg}</div>`).join('');
+    }
+
     // ============ CARROSSEL ============
     let carrosselIndex = 0;
     let carrosselTimer = null;
-    const totalSlides = 4; // mesmo número de slides do HTML
-
-    function slideAtual(index) {
-        carrosselIndex = index;
-        atualizarCarrossel();
-        resetarAutoPlay();
-    }
-
-    function mudarSlide(direcao) {
-        carrosselIndex = (carrosselIndex + direcao + totalSlides) % totalSlides;
-        atualizarCarrossel();
-        resetarAutoPlay();
-    }
-
+    const totalSlides = 4;
+    function slideAtual(index) { carrosselIndex = index; atualizarCarrossel(); resetarAutoPlay(); }
+    function mudarSlide(direcao) { carrosselIndex = (carrosselIndex + direcao + totalSlides) % totalSlides; atualizarCarrossel(); resetarAutoPlay(); }
     function atualizarCarrossel() {
         const slidesContainer = document.querySelector('.carrossel-slides');
-        if (slidesContainer) {
-            slidesContainer.style.transform = `translateX(-${carrosselIndex * 100}%)`;
-        }
-        document.querySelectorAll('.dot').forEach((dot, i) => {
-            dot.classList.toggle('active', i === carrosselIndex);
-        });
+        if (slidesContainer) slidesContainer.style.transform = `translateX(-${carrosselIndex * 100}%)`;
+        document.querySelectorAll('.dot').forEach((dot, i) => dot.classList.toggle('active', i === carrosselIndex));
     }
-
-    function autoPlay() {
-        carrosselTimer = setInterval(() => {
-            carrosselIndex = (carrosselIndex + 1) % totalSlides;
-            atualizarCarrossel();
-        }, 5000);
-    }
-
-    function resetarAutoPlay() {
-        clearInterval(carrosselTimer);
-        autoPlay();
-    }
-
-    // Iniciar carrossel automaticamente
+    function autoPlay() { carrosselTimer = setInterval(() => { carrosselIndex = (carrosselIndex + 1) % totalSlides; atualizarCarrossel(); }, 5000); }
+    function resetarAutoPlay() { clearInterval(carrosselTimer); autoPlay(); }
     autoPlay();
 
     // ============ NAVEGAÇÃO ============
@@ -861,7 +972,7 @@
         if (p) p.classList.add('active');
         if (btn) btn.classList.add('active');
         document.getElementById('sidebar').classList.remove('open');
-        if (page === 'build') { renderExerciseLibrary(currentFilter); renderChosenExercises(); renderSavedWorkouts(); }
+        if (page === 'build') { renderExerciseLibrary(currentFilter, currentSearch); renderChosenExercises(); renderSavedWorkouts(); }
         if (page === 'workout') { updateActiveWorkoutSelect(); loadActiveWorkout(); }
         if (page === 'progress') { updateXPDisplay(); renderHistory(); }
         if (page === 'home') { updateXPDisplay(); updateUpcomingWorkouts(); }
@@ -872,12 +983,13 @@
         if (confirm('⚠️ Apagar TODO progresso?')) {
             localStorage.clear();
             userXP = 0; totalExercisesDone = 0; trainingDays = []; workoutHistory = []; savedWorkouts = []; currentWorkout = []; iaGeneratedWorkout = [];
-            activeWorkoutIndex = -1; currentExerciseIndex = 0; apiKey = ''; editingWorkoutIndex = -1;
+            activeWorkoutIndex = -1; currentExerciseIndex = 0; editingWorkoutIndex = -1;
             stopwatchSeconds = 0; clearInterval(stopwatchInterval); stopwatchRunning = false;
             clearInterval(timerInterval); timerRunning = false; timerRemaining = 60; timerMode = 'regressivo';
+            currentSearch = ''; currentFilter = 'all';
             saveAllState();
             updateXPDisplay();
-            renderExerciseLibrary('all');
+            renderExerciseLibrary('all', '');
             renderChosenExercises();
             renderSavedWorkouts();
             renderHistory();
@@ -886,11 +998,10 @@
             updateTimerDisplay();
             updateStopwatchDisplay();
             document.getElementById('iaResultCard').style.display = 'none';
-            const apiKeyField = document.getElementById('apiKey');
-            if (apiKeyField) apiKeyField.value = '';
             const toggleBtn = document.getElementById('timerModeToggle');
             if (toggleBtn) toggleBtn.textContent = '⬇️ Regressivo';
             document.getElementById('timerSeconds').style.display = 'inline-block';
+            document.getElementById('exerciseSearch').value = '';
             showToast('🔄 Progresso resetado.', 'info');
         }
     }
@@ -907,6 +1018,7 @@
     window.handleDragOver = handleDragOver;
     window.handleDragLeave = handleDragLeave;
     window.handleDrop = handleDrop;
+    window.addExerciseByClick = addExerciseByClick;
     window.removeFromWorkout = removeFromWorkout;
     window.loadWorkoutForEditing = loadWorkoutForEditing;
     window.cancelEditWorkout = cancelEditWorkout;
@@ -928,10 +1040,9 @@
     window.loadMusic = loadMusic;
     window.analyzeAndGenerate = analyzeAndGenerate;
     window.resetAllProgress = resetAllProgress;
-    window.saveApiKey = saveApiKey;
-    window.testGemini = testGemini;
     window.slideAtual = slideAtual;
     window.mudarSlide = mudarSlide;
+    window.filterExercises = filterExercises;
 
     // ============ INIT ============
     document.getElementById('filterTags').addEventListener('click', e => {
@@ -939,18 +1050,14 @@
             document.querySelectorAll('#filterTags .filter-tag').forEach(t => t.classList.remove('active'));
             e.target.classList.add('active');
             currentFilter = e.target.dataset.filter;
-            renderExerciseLibrary(currentFilter);
+            renderExerciseLibrary(currentFilter, currentSearch);
         }
     });
     document.getElementById('timerSeconds').addEventListener('change', function() {
         if (!timerRunning && timerMode === 'regressivo') { timerRemaining = parseInt(this.value) || 60; updateTimerDisplay(); }
     });
-    const apiKeyField = document.getElementById('apiKey');
-    if (apiKeyField && apiKey) {
-        apiKeyField.value = apiKey;
-    }
     updateXPDisplay();
-    renderExerciseLibrary('all');
+    renderExerciseLibrary('all', currentSearch);
     renderChosenExercises();
     renderSavedWorkouts();
     renderHistory();
