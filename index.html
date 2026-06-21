@@ -23,10 +23,10 @@
             <small style="color:var(--text2); font-size:0.7rem;">Clique na foto ou no nome para editar</small>
         </div>
         <div style="text-align:center; margin-bottom:12px;">
-    <button class="btn btn-sm btn-outline" onclick="toggleTheme()" id="themeToggleBtn" style="width:100%;">
-        🌙 Tema Escuro
-    </button>
-</div>
+            <button class="btn btn-sm btn-outline" onclick="toggleTheme()" id="themeToggleBtn" style="width:100%;">
+                🌙 Tema Escuro
+            </button>
+        </div>
         <button class="nav-btn active" data-page="home" onclick="navigateTo('home', this)"><span class="icon">🏠</span> Dashboard</button>
         <button class="nav-btn" data-page="build" onclick="navigateTo('build', this)"><span class="icon">🔧</span> Montar Treino</button>
         <button class="nav-btn" data-page="ia" onclick="navigateTo('ia', this)"><span class="icon">🤖</span> Auto Treino</button>
@@ -55,48 +55,37 @@
             <!-- ========== CARROSSEL DE IMAGENS (ANIME) ========== -->
             <div class="card mt-2" style="padding:0; overflow:hidden;">
                 <div class="carrossel-container">
+                    <div class="carrossel-counter" id="carrosselCounter">1 / 4</div>
                     <div class="carrossel-slides" id="carrosselSlides">
                         <div class="carrossel-slide active">
                             <img src="https://images3.alphacoders.com/132/thumbbig-1323165.webp" alt="Anime treino 1">
-                            <div class="carrossel-overlay">
-                                <h3>Foco absoluto</h3>
-                                <p>Seu treino, sua jornada</p>
-                            </div>
+                            <div class="carrossel-overlay"><h3>Foco absoluto</h3><p>Seu treino, sua jornada</p></div>
                         </div>
                         <div class="carrossel-slide">
                             <img src="https://images.alphacoders.com/135/thumbbig-1352220.webp" alt="Anime treino 2">
-                            <div class="carrossel-overlay">
-                                <h3>Além dos limites</h3>
-                                <p>Calistenia é arte</p>
-                            </div>
+                            <div class="carrossel-overlay"><h3>Além dos limites</h3><p>Calistenia é arte</p></div>
                         </div>
                         <div class="carrossel-slide">
                             <img src="https://images8.alphacoders.com/135/thumbbig-1352217.webp" alt="Anime treino 3">
-                            <div class="carrossel-overlay">
-                                <h3>Disciplina diária</h3>
-                                <p>Evolua um pouco a cada dia</p>
-                            </div>
+                            <div class="carrossel-overlay"><h3>Disciplina diária</h3><p>Evolua um pouco a cada dia</p></div>
                         </div>
                         <div class="carrossel-slide">
                             <img src="https://images2.alphacoders.com/135/thumbbig-1359482.webp" alt="Anime treino 4">
-                            <div class="carrossel-overlay">
-                                <h3>Espírito inquebrável</h3>
-                                <p>Nunca desista</p>
-                            </div>
+                            <div class="carrossel-overlay"><h3>Espírito inquebrável</h3><p>Nunca desista</p></div>
                         </div>
                     </div>
-                    <button class="carrossel-btn carrossel-prev" onclick="mudarSlide(-1)">&#10094;</button>
-                    <button class="carrossel-btn carrossel-next" onclick="mudarSlide(1)">&#10095;</button>
-                    <div class="carrossel-dots" id="carrosselDots">
-                        <span class="dot active" onclick="slideAtual(0)"></span>
-                        <span class="dot" onclick="slideAtual(1)"></span>
-                        <span class="dot" onclick="slideAtual(2)"></span>
-                        <span class="dot" onclick="slideAtual(3)"></span>
+                    <button class="carrossel-btn carrossel-prev" onclick="mudarSlide(-1)">❮</button>
+                    <button class="carrossel-btn carrossel-next" onclick="mudarSlide(1)">❯</button>
+                    <div class="carrossel-progress" id="carrosselProgress">
+                        <div class="progress-bar active" onclick="slideAtual(0)"><div class="progress-bar-fill" style="width:100%"></div></div>
+                        <div class="progress-bar" onclick="slideAtual(1)"><div class="progress-bar-fill" style="width:0%"></div></div>
+                        <div class="progress-bar" onclick="slideAtual(2)"><div class="progress-bar-fill" style="width:0%"></div></div>
+                        <div class="progress-bar" onclick="slideAtual(3)"><div class="progress-bar-fill" style="width:0%"></div></div>
                     </div>
                 </div>
-                <small style="display:block; text-align:center; padding:8px; color:var(--text2);">Wallpapers de anime para inspiração</small>
+                <small style="display:block; text-align:center; padding:10px; color:var(--text2);">Wallpapers de anime para inspiração</small>
             </div>
-        </div>
+        </div><!-- FIM DO PAGE-HOME -->
 
         <!-- ========== BUILD ========== -->
         <div class="page" id="page-build">
@@ -122,12 +111,9 @@
                         <button class="filter-tag" data-filter="Aquecimento"> Aquecimento</button>
                         <button class="filter-tag" data-filter="Resfriamento"> Resfriamento</button>
                     </div>
-                    <div class="search-bar">
-                        <input type="text" id="exerciseSearch" placeholder="🔍 Pesquisar exercícios..." oninput="filterExercises()">
-                    </div>
+                    <div class="search-bar"><input type="text" id="exerciseSearch" placeholder="🔍 Pesquisar exercícios..." oninput="filterExercises()"></div>
                     <div style="max-height:450px;overflow-y:auto;" id="exerciseLibrary"></div>
                 </div>
-
                 <div class="card">
                     <h3>🏗️ Seu Treino (arraste ou clique)</h3>
                     <div class="drop-zone" id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
@@ -143,7 +129,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card mt-2" id="workoutAnalysisCard" style="display:none;">
                 <h3>📊 Análise do Treino</h3>
                 <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
@@ -157,7 +142,6 @@
                     <div id="analysisFeedback" style="flex:1; min-width:200px;"></div>
                 </div>
             </div>
-
             <div class="card mt-2" id="savedWorkoutsSection"><h3>💾 Treinos Salvos</h3><div id="savedWorkoutsList" style="color:var(--text2);">Nenhum treino salvo ainda.</div></div>
         </div>
 
@@ -171,6 +155,14 @@
                     <div><label for="iaDuration">Duração (minutos):</label><input type="number" id="iaDuration" value="30" min="10" max="120"></div>
                     <div><label for="iaNumExercises">Nº de Exercícios:</label><input type="number" id="iaNumExercises" value="5" min="3" max="10"></div>
                 </div>
+                
+                <!-- Chave do GIPHY -->
+                <div class="mt-2">
+                    <label for="giphyApiKey">🔑 Chave da API do GIPHY (opcional):</label>
+                    <input type="password" id="giphyApiKey" placeholder="Cole sua chave aqui" onchange="saveGiphyApiKey()">
+                    <small style="color:var(--text2);"><a href="https://developers.giphy.com/" target="_blank" style="color:var(--blue);">Obter chave gratuita</a> — para ver GIFs animados nos tutoriais</small>
+                </div>
+                
                 <button class="btn btn-primary btn-lg mt-2" onclick="generateIATraining()">✨ Gerar Treino Automático</button>
                 <button class="btn btn-outline btn-lg mt-2" onclick="analyzeAndGenerate()">🧠 Analisar Lacunas e Gerar</button>
             </div>
@@ -187,17 +179,12 @@
         <!-- ========== WORKOUT ========== -->
         <div class="page" id="page-workout">
             <h2>⏱️ Treinar Agora</h2>
-          <div class="card">
-    <h3>🎵 Música</h3>
-    <div style="display:flex; gap:10px; margin-bottom:12px;">
-        <input type="text" id="musicSearch" placeholder="🔍 Buscar música (YouTube + SoundCloud)..." style="flex:1;" onkeydown="if(event.key==='Enter') searchAllMusic()">
-        <button class="btn btn-primary btn-sm" onclick="searchAllMusic()">Buscar</button>
-    </div>
-    <div id="musicSearchResults" style="margin-bottom:12px;"></div>
-    <label style="margin-top:8px;">Ou cole links diretos (um por linha ou separados por vírgula):</label>
-    <textarea id="musicUrl" placeholder="https://www.youtube.com/watch?v=...&#10;https://soundcloud.com/..." rows="2" onchange="loadMusic()" style="width:100%; resize:vertical;"></textarea>
-    <div id="musicPlayerContainer"></div>
-</div>
+            <div class="card">
+                <h3>🎵 Música</h3>
+                <label>Cole links diretos (um por linha ou separados por vírgula):</label>
+                <textarea id="musicUrl" placeholder="https://www.youtube.com/watch?v=...&#10;https://soundcloud.com/..." rows="2" onchange="loadMusic()" style="width:100%; resize:vertical;"></textarea>
+                <div id="musicPlayerContainer"></div>
+            </div>
             <div class="card">
                 <h3>⏱️ Cronômetros</h3>
                 <div style="margin-bottom:12px;">
