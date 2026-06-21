@@ -55,7 +55,7 @@
     // ============ DATABASE EXPANDIDO ============
    const exerciseDB = [
     // ========== FORÇA ==========
-    { nome: "Australian Pull Up", nivel: "Iniciante", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Core"], tipo: "Pull", xp: 15, duracao: 45, video: "UaTnPqbK9ZA?si" },
+    { nome: "Australian Pull Up", nivel: "Iniciante", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Core"], tipo: "Pull", xp: 15, duracao: 45, video: "zpaSJ45RVmQ?si" },
     { nome: "Pull Up", nivel: "Iniciante", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Antebraço"], tipo: "Pull", xp: 20, duracao: 45, gif: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ2Yxa2JmZ3lwZjl3N2UyMDdkNXQyY25tcm11Njlhc3RmZnNjeTI2ZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/2bgXRTNDcAxFIzH3B1/200w.webp" },
     { nome: "Chin Up", nivel: "Iniciante", grupo_principal: "Bíceps", grupos_secundarios: ["Dorsal", "Core"], tipo: "Pull", xp: 20, duracao: 45, gif: "https://fitnessprogramer.com/wp-content/uploads/2015/08/Chin-Up.gif" },
     { nome: "Archer Pull Up", nivel: "Intermediário", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Ombro"], tipo: "Pull", xp: 35, duracao: 45, gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Archer-Pull-Up.gif" },
@@ -195,6 +195,7 @@
     { nome: "Alongamento de Corpo Inteiro", nivel: "Iniciante", grupo_principal: "Corpo Inteiro", grupos_secundarios: [], tipo: "Resfriamento", xp: 5, duracao: 45 },
     { nome: "Savasana (Relaxamento)", nivel: "Iniciante", grupo_principal: "Corpo Inteiro", grupos_secundarios: [], tipo: "Resfriamento", xp: 5, duracao: 60 }
 ];
+
     // ============ STATE ============
     let currentWorkout = [];
     let savedWorkouts = safeGetJSON('calisthenicsBlue_workouts', []);
@@ -221,7 +222,6 @@
     let musicPlaylist = [];
     let currentMusicIndex = 0;
     let musicPaused = false;
-    let giphyApiKey = localStorage.getItem('calisthenicsBlue_giphyApiKey') || '';
 
     // ============ AUDIO ============
     function playBeep(frequency = 880, duration = 0.3, type = 'square') {
@@ -245,27 +245,6 @@
         playBeep(880, 0.25);
         setTimeout(() => playBeep(880, 0.25), 300);
         setTimeout(() => playBeep(1100, 0.35), 600);
-    }
-
-    // ============ GIPHY API ============
-    function saveGiphyApiKey() {
-        giphyApiKey = document.getElementById('giphyApiKey')?.value.trim() || '';
-        localStorage.setItem('calisthenicsBlue_giphyApiKey', giphyApiKey);
-        showToast('🔑 Chave do GIPHY salva!', 'success');
-    }
-
-    async function searchGiphyGif(query) {
-        if (!giphyApiKey) return null;
-        try {
-            const response = await fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyApiKey}&q=${encodeURIComponent(query + ' exercise calisthenics')}&limit=1&rating=g&lang=pt`);
-            const data = await response.json();
-            if (data.data && data.data.length > 0) {
-                return data.data[0].images.original.url;
-            }
-        } catch (e) {
-            console.warn('Erro ao buscar GIF:', e);
-        }
-        return null;
     }
 
     // ============ UTILITÁRIOS ============
@@ -709,196 +688,193 @@
         generateIATraining(lacunas);
     }
 
-    // ============ TUTORIAL DO EXERCÍCIO (COM GIF/GIPHY/YOUTUBE) ============
-    function openExerciseTutorial(idx) {
-        const ex = exerciseDB[idx];
-        if (!ex) return;
-        
-        const isPull = ex.tipo === 'Pull' || ex.tipo === 'Front Lever';
-        const isPush = ex.tipo === 'Push' || ex.tipo === 'Planche' || ex.tipo === 'Ombros' || ex.tipo === 'Tríceps';
-        const isCore = ex.tipo === 'Core';
-        const isLegs = ex.tipo === 'Pernas';
-        const isHandstand = ex.tipo === 'Handstand';
-        const isFlag = ex.tipo === 'Human Flag';
-        const isStretch = ex.tipo === 'Alongamento' || ex.tipo === 'Resfriamento';
-        const isYoga = ex.tipo === 'Yoga';
-        const isWarmup = ex.tipo === 'Aquecimento';
-        
-        let steps = [];
-        if (isPull) {
-            steps = [
-                { title: 'Posição Inicial', desc: 'Segure a barra com pegada firme, mãos na largura dos ombros. Braços completamente estendidos.' },
-                { title: 'Ativação', desc: 'Contraia as escápulas (puxe os ombros para baixo e para trás). Ative o core e os glúteos.' },
-                { title: 'Execução', desc: 'Puxe o corpo para cima de forma controlada até o queixo ultrapassar a barra. Cotovelos próximos ao corpo.' },
-                { title: 'Finalização', desc: 'Desça lentamente até os braços ficarem totalmente estendidos. Mantenha a tensão nas costas.' }
-            ];
-        } else if (isPush) {
-            steps = [
-                { title: 'Posição Inicial', desc: 'Apoie as mãos no chão alinhadas com os ombros. Corpo reto como uma prancha.' },
-                { title: 'Ativação', desc: 'Contraia abdômen, glúteos e pernas. Mantenha o corpo totalmente alinhado.' },
-                { title: 'Execução', desc: 'Desça o corpo flexionando os cotovelos a 45°. Mantenha os cotovelos próximos ao tronco.' },
-                { title: 'Finalização', desc: 'Empurre o chão para voltar à posição inicial. Estenda completamente os braços.' }
-            ];
-        } else if (isCore) {
-            steps = [
-                { title: 'Posição Inicial', desc: 'Deite-se ou posicione-se conforme o exercício. Mantenha a lombar apoiada (ou neutra).' },
-                { title: 'Ativação', desc: 'Contraia profundamente o abdômen (como se fosse levar o umbigo às costas).' },
-                { title: 'Execução', desc: 'Realize o movimento de forma controlada, sem usar impulso. Foco na contração abdominal.' },
-                { title: 'Finalização', desc: 'Retorne à posição inicial mantendo a tensão no core. Não relaxe completamente.' }
-            ];
-        } else if (isLegs) {
-            steps = [
-                { title: 'Posição Inicial', desc: 'Fique em pé com os pés alinhados aos ombros. Coluna neutra, olhar para frente.' },
-                { title: 'Ativação', desc: 'Contraia o core e mantenha o peito aberto. Distribua o peso uniformemente.' },
-                { title: 'Execução', desc: 'Realize o movimento de forma controlada. Joelhos alinhados com os pés, sem ultrapassar a ponta.' },
-                { title: 'Finalização', desc: 'Volte à posição inicial empurrando o chão. Mantenha o controle durante todo o movimento.' }
-            ];
-        } else if (isHandstand) {
-            steps = [
-                { title: 'Posição Inicial', desc: 'Apoie as mãos no chão a 30 cm da parede. Dedos bem abertos e braços estendidos.' },
-                { title: 'Ativação', desc: 'Empurre o chão ativamente. Ative ombros, core e glúteos. Olhe para as mãos.' },
-                { title: 'Execução', desc: 'Eleve as pernas com controle, mantendo o corpo alinhado. Use a parede como apoio se necessário.' },
-                { title: 'Finalização', desc: 'Mantenha a posição com respiração controlada. Desça com controle absoluto.' }
-            ];
-        } else if (isFlag) {
-            steps = [
-                { title: 'Posição Inicial', desc: 'Segure a barra vertical: mão de cima pronada, mão de baixo supinada. Afaste os pés.' },
-                { title: 'Ativação', desc: 'Contraia intensamente ombros, costas e core. Empurre com a mão de baixo, puxe com a de cima.' },
-                { title: 'Execução', desc: 'Eleve o corpo lateralmente até ficar paralelo ao chão. Mantenha o corpo totalmente reto.' },
-                { title: 'Finalização', desc: 'Desça controladamente. Alterne os lados para equilibrar o treino.' }
-            ];
-        } else if (isStretch || isYoga) {
-            steps = [
-                { title: 'Posição Inicial', desc: 'Sente-se ou posicione-se confortavelmente. Respire profundamente.' },
-                { title: 'Alongamento', desc: 'Avance no alongamento até sentir tensão moderada (não dor). Mantenha a respiração.' },
-                { title: 'Manutenção', desc: 'Permaneça na posição por 20-30 segundos. Relaxe os músculos gradualmente.' },
-                { title: 'Finalização', desc: 'Solte lentamente. Repita se necessário. Nunca force além do limite.' }
-            ];
-        } else if (isWarmup) {
-            steps = [
-                { title: 'Posição Inicial', desc: 'Fique em pé, respire fundo. Prepare o corpo para o exercício.' },
-                { title: 'Ativação', desc: 'Movimente as articulações suavemente. Aumente a circulação gradualmente.' },
-                { title: 'Execução', desc: 'Realize o movimento de forma dinâmica, aumentando a amplitude aos poucos.' },
-                { title: 'Finalização', desc: 'Repita o movimento por 30 segundos. Sinta o corpo aquecido e preparado.' }
-            ];
-        } else {
-            steps = [
-                { title: 'Posição Inicial', desc: 'Posicione-se corretamente para o exercício.' },
-                { title: 'Ativação', desc: 'Ative os músculos principais antes de iniciar o movimento.' },
-                { title: 'Execução', desc: 'Realize o movimento completo com controle e amplitude.' },
-                { title: 'Finalização', desc: 'Retorne à posição inicial mantendo a tensão muscular.' }
-            ];
-        }
-        
-        const tutorialHTML = `
-            <div class="exercise-tutorial-header">
-                <h2>${ex.nome}</h2>
-                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:10px 0;">
-                    <span class="badge ${getBadgeClass(ex.nivel)}">${ex.nivel}</span>
-                    <span class="badge" style="background:rgba(18,103,232,0.15); color:#1267e8;">${ex.xp} XP</span>
-                    <span class="badge" style="background:rgba(18,103,232,0.1); color:#1267e8;">⏱️ ${ex.duracao || 45}s</span>
-                </div>
-                <p style="color:var(--text2);">${ex.grupo_principal}${ex.grupos_secundarios.length ? ' • ' + ex.grupos_secundarios.join(' • ') : ''}</p>
-            </div>
-            
-            <!-- Mídia do exercício -->
-            <div class="card" style="padding:0; overflow:hidden;" id="tutorialMediaCard">
-                <div style="position:relative; width:100%; min-height:200px; display:flex; align-items:center; justify-content:center; background:var(--surface2);">
-                    <p style="color:var(--text2);" id="tutorialMediaLoading">🔍 Buscando demonstração...</p>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>📋 Passos de Execução</h3>
-                <div class="exercise-steps-list">
-                    ${steps.map((step, i) => `
-                        <div class="step-item">
-                            <div class="step-marker">${i + 1}</div>
-                            <div class="step-content">
-                                <h4>${step.title}</h4>
-                                <p>${step.desc}</p>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>💡 Dicas & Erros Comuns</h3>
-                <div class="tips-errors-grid">
-                    <div>
-                        <h4 style="color:var(--success);">✅ Dicas</h4>
-                        <ul style="color:var(--text2); padding-left:20px;">
-                            <li>Mantenha a postura correta</li>
-                            <li>Respire durante o movimento</li>
-                            <li>Progrida gradualmente</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 style="color:var(--danger);">❌ Erros Comuns</h4>
-                        <ul style="color:var(--text2); padding-left:20px;">
-                            <li>Não use impulso excessivo</li>
-                            <li>Evite arquear as costas</li>
-                            <li>Não prenda a respiração</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="card">
-                <h3>📈 Progressões</h3>
-                <div id="progressionList" style="color:var(--text2);">Carregando progressões...</div>
-            </div>
-            
-            <button class="btn btn-primary mt-2" onclick="addExerciseByClick(${idx})">➕ Adicionar ao Treino</button>
-        `;
-        
-        document.getElementById('exerciseTutorialContent').innerHTML = tutorialHTML;
-        navigateTo('exercise', null);
-        
-        const progressoes = exerciseDB.filter(e => e.grupo_principal === ex.grupo_principal && e.nome !== ex.nome)
-            .sort((a,b) => a.xp - b.xp)
-            .slice(0, 4);
-        const progHTML = progressoes.length 
-            ? progressoes.map(p => `<span class="badge ${getBadgeClass(p.nivel)}" style="margin:4px;cursor:pointer;" onclick="openExerciseTutorial(${exerciseDB.indexOf(p)})">${p.nome}</span>`).join('')
-            : 'Nenhuma progressão encontrada.';
-        document.getElementById('progressionList').innerHTML = progHTML;
-        
-        // Buscar mídia (GIF cadastrado → GIPHY → YouTube)
-        // Buscar mídia (GIF cadastrado → GIPHY → YouTube)
-(async () => {
-    const mediaCard = document.getElementById('tutorialMediaCard');
-    if (!mediaCard) return;
+    // ============ TUTORIAL DO EXERCÍCIO ============
+    // ============ TUTORIAL DO EXERCÍCIO ============
+function openExerciseTutorial(idx) {
+    const ex = exerciseDB[idx];
+    if (!ex) return;
     
-    if (ex.gif) {
-        mediaCard.innerHTML = `
+    const isPull = ex.tipo === 'Pull' || ex.tipo === 'Front Lever';
+    const isPush = ex.tipo === 'Push' || ex.tipo === 'Planche' || ex.tipo === 'Ombros' || ex.tipo === 'Tríceps';
+    const isCore = ex.tipo === 'Core';
+    const isLegs = ex.tipo === 'Pernas';
+    const isHandstand = ex.tipo === 'Handstand';
+    const isFlag = ex.tipo === 'Human Flag';
+    const isStretch = ex.tipo === 'Alongamento' || ex.tipo === 'Resfriamento';
+    const isYoga = ex.tipo === 'Yoga';
+    const isWarmup = ex.tipo === 'Aquecimento';
+    
+    let steps = [];
+    if (isPull) {
+        steps = [
+            { title: 'Posição Inicial', desc: 'Segure a barra com pegada firme, mãos na largura dos ombros. Braços completamente estendidos.' },
+            { title: 'Ativação', desc: 'Contraia as escápulas (puxe os ombros para baixo e para trás). Ative o core e os glúteos.' },
+            { title: 'Execução', desc: 'Puxe o corpo para cima de forma controlada até o queixo ultrapassar a barra. Cotovelos próximos ao corpo.' },
+            { title: 'Finalização', desc: 'Desça lentamente até os braços ficarem totalmente estendidos. Mantenha a tensão nas costas.' }
+        ];
+    } else if (isPush) {
+        steps = [
+            { title: 'Posição Inicial', desc: 'Apoie as mãos no chão alinhadas com os ombros. Corpo reto como uma prancha.' },
+            { title: 'Ativação', desc: 'Contraia abdômen, glúteos e pernas. Mantenha o corpo totalmente alinhado.' },
+            { title: 'Execução', desc: 'Desça o corpo flexionando os cotovelos a 45°. Mantenha os cotovelos próximos ao tronco.' },
+            { title: 'Finalização', desc: 'Empurre o chão para voltar à posição inicial. Estenda completamente os braços.' }
+        ];
+    } else if (isCore) {
+        steps = [
+            { title: 'Posição Inicial', desc: 'Deite-se ou posicione-se conforme o exercício. Mantenha a lombar apoiada (ou neutra).' },
+            { title: 'Ativação', desc: 'Contraia profundamente o abdômen (como se fosse levar o umbigo às costas).' },
+            { title: 'Execução', desc: 'Realize o movimento de forma controlada, sem usar impulso. Foco na contração abdominal.' },
+            { title: 'Finalização', desc: 'Retorne à posição inicial mantendo a tensão no core. Não relaxe completamente.' }
+        ];
+    } else if (isLegs) {
+        steps = [
+            { title: 'Posição Inicial', desc: 'Fique em pé com os pés alinhados aos ombros. Coluna neutra, olhar para frente.' },
+            { title: 'Ativação', desc: 'Contraia o core e mantenha o peito aberto. Distribua o peso uniformemente.' },
+            { title: 'Execução', desc: 'Realize o movimento de forma controlada. Joelhos alinhados com os pés, sem ultrapassar a ponta.' },
+            { title: 'Finalização', desc: 'Volte à posição inicial empurrando o chão. Mantenha o controle durante todo o movimento.' }
+        ];
+    } else if (isHandstand) {
+        steps = [
+            { title: 'Posição Inicial', desc: 'Apoie as mãos no chão a 30 cm da parede. Dedos bem abertos e braços estendidos.' },
+            { title: 'Ativação', desc: 'Empurre o chão ativamente. Ative ombros, core e glúteos. Olhe para as mãos.' },
+            { title: 'Execução', desc: 'Eleve as pernas com controle, mantendo o corpo alinhado. Use a parede como apoio se necessário.' },
+            { title: 'Finalização', desc: 'Mantenha a posição com respiração controlada. Desça com controle absoluto.' }
+        ];
+    } else if (isFlag) {
+        steps = [
+            { title: 'Posição Inicial', desc: 'Segure a barra vertical: mão de cima pronada, mão de baixo supinada. Afaste os pés.' },
+            { title: 'Ativação', desc: 'Contraia intensamente ombros, costas e core. Empurre com a mão de baixo, puxe com a de cima.' },
+            { title: 'Execução', desc: 'Eleve o corpo lateralmente até ficar paralelo ao chão. Mantenha o corpo totalmente reto.' },
+            { title: 'Finalização', desc: 'Desça controladamente. Alterne os lados para equilibrar o treino.' }
+        ];
+    } else if (isStretch || isYoga) {
+        steps = [
+            { title: 'Posição Inicial', desc: 'Sente-se ou posicione-se confortavelmente. Respire profundamente.' },
+            { title: 'Alongamento', desc: 'Avance no alongamento até sentir tensão moderada (não dor). Mantenha a respiração.' },
+            { title: 'Manutenção', desc: 'Permaneça na posição por 20-30 segundos. Relaxe os músculos gradualmente.' },
+            { title: 'Finalização', desc: 'Solte lentamente. Repita se necessário. Nunca force além do limite.' }
+        ];
+    } else if (isWarmup) {
+        steps = [
+            { title: 'Posição Inicial', desc: 'Fique em pé, respire fundo. Prepare o corpo para o exercício.' },
+            { title: 'Ativação', desc: 'Movimente as articulações suavemente. Aumente a circulação gradualmente.' },
+            { title: 'Execução', desc: 'Realize o movimento de forma dinâmica, aumentando a amplitude aos poucos.' },
+            { title: 'Finalização', desc: 'Repita o movimento por 30 segundos. Sinta o corpo aquecido e preparado.' }
+        ];
+    } else {
+        steps = [
+            { title: 'Posição Inicial', desc: 'Posicione-se corretamente para o exercício.' },
+            { title: 'Ativação', desc: 'Ative os músculos principais antes de iniciar o movimento.' },
+            { title: 'Execução', desc: 'Realize o movimento completo com controle e amplitude.' },
+            { title: 'Finalização', desc: 'Retorne à posição inicial mantendo a tensão muscular.' }
+        ];
+    }
+    
+    // Monta o HTML do tutorial
+    const tutorialHTML = `
+        <div class="exercise-tutorial-header">
+            <h2>${ex.nome}</h2>
+            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:10px 0;">
+                <span class="badge ${getBadgeClass(ex.nivel)}">${ex.nivel}</span>
+                <span class="badge" style="background:rgba(18,103,232,0.15); color:#1267e8;">${ex.xp} XP</span>
+                <span class="badge" style="background:rgba(18,103,232,0.1); color:#1267e8;">⏱️ ${ex.duracao || 45}s</span>
+            </div>
+            <p style="color:var(--text2);">${ex.grupo_principal}${ex.grupos_secundarios.length ? ' • ' + ex.grupos_secundarios.join(' • ') : ''}</p>
+        </div>
+        
+        <div class="card" style="padding:0; overflow:hidden;" id="tutorialMediaCard">
+            ${ex.video ? `
+            <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+                <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
+                        src="https://www.youtube.com/embed/${ex.video}?rel=0&showinfo=0&modestbranding=1"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen
+                        loading="lazy">
+                </iframe>
+            </div>
+            <div style="padding:8px; text-align:center; background:var(--card);">
+                <small style="color:var(--text2);">🎥 Demonstração em vídeo</small>
+            </div>
+            ` : ex.gif ? `
             <div style="position:relative; width:100%; max-height:450px; display:flex; align-items:center; justify-content:center; background:#000;">
-                <img src="${ex.gif}" alt="${ex.nome}" style="width:100%; height:auto; max-height:450px; object-fit:contain;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'padding:40px; text-align:center; color:var(--text2);\\'>GIF não encontrado</div>';">
+                <img src="${ex.gif}" alt="${ex.nome}" 
+                     style="width:100%; height:auto; max-height:450px; object-fit:contain;" 
+                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'padding:40px; text-align:center; color:var(--text2);\\'>⚠️ Imagem/GIF não encontrado</div>';"
+                     loading="lazy">
             </div>
             <div style="padding:8px; text-align:center; background:var(--card);">
                 <small style="color:var(--text2);">Demonstração do exercício</small>
             </div>
-        `;
-        return;
-    }    
-            // Fallback: YouTube
-            mediaCard.innerHTML = `
-                <div style="position:relative; padding-bottom:56.25%; height:0;">
-                    <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
-                            src="https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(ex.nome + ' calistenia exercício tutorial')}&autoplay=0"
-                            allowfullscreen>
-                    </iframe>
+            ` : `
+            <div style="padding:40px; text-align:center; color:var(--text2);">
+                <p>📷 Sem demonstração disponível para este exercício.</p>
+                <p style="font-size:0.8rem; margin-top:8px;">Adicione um GIF, imagem ou vídeo do YouTube no banco de dados.</p>
+            </div>
+            `}
+        </div>
+        
+        <div class="card">
+            <h3>📋 Passos de Execução</h3>
+            <div class="exercise-steps-list">
+                ${steps.map((step, i) => `
+                    <div class="step-item">
+                        <div class="step-marker">${i + 1}</div>
+                        <div class="step-content">
+                            <h4>${step.title}</h4>
+                            <p>${step.desc}</p>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>💡 Dicas & Erros Comuns</h3>
+            <div class="tips-errors-grid">
+                <div>
+                    <h4 style="color:var(--success);">✅ Dicas</h4>
+                    <ul style="color:var(--text2); padding-left:20px;">
+                        <li>Mantenha a postura correta</li>
+                        <li>Respire durante o movimento</li>
+                        <li>Progrida gradualmente</li>
+                    </ul>
                 </div>
-                <div style="padding:12px; text-align:center; background:var(--card);">
-                    <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.nome + ' calistenia exercício tutorial')}" 
-                       target="_blank" class="btn btn-outline btn-sm">
-                       🔍 Buscar vídeos no YouTube
-                    </a>
-                    <p style="font-size:0.7rem; color:var(--text2); margin-top:6px;">Configure uma chave gratuita do GIPHY para ver GIFs animados.</p>
+                <div>
+                    <h4 style="color:var(--danger);">❌ Erros Comuns</h4>
+                    <ul style="color:var(--text2); padding-left:20px;">
+                        <li>Não use impulso excessivo</li>
+                        <li>Evite arquear as costas</li>
+                        <li>Não prenda a respiração</li>
+                    </ul>
                 </div>
-            `;
-        })();
-    }
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>📈 Progressões</h3>
+            <div id="progressionList" style="color:var(--text2);">Carregando progressões...</div>
+        </div>
+        
+        <button class="btn btn-primary mt-2" onclick="addExerciseByClick(${idx})">➕ Adicionar ao Treino</button>
+    `;
+    
+    document.getElementById('exerciseTutorialContent').innerHTML = tutorialHTML;
+    navigateTo('exercise', null);
+    
+    // Carrega progressões
+    const progressoes = exerciseDB.filter(e => e.grupo_principal === ex.grupo_principal && e.nome !== ex.nome)
+        .sort((a,b) => a.xp - b.xp)
+        .slice(0, 4);
+    const progHTML = progressoes.length 
+        ? progressoes.map(p => `<span class="badge ${getBadgeClass(p.nivel)}" style="margin:4px;cursor:pointer;" onclick="openExerciseTutorial(${exerciseDB.indexOf(p)})">${p.nome}</span>`).join('')
+        : 'Nenhuma progressão encontrada.';
+    
+    // Aguarda o DOM atualizar antes de injetar as progressões
+    setTimeout(() => {
+        const progList = document.getElementById('progressionList');
+        if (progList) progList.innerHTML = progHTML;
+    }, 50);
+}
 
     // ============ TREINO ATIVO ============
     function loadActiveWorkout() {
@@ -987,10 +963,17 @@
 
     // ============ CRONÔMETROS ============
     function updateTimerDisplay() {
-        const totalSeconds = Math.round(timerRemaining);
-        const m = Math.floor(totalSeconds / 60);
-        const s = totalSeconds % 60;
-        document.getElementById('timerDisplay').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+        try {
+            const totalSeconds = Math.round(timerRemaining);
+            const m = Math.floor(totalSeconds / 60);
+            const s = totalSeconds % 60;
+            const display = document.getElementById('timerDisplay');
+            if (display) {
+                display.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+            }
+        } catch(e) {
+            console.warn('Erro ao atualizar cronômetro:', e);
+        }
     }
 
     function startTimer() {
@@ -1065,12 +1048,18 @@
     }
 
     function updateStopwatchDisplay() {
-        const h = Math.floor(stopwatchSeconds / 3600);
-        const m = Math.floor((stopwatchSeconds % 3600) / 60);
-        const s = stopwatchSeconds % 60;
-        const display = document.getElementById('stopwatchDisplay');
-        if (display) {
-            display.textContent = (h > 0 ? String(h).padStart(2,'0') + ':' : '') + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+        try {
+            const h = Math.floor(stopwatchSeconds / 3600);
+            const m = Math.floor((stopwatchSeconds % 3600) / 60);
+            const s = stopwatchSeconds % 60;
+            const display = document.getElementById('stopwatchDisplay');
+            if (display) {
+                display.textContent = (h > 0 ? String(h).padStart(2,'0') + ':' : '') + 
+                                     String(m).padStart(2,'0') + ':' + 
+                                     String(s).padStart(2,'0');
+            }
+        } catch(e) {
+            console.warn('Erro ao atualizar cronômetro:', e);
         }
     }
 
@@ -1103,7 +1092,7 @@
         if (btn) { btn.disabled = false; btn.textContent = '▶️ Iniciar'; }
     }
 
-    // ============ MÚSICA (APENAS LINKS DIRETOS) ============
+    // ============ MÚSICA ============
     function parseMusicUrls(input) {
         return input.split(/[\n,]+/).map(s => s.trim()).filter(url => url.length > 0);
     }
@@ -1202,7 +1191,7 @@
 
     // ============ ANÁLISE DO TREINO ============
     function analisarWorkout(workout) {
-        if (!workout.length) return null;
+        if (!workout || !Array.isArray(workout) || !workout.length) return null;
         const aquecimento = workout.filter(ex => ex.tipo === 'Aquecimento').length;
         const resfriamento = workout.filter(ex => ex.tipo === 'Resfriamento').length;
         const numExercicios = workout.length;
@@ -1249,10 +1238,16 @@
     function atualizarAnalise() {
         const card = document.getElementById('workoutAnalysisCard');
         if (!card) return;
-        if (!currentWorkout.length) { card.style.display = 'none'; return; }
+        if (!currentWorkout || !currentWorkout.length) { 
+            card.style.display = 'none'; 
+            return; 
+        }
         card.style.display = 'block';
         const analise = analisarWorkout(currentWorkout);
-        if (!analise) return;
+        if (!analise) {
+            card.style.display = 'none';
+            return;
+        }
         const canvas = document.getElementById('gaugeCanvas');
         if (canvas) {
             const ctx = canvas.getContext('2d');
@@ -1388,7 +1383,6 @@
     window.updateProfilePic = updateProfilePic;
     window.editProfileName = editProfileName;
     window.toggleTheme = toggleTheme;
-    window.saveGiphyApiKey = saveGiphyApiKey;
 
     // ============ INIT ============
     document.getElementById('filterTags').addEventListener('click', e => {
@@ -1402,10 +1396,6 @@
     document.getElementById('timerSeconds').addEventListener('change', function() {
         if (!timerRunning && timerMode === 'regressivo') { timerRemaining = parseInt(this.value) || 60; updateTimerDisplay(); }
     });
-    if (giphyApiKey) {
-        const field = document.getElementById('giphyApiKey');
-        if (field) field.value = giphyApiKey;
-    }
     updateXPDisplay();
     renderExerciseLibrary('all', currentSearch);
     renderChosenExercises();
