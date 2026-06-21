@@ -865,37 +865,22 @@
         document.getElementById('progressionList').innerHTML = progHTML;
         
         // Buscar mídia (GIF cadastrado → GIPHY → YouTube)
-        (async () => {
-            const mediaCard = document.getElementById('tutorialMediaCard');
-            if (!mediaCard) return;
-            
-            if (ex.gif) {
-                mediaCard.innerHTML = `
-                    <div style="position:relative; width:100%; max-height:450px; display:flex; align-items:center; justify-content:center; background:#000;">
-                        <img src="${ex.gif}" alt="${ex.nome}" style="width:100%; height:auto; max-height:450px; object-fit:contain;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'padding:40px; text-align:center; color:var(--text2);\\'>GIF não encontrado</div>';">
-                    </div>
-                    <div style="padding:8px; text-align:center; background:var(--card);">
-                        <small style="color:var(--text2);">Demonstração do exercício</small>
-                    </div>
-                `;
-                return;
-            }
-            
-            if (giphyApiKey) {
-                const gifUrl = await searchGiphyGif(ex.nome);
-                if (gifUrl) {
-                    mediaCard.innerHTML = `
-                        <div style="position:relative; width:100%; max-height:450px; display:flex; align-items:center; justify-content:center; background:#000;">
-                            <img src="${gifUrl}" alt="${ex.nome}" style="width:100%; height:auto; max-height:450px; object-fit:contain;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'padding:40px; text-align:center; color:var(--text2);\\'>Erro ao carregar GIF</div>';">
-                        </div>
-                        <div style="padding:8px; text-align:center; background:var(--card);">
-                            <small style="color:var(--text2);">GIF obtido via GIPHY</small>
-                        </div>
-                    `;
-                    return;
-                }
-            }
-            
+        // Buscar mídia (GIF cadastrado → GIPHY → YouTube)
+(async () => {
+    const mediaCard = document.getElementById('tutorialMediaCard');
+    if (!mediaCard) return;
+    
+    if (ex.gif) {
+        mediaCard.innerHTML = `
+            <div style="position:relative; width:100%; max-height:450px; display:flex; align-items:center; justify-content:center; background:#000;">
+                <img src="${ex.gif}" alt="${ex.nome}" style="width:100%; height:auto; max-height:450px; object-fit:contain;" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'padding:40px; text-align:center; color:var(--text2);\\'>GIF não encontrado</div>';">
+            </div>
+            <div style="padding:8px; text-align:center; background:var(--card);">
+                <small style="color:var(--text2);">Demonstração do exercício</small>
+            </div>
+        `;
+        return;
+    }    
             // Fallback: YouTube
             mediaCard.innerHTML = `
                 <div style="position:relative; padding-bottom:56.25%; height:0;">
