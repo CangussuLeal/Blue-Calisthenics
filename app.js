@@ -21,6 +21,37 @@
         }
     }
 
+    // ============ PERFIL DO USUÁRIO ============
+    function updateProfilePic(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imgData = e.target.result;
+            document.getElementById('profilePic').src = imgData;
+            localStorage.setItem('calisthenicsBlue_profilePic', imgData);
+            showToast('📷 Foto atualizada!', 'success');
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function editProfileName() {
+        const currentName = document.getElementById('profileName').textContent;
+        const newName = prompt('Seu nome de guerreiro(a):', currentName);
+        if (newName && newName.trim() !== '') {
+            document.getElementById('profileName').textContent = newName.trim();
+            localStorage.setItem('calisthenicsBlue_profileName', newName.trim());
+            showToast('✨ Nome atualizado!', 'success');
+        }
+    }
+
+    function loadUserProfile() {
+        const savedPic = localStorage.getItem('calisthenicsBlue_profilePic');
+        const savedName = localStorage.getItem('calisthenicsBlue_profileName');
+        if (savedPic) document.getElementById('profilePic').src = savedPic;
+        if (savedName) document.getElementById('profileName').textContent = savedName;
+    }
+
     // ============ DATABASE EXPANDIDO ============
     const exerciseDB = [
         // ========== FORÇA ==========
@@ -306,7 +337,7 @@
         return { 'Iniciante':'badge-iniciante', 'Intermediário':'badge-intermediario', 'Avançado':'badge-avancado', 'Elite':'badge-elite' }[nivel] || 'badge-iniciante';
     }
 
-    // ============ RENDERIZAÇÃO ============
+    // ============ RENDERIZAÇÃO (COM TUTORIAL) ============
     function renderExerciseLibrary(filter = 'all', search = '') {
         const container = document.getElementById('exerciseLibrary');
         let exs = exerciseDB;
@@ -321,10 +352,12 @@
             const realIndex = exerciseDB.indexOf(ex);
             return `
             <div class="exercise-item" draggable="true" data-exercise-index="${realIndex}" 
-                 ondragstart="handleDragStart(event,${realIndex})" ondragend="handleDragEnd(event)"
-                 onclick="addExerciseByClick(${realIndex})">
-              <div class="ex-info"><div class="ex-name">${ex.nome}</div><div class="ex-meta">${ex.grupo_principal} • <span class="badge ${getBadgeClass(ex.nivel)}">${ex.nivel}</span> • ${ex.xp} XP</div></div>
-              <span style="font-size:1.2rem;">⋮⋮</span>
+                 ondragstart="handleDragStart(event,${realIndex})" ondragend="handleDragEnd(event)">
+              <div class="ex-info">
+                <div class="ex-name" onclick="event.stopPropagation(); openExerciseTutorial(${realIndex})" style="cursor:pointer; text-decoration:underline;">${ex.nome}</div>
+                <div class="ex-meta">${ex.grupo_principal} • <span class="badge ${getBadgeClass(ex.nivel)}">${ex.nivel}</span> • ${ex.xp} XP</div>
+              </div>
+              <button class="btn btn-sm btn-outline" onclick="event.stopPropagation(); addExerciseByClick(${realIndex})" title="Adicionar ao treino">➕</button>
             </div>`;
         }).join('');
     }
@@ -359,7 +392,7 @@
         container.innerHTML = currentWorkout.map((ex, i) => `
         <div class="exercise-item" style="cursor:default;border-color:var(--primary);">
           <div class="ex-info">
-            <div class="ex-name">${i+1}. ${ex.nome}</div>
+            <div class="ex-name" onclick="event.stopPropagation(); openExerciseTutorial(${exerciseDB.findIndex(e => e.nome === ex.nome)})" style="cursor:pointer; text-decoration:underline;">${i+1}. ${ex.nome}</div>
             <div class="ex-meta">${ex.grupo_principal} • ${ex.xp} XP</div>
           </div>
           <div style="display:flex; align-items:center; gap:4px; margin-right: 8px;">
@@ -604,7 +637,7 @@
         document.getElementById('iaResult').innerHTML = iaGeneratedWorkout.map((e,i) => `
             <div class="exercise-item">
                 <div class="ex-info">
-                    <div class="ex-name">${i+1}. ${e.nome}${e.tipo==='Aquecimento'?' 🔥':''}${e.tipo==='Resfriamento'?' ❄️':''}</div>
+                    <div class="ex-name" onclick="event.stopPropagation(); openExerciseTutorial(${exerciseDB.findIndex(db => db.nome === e.nome)})" style="cursor:pointer; text-decoration:underline;">${i+1}. ${e.nome}${e.tipo==='Aquecimento'?' 🔥':''}${e.tipo==='Resfriamento'?' ❄️':''}</div>
                     <div class="ex-meta">${e.grupo_principal} • ${e.xp} XP • ${e.series || 3} séries</div>
                 </div>
             </div>
@@ -655,6 +688,180 @@
         generateIATraining(lacunas);
     }
 
+    // ============ TUTORIAL DO EXERCÍCIO (COM VÍDEO DO YOUTUBE E PASSOS PERSONALIZADOS) ============
+    function openExerciseTutorial(idx) {
+        const ex = exerciseDB[idx];
+        if (!ex) return;
+        
+        // Determinar tipo de exercício para instruções personalizadas
+        const isPull = ex.tipo === 'Pull' || ex.tipo === 'Front Lever';
+        const isPush = ex.tipo === 'Push' || ex.tipo === 'Planche' || ex.tipo === 'Ombros' || ex.tipo === 'Tríceps';
+        const isCore = ex.tipo === 'Core';
+        const isLegs = ex.tipo === 'Pernas';
+        const isHandstand = ex.tipo === 'Handstand';
+        const isFlag = ex.tipo === 'Human Flag';
+        const isStretch = ex.tipo === 'Alongamento' || ex.tipo === 'Resfriamento';
+        const isYoga = ex.tipo === 'Yoga';
+        const isWarmup = ex.tipo === 'Aquecimento';
+        
+        // Definir passos específicos
+        let steps = [];
+        if (isPull) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Segure a barra com pegada firme, mãos na largura dos ombros. Braços completamente estendidos.' },
+                { title: 'Ativação', desc: 'Contraia as escápulas (puxe os ombros para baixo e para trás). Ative o core e os glúteos.' },
+                { title: 'Execução', desc: 'Puxe o corpo para cima de forma controlada até o queixo ultrapassar a barra. Cotovelos próximos ao corpo.' },
+                { title: 'Finalização', desc: 'Desça lentamente até os braços ficarem totalmente estendidos. Mantenha a tensão nas costas.' }
+            ];
+        } else if (isPush) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Apoie as mãos no chão alinhadas com os ombros. Corpo reto como uma prancha.' },
+                { title: 'Ativação', desc: 'Contraia abdômen, glúteos e pernas. Mantenha o corpo totalmente alinhado.' },
+                { title: 'Execução', desc: 'Desça o corpo flexionando os cotovelos a 45°. Mantenha os cotovelos próximos ao tronco.' },
+                { title: 'Finalização', desc: 'Empurre o chão para voltar à posição inicial. Estenda completamente os braços.' }
+            ];
+        } else if (isCore) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Deite-se ou posicione-se conforme o exercício. Mantenha a lombar apoiada (ou neutra).' },
+                { title: 'Ativação', desc: 'Contraia profundamente o abdômen (como se fosse levar o umbigo às costas).' },
+                { title: 'Execução', desc: 'Realize o movimento de forma controlada, sem usar impulso. Foco na contração abdominal.' },
+                { title: 'Finalização', desc: 'Retorne à posição inicial mantendo a tensão no core. Não relaxe completamente.' }
+            ];
+        } else if (isLegs) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Fique em pé com os pés alinhados aos ombros. Coluna neutra, olhar para frente.' },
+                { title: 'Ativação', desc: 'Contraia o core e mantenha o peito aberto. Distribua o peso uniformemente.' },
+                { title: 'Execução', desc: 'Realize o movimento de forma controlada. Joelhos alinhados com os pés, sem ultrapassar a ponta.' },
+                { title: 'Finalização', desc: 'Volte à posição inicial empurrando o chão. Mantenha o controle durante todo o movimento.' }
+            ];
+        } else if (isHandstand) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Apoie as mãos no chão a 30 cm da parede. Dedos bem abertos e braços estendidos.' },
+                { title: 'Ativação', desc: 'Empurre o chão ativamente. Ative ombros, core e glúteos. Olhe para as mãos.' },
+                { title: 'Execução', desc: 'Eleve as pernas com controle, mantendo o corpo alinhado. Use a parede como apoio se necessário.' },
+                { title: 'Finalização', desc: 'Mantenha a posição com respiração controlada. Desça com controle absoluto.' }
+            ];
+        } else if (isFlag) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Segure a barra vertical: mão de cima pronada, mão de baixo supinada. Afaste os pés.' },
+                { title: 'Ativação', desc: 'Contraia intensamente ombros, costas e core. Empurre com a mão de baixo, puxe com a de cima.' },
+                { title: 'Execução', desc: 'Eleve o corpo lateralmente até ficar paralelo ao chão. Mantenha o corpo totalmente reto.' },
+                { title: 'Finalização', desc: 'Desça controladamente. Alterne os lados para equilibrar o treino.' }
+            ];
+        } else if (isStretch || isYoga) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Sente-se ou posicione-se confortavelmente. Respire profundamente.' },
+                { title: 'Alongamento', desc: 'Avance no alongamento até sentir tensão moderada (não dor). Mantenha a respiração.' },
+                { title: 'Manutenção', desc: 'Permaneça na posição por 20-30 segundos. Relaxe os músculos gradualmente.' },
+                { title: 'Finalização', desc: 'Solte lentamente. Repita se necessário. Nunca force além do limite.' }
+            ];
+        } else if (isWarmup) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Fique em pé, respire fundo. Prepare o corpo para o exercício.' },
+                { title: 'Ativação', desc: 'Movimente as articulações suavemente. Aumente a circulação gradualmente.' },
+                { title: 'Execução', desc: 'Realize o movimento de forma dinâmica, aumentando a amplitude aos poucos.' },
+                { title: 'Finalização', desc: 'Repita o movimento por 30 segundos. Sinta o corpo aquecido e preparado.' }
+            ];
+        } else {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Posicione-se corretamente para o exercício.' },
+                { title: 'Ativação', desc: 'Ative os músculos principais antes de iniciar o movimento.' },
+                { title: 'Execução', desc: 'Realize o movimento completo com controle e amplitude.' },
+                { title: 'Finalização', desc: 'Retorne à posição inicial mantendo a tensão muscular.' }
+            ];
+        }
+        
+        const tutorialHTML = `
+            <div class="exercise-tutorial-header">
+                <h2>${ex.nome}</h2>
+                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:10px 0;">
+                    <span class="badge ${getBadgeClass(ex.nivel)}">${ex.nivel}</span>
+                    <span class="badge" style="background:rgba(18,103,232,0.15); color:#1267e8;">${ex.xp} XP</span>
+                    <span class="badge" style="background:rgba(18,103,232,0.1); color:#1267e8;">⏱️ ${ex.duracao || 45}s</span>
+                </div>
+                <p style="color:var(--text2);">${ex.grupo_principal}${ex.grupos_secundarios.length ? ' • ' + ex.grupos_secundarios.join(' • ') : ''}</p>
+            </div>
+            
+            <!-- Vídeo do YouTube incorporado -->
+            <div class="card" style="padding:0; overflow:hidden;">
+                <div style="position:relative; padding-bottom:56.25%; height:0;">
+                    <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
+                            src="https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(ex.nome + ' calistenia exercício tutorial')}&autoplay=0"
+                            allowfullscreen>
+                    </iframe>
+                </div>
+                <div style="padding:12px; text-align:center; background:var(--card);">
+                    <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(ex.nome + ' calistenia exercício tutorial')}" 
+                       target="_blank" class="btn btn-outline btn-sm">
+                       🔍 Buscar mais vídeos no YouTube
+                    </a>
+                    <p style="font-size:0.7rem; color:var(--text2); margin-top:6px;">
+                        Os vídeos são carregados diretamente do YouTube.
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Passos de execução personalizados -->
+            <div class="card">
+                <h3>📋 Passos de Execução</h3>
+                <div class="exercise-steps-list">
+                    ${steps.map((step, i) => `
+                        <div class="step-item">
+                            <div class="step-marker">${i + 1}</div>
+                            <div class="step-content">
+                                <h4>${step.title}</h4>
+                                <p>${step.desc}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <!-- Dicas e Erros -->
+            <div class="card">
+                <h3>💡 Dicas & Erros Comuns</h3>
+                <div class="tips-errors-grid">
+                    <div>
+                        <h4 style="color:var(--success);">✅ Dicas</h4>
+                        <ul style="color:var(--text2); padding-left:20px;">
+                            <li>Mantenha a postura correta</li>
+                            <li>Respire durante o movimento</li>
+                            <li>Progrida gradualmente</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color:var(--danger);">❌ Erros Comuns</h4>
+                        <ul style="color:var(--text2); padding-left:20px;">
+                            <li>Não use impulso excessivo</li>
+                            <li>Evite arquear as costas</li>
+                            <li>Não prenda a respiração</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Progressões -->
+            <div class="card">
+                <h3>📈 Progressões</h3>
+                <div id="progressionList" style="color:var(--text2);">Carregando progressões...</div>
+            </div>
+            
+            <button class="btn btn-primary mt-2" onclick="addExerciseByClick(${idx})">➕ Adicionar ao Treino</button>
+        `;
+        
+        document.getElementById('exerciseTutorialContent').innerHTML = tutorialHTML;
+        navigateTo('exercise', null);
+        
+        // Carrega progressões
+        const progressoes = exerciseDB.filter(e => e.grupo_principal === ex.grupo_principal && e.nome !== ex.nome)
+            .sort((a,b) => a.xp - b.xp)
+            .slice(0, 4);
+        const progHTML = progressoes.length 
+            ? progressoes.map(p => `<span class="badge ${getBadgeClass(p.nivel)}" style="margin:4px;cursor:pointer;" onclick="openExerciseTutorial(${exerciseDB.indexOf(p)})">${p.nome}</span>`).join('')
+            : 'Nenhuma progressão encontrada.';
+        document.getElementById('progressionList').innerHTML = progHTML;
+    }
+
     // ============ TREINO ATIVO ============
     function loadActiveWorkout() {
         const idx = parseInt(document.getElementById('activeWorkoutSelect').value);
@@ -675,7 +882,10 @@
         const w = savedWorkouts[activeWorkoutIndex];
         document.getElementById('activeWorkoutDisplay').innerHTML = w.exercises.map((e,i) => `
             <div class="exercise-item" style="cursor:default;${i===currentExerciseIndex?'border:2px solid var(--primary-light);background:var(--primary-dark);':''}">
-                <div class="ex-info"><div class="ex-name">${i+1}. ${e.nome} (${e.series || 3}x)</div><div class="ex-meta">${e.xp} XP</div></div>
+                <div class="ex-info">
+                    <div class="ex-name" onclick="event.stopPropagation(); openExerciseTutorial(${exerciseDB.findIndex(db => db.nome === e.nome)})" style="cursor:pointer; text-decoration:underline;">${i+1}. ${e.nome} (${e.series || 3}x)</div>
+                    <div class="ex-meta">${e.xp} XP</div>
+                </div>
                 ${i<currentExerciseIndex?'<span style="color:var(--success);">✅</span>':''}
             </div>`).join('');
 
@@ -866,119 +1076,246 @@
     }
 
     // ============ MÚSICA COM PLAYLIST ============
-    function parseMusicUrls(input) {
-        return input.split(/[\n,]+/).map(s => s.trim()).filter(url => url.length > 0);
-    }
+    // ============ MÚSICA COM PLAYLIST E BUSCA NO YOUTUBE ============
+let currentYouTubePlayer = null;
+let youtubePlayerReady = false;
 
-    function loadMusic() {
-        const rawInput = document.getElementById('musicUrl').value.trim();
-        const container = document.getElementById('musicPlayerContainer');
-        if (!rawInput) {
-            container.innerHTML = '';
-            musicPlaylist = [];
-            currentMusicIndex = 0;
-            return;
-        }
-        musicPlaylist = parseMusicUrls(rawInput);
-        currentMusicIndex = 0;
-        musicPaused = false;
-        playMusicAtIndex(0);
-    }
+// Carrega a API do YouTube IFrame (feito uma única vez)
+function loadYouTubeAPI() {
+    if (document.getElementById('youtube-api-script')) return;
+    const tag = document.createElement('script');
+    tag.id = 'youtube-api-script';
+    tag.src = 'https://www.youtube.com/iframe_api';
+    const firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+}
 
-    function playMusicAtIndex(index) {
-        if (musicPlaylist.length === 0) return;
-        currentMusicIndex = (index + musicPlaylist.length) % musicPlaylist.length;
-        const url = musicPlaylist[currentMusicIndex];
-        const container = document.getElementById('musicPlayerContainer');
-        container.innerHTML = '';
+// Chamado automaticamente pela API quando o player está pronto
+function onYouTubeIframeAPIReady() {
+    youtubePlayerReady = true;
+}
 
-        if (musicPaused) {
-            showPausedPlaceholder(container);
-            return;
-        }
-
-        if (url.includes('soundcloud.com')) {
-            fetch(`https://soundcloud.com/oembed?url=${encodeURIComponent(url)}&format=json`)
-                .then(res => res.ok ? res.json() : Promise.reject())
-                .then(data => { container.innerHTML = data.html; })
-                .catch(() => showFallback(url, container));
-        } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
-            let id = null;
-            try {
-                const u = new URL(url);
-                if (u.searchParams.has('v')) id = u.searchParams.get('v');
-                else if (u.hostname === 'youtu.be') id = u.pathname.slice(1).split('/')[0];
-                else if (u.pathname.startsWith('/embed/')) id = u.pathname.split('/')[2];
-                else if (u.pathname.startsWith('/shorts/')) id = u.pathname.split('/')[2];
-            } catch (e) {}
-            if (id) {
-                container.innerHTML = `<div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;"><iframe style="position:absolute; top:0; left:0; width:100%; height:100%;" src="https://www.youtube.com/embed/${id}?rel=0&autoplay=1" allowfullscreen></iframe></div>`;
+// Buscar músicas no YouTube
+async function searchYouTubeMusic() {
+    const query = document.getElementById('musicSearch').value.trim();
+    if (!query) return;
+    
+    const container = document.getElementById('youtubeSearchResults');
+    container.innerHTML = '<p style="color:var(--text2);">🔍 Buscando...</p>';
+    
+    try {
+        // Usa a API de busca do YouTube (não precisa de chave para o embed)
+        const response = await fetch(`https://www.youtube.com/results?search_query=${encodeURIComponent(query + ' música')}`);
+        const text = await response.text();
+        
+        // Extrai os IDs dos vídeos do HTML da página de resultados
+        const videoIds = [];
+        const regex = /\/watch\?v=([a-zA-Z0-9_-]{11})/g;
+        let match;
+        while ((match = regex.exec(text)) !== null && videoIds.length < 5) {
+            if (!videoIds.includes(match[1])) {
+                videoIds.push(match[1]);
             }
-        } else if (url.includes('open.spotify.com')) {
-            try {
-                const u = new URL(url);
-                const parts = u.pathname.split('/').filter(Boolean);
-                if (parts.length >= 2 && ['track','album','playlist'].includes(parts[0])) {
-                    container.innerHTML = `<iframe style="border-radius:12px;" src="https://open.spotify.com/embed/${parts[0]}/${parts[1]}" width="100%" height="152" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
-                }
-            } catch (e) {}
+        }
+        
+        if (videoIds.length === 0) {
+            container.innerHTML = '<p style="color:var(--text2);">Nenhum vídeo encontrado.</p>';
+            return;
+        }
+        
+        // Mostra os resultados como miniaturas clicáveis
+        container.innerHTML = `
+            <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap:8px;">
+                ${videoIds.map(id => `
+                    <div onclick="addToPlaylist('https://www.youtube.com/watch?v=${id}')" 
+                         style="cursor:pointer; text-align:center; background:var(--surface2); border-radius:10px; padding:8px; transition:transform 0.2s;"
+                         onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        <img src="https://img.youtube.com/vi/${id}/mqdefault.jpg" 
+                             style="width:100%; border-radius:8px;" alt="Vídeo">
+                        <span style="font-size:0.7rem; color:var(--text2); display:block; margin-top:4px;">▶️ Tocar</span>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    } catch (e) {
+        container.innerHTML = '<p style="color:var(--danger);">Erro ao buscar. Tente novamente.</p>';
+    }
+}
+
+// Adicionar link à playlist
+function addToPlaylist(url) {
+    if (!musicPlaylist.includes(url)) {
+        musicPlaylist.push(url);
+    }
+    currentMusicIndex = musicPlaylist.length - 1;
+    musicPaused = false;
+    playMusicAtIndex(currentMusicIndex);
+    showToast('🎵 Adicionado à playlist!', 'success');
+}
+
+// Função parseMusicUrls atualizada para aceitar textarea
+function parseMusicUrls(input) {
+    return input.split(/[\n,]+/).map(s => s.trim()).filter(url => url.length > 0);
+}
+
+function loadMusic() {
+    const rawInput = document.getElementById('musicUrl').value.trim();
+    const container = document.getElementById('musicPlayerContainer');
+    if (!rawInput) {
+        container.innerHTML = '';
+        musicPlaylist = [];
+        currentMusicIndex = 0;
+        return;
+    }
+    musicPlaylist = parseMusicUrls(rawInput);
+    currentMusicIndex = 0;
+    musicPaused = false;
+    playMusicAtIndex(0);
+}
+
+function playMusicAtIndex(index) {
+    if (musicPlaylist.length === 0) return;
+    currentMusicIndex = (index + musicPlaylist.length) % musicPlaylist.length;
+    const url = musicPlaylist[currentMusicIndex];
+    const container = document.getElementById('musicPlayerContainer');
+    container.innerHTML = '';
+
+    if (musicPaused) {
+        showPausedPlaceholder(container);
+        updateMusicControls();
+        return;
+    }
+
+    if (url.includes('soundcloud.com')) {
+        fetch(`https://soundcloud.com/oembed?url=${encodeURIComponent(url)}&format=json`)
+            .then(res => res.ok ? res.json() : Promise.reject())
+            .then(data => { container.innerHTML = data.html; })
+            .catch(() => showFallback(url, container));
+    } else if (url.includes('youtube.com') || url.includes('youtu.be')) {
+        let id = null;
+        try {
+            const u = new URL(url);
+            if (u.searchParams.has('v')) id = u.searchParams.get('v');
+            else if (u.hostname === 'youtu.be') id = u.pathname.slice(1).split('/')[0];
+            else if (u.pathname.startsWith('/embed/')) id = u.pathname.split('/')[2];
+            else if (u.pathname.startsWith('/shorts/')) id = u.pathname.split('/')[2];
+        } catch (e) {}
+        if (id) {
+            // Usa o player da API para ter controle de eventos
+            container.innerHTML = `
+                <div id="youtube-player-${currentMusicIndex}" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+                    <div style="position:absolute; top:0; left:0; width:100%; height:100%;" id="youtube-inner-${currentMusicIndex}"></div>
+                </div>
+            `;
+            // Inicializa o player quando a API estiver pronta
+            if (youtubePlayerReady) {
+                createYouTubePlayer(id, currentMusicIndex);
+            } else {
+                // Aguarda a API carregar e depois cria o player
+                const checkAPI = setInterval(() => {
+                    if (youtubePlayerReady) {
+                        clearInterval(checkAPI);
+                        createYouTubePlayer(id, currentMusicIndex);
+                    }
+                }, 100);
+            }
+        }
+    } else if (url.includes('open.spotify.com')) {
+        try {
+            const u = new URL(url);
+            const parts = u.pathname.split('/').filter(Boolean);
+            if (parts.length >= 2 && ['track','album','playlist'].includes(parts[0])) {
+                container.innerHTML = `<iframe style="border-radius:12px;" src="https://open.spotify.com/embed/${parts[0]}/${parts[1]}" width="100%" height="152" allowfullscreen allow="autoplay; encrypted-media"></iframe>`;
+            }
+        } catch (e) {}
+    } else {
+        const audioExts = ['.mp3','.wav','.ogg','.m4a','.aac','.flac'];
+        if (audioExts.some(ext => url.toLowerCase().endsWith(ext))) {
+            container.innerHTML = `<audio controls autoplay style="width:100%;" onended="nextMusic()"><source src="${url}" type="audio/mpeg"></audio>`;
         } else {
             showFallback(url, container);
         }
-        updateMusicControls();
     }
+    updateMusicControls();
+}
 
-    function prevMusic() {
-        if (musicPlaylist.length === 0) return;
-        playMusicAtIndex(currentMusicIndex - 1);
-    }
-
-    function nextMusic() {
-        if (musicPlaylist.length === 0) return;
-        playMusicAtIndex(currentMusicIndex + 1);
-    }
-
-    function toggleMusicPause() {
-        musicPaused = !musicPaused;
-        if (musicPaused) {
-            const container = document.getElementById('musicPlayerContainer');
-            showPausedPlaceholder(container);
-            updateMusicControls();
-        } else {
-            playMusicAtIndex(currentMusicIndex);
+// Criar player do YouTube com evento de término
+function createYouTubePlayer(videoId, index) {
+    const player = new YT.Player(`youtube-inner-${index}`, {
+        videoId: videoId,
+        playerVars: {
+            autoplay: 1,
+            rel: 0,
+            modestbranding: 1
+        },
+        events: {
+            'onStateChange': function(event) {
+                // Quando o vídeo termina (estado 0), toca o próximo
+                if (event.data === 0) {
+                    nextMusic();
+                }
+            }
         }
-    }
+    });
+    currentYouTubePlayer = player;
+}
 
-    function showPausedPlaceholder(container) {
-        container.innerHTML = `
-            <div style="text-align:center; padding:30px; background:var(--surface2); border-radius:var(--radius-sm);">
-                <p style="color:var(--text2); font-size:1.2rem;">⏸️ Música pausada</p>
-                <p style="color:var(--text2); font-size:0.8rem;">${musicPlaylist.length} faixa(s) na playlist</p>
-            </div>
-        `;
-    }
+function prevMusic() {
+    if (musicPlaylist.length === 0) return;
+    playMusicAtIndex(currentMusicIndex - 1);
+}
 
-    function updateMusicControls() {
+function nextMusic() {
+    if (musicPlaylist.length === 0) return;
+    playMusicAtIndex(currentMusicIndex + 1);
+}
+
+function toggleMusicPause() {
+    musicPaused = !musicPaused;
+    if (musicPaused) {
         const container = document.getElementById('musicPlayerContainer');
-        if (!container || musicPlaylist.length === 0) return;
-        const oldControls = container.querySelector('.music-controls');
-        if (oldControls) oldControls.remove();
-
-        const controlsDiv = document.createElement('div');
-        controlsDiv.className = 'music-controls';
-        controlsDiv.style.cssText = 'display:flex; gap:8px; justify-content:center; margin-top:12px;';
-        controlsDiv.innerHTML = `
-            <button class="btn btn-sm btn-outline" onclick="prevMusic()">⏮️</button>
-            <button class="btn btn-sm btn-outline" onclick="toggleMusicPause()">${musicPaused ? '▶️' : '⏸️'}</button>
-            <button class="btn btn-sm btn-outline" onclick="nextMusic()">⏭️</button>
-            <span style="color:var(--text2); align-self:center; font-size:0.8rem;">${currentMusicIndex+1}/${musicPlaylist.length}</span>
-        `;
-        container.appendChild(controlsDiv);
+        showPausedPlaceholder(container);
+        updateMusicControls();
+    } else {
+        playMusicAtIndex(currentMusicIndex);
     }
+}
 
-    function showFallback(url, container) {
-        container.innerHTML = `<div style="text-align:center; padding:20px; background:var(--surface2); border-radius:var(--radius-sm);"><p style="color:var(--text2);">Não foi possível incorporar este link.</p><a href="${url}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="margin-top:8px;">▶️ Ouvir no site original</a></div>`;
-    }
+function showPausedPlaceholder(container) {
+    container.innerHTML = `
+        <div style="text-align:center; padding:30px; background:var(--surface2); border-radius:var(--radius-sm);">
+            <p style="color:var(--text2); font-size:1.2rem;">⏸️ Música pausada</p>
+            <p style="color:var(--text2); font-size:0.8rem;">${musicPlaylist.length} faixa(s) na playlist</p>
+        </div>
+    `;
+}
+
+function updateMusicControls() {
+    const container = document.getElementById('musicPlayerContainer');
+    if (!container || musicPlaylist.length === 0) return;
+    const oldControls = container.querySelector('.music-controls');
+    if (oldControls) oldControls.remove();
+
+    const controlsDiv = document.createElement('div');
+    controlsDiv.className = 'music-controls';
+    controlsDiv.style.cssText = 'display:flex; gap:8px; justify-content:center; margin-top:12px;';
+    controlsDiv.innerHTML = `
+        <button class="btn btn-sm btn-outline" onclick="prevMusic()">⏮️</button>
+        <button class="btn btn-sm btn-outline" onclick="toggleMusicPause()">${musicPaused ? '▶️' : '⏸️'}</button>
+        <button class="btn btn-sm btn-outline" onclick="nextMusic()">⏭️</button>
+        <span style="color:var(--text2); align-self:center; font-size:0.8rem;">${currentMusicIndex+1}/${musicPlaylist.length}</span>
+    `;
+    container.appendChild(controlsDiv);
+}
+
+function showFallback(url, container) {
+    container.innerHTML = `
+        <div style="text-align:center; padding:20px; background:var(--surface2); border-radius:var(--radius-sm);">
+            <p style="color:var(--text2);">Não foi possível incorporar este link.</p>
+            <a href="${url}" target="_blank" rel="noopener" class="btn btn-primary btn-sm" style="margin-top:8px;">▶️ Ouvir no site original</a>
+        </div>
+    `;
+}
 
     // ============ ANÁLISE DO TREINO ============
     function analisarWorkout(workout) {
@@ -1115,6 +1452,10 @@
             showToast('🔄 Progresso resetado.', 'info');
         }
     }
+    // ============ TOGGLE DE TEMA ============
+function toggleTheme() {
+    document.body.classList.toggle('dark-theme');
+}
 
     // ============ EXPOSIÇÃO GLOBAL ============
     window.navigateTo = navigateTo;
@@ -1151,6 +1492,7 @@
     window.prevMusic = prevMusic;
     window.nextMusic = nextMusic;
     window.toggleMusicPause = toggleMusicPause;
+    window.openExerciseTutorial = openExerciseTutorial;
     window.analyzeAndGenerate = analyzeAndGenerate;
     window.resetAllProgress = resetAllProgress;
     window.slideAtual = slideAtual;
@@ -1158,6 +1500,10 @@
     window.filterExercises = filterExercises;
     window.increaseSeries = increaseSeries;
     window.decreaseSeries = decreaseSeries;
+    window.updateProfilePic = updateProfilePic;
+    window.editProfileName = editProfileName;
+    window.youtubeAPIReady = true;
+    window.toggleTheme = toggleTheme;
 
     // ============ INIT ============
     document.getElementById('filterTags').addEventListener('click', e => {
@@ -1180,5 +1526,8 @@
     updateUpcomingWorkouts();
     updateTimerDisplay();
     updateStopwatchDisplay();
+    loadUserProfile();
+    loadYouTubeAPI();
+    loadTheme();
     console.log('💪 Calisthenics Blue pronto!');
 })();

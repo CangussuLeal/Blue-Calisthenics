@@ -11,6 +11,22 @@
 
     <aside class="sidebar" id="sidebar">
         <div class="logo"><span class="logo-icon"></span> CALISTHENICS BLUE</div>
+        
+        <!-- Perfil do usuário -->
+        <div class="anime-coach" id="userProfile">
+            <label for="profilePicInput" style="cursor:pointer;">
+                <img id="profilePic" src="https://i.imgur.com/3qK9J0t.png" alt="Sua foto" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23ddd%22/><text x=%2225%22 y=%2255%22 font-size=%2218%22 fill=%22%23999%22>Foto</text></svg>'">
+            </label>
+            <input type="file" id="profilePicInput" accept="image/*" style="display:none;" onchange="updateProfilePic(event)">
+            <h3 id="profileName" onclick="editProfileName()" style="cursor:pointer;">AKIRA</h3>
+            <p id="profileTitle">Especialista em Pull</p>
+            <small style="color:var(--text2); font-size:0.7rem;">Clique na foto ou no nome para editar</small>
+        </div>
+        <div style="text-align:center; margin-bottom:12px;">
+    <button class="btn btn-sm btn-outline" onclick="toggleTheme()" id="themeToggleBtn" style="width:100%;">
+        🌙 Tema Escuro
+    </button>
+</div>
         <button class="nav-btn active" data-page="home" onclick="navigateTo('home', this)"><span class="icon">🏠</span> Dashboard</button>
         <button class="nav-btn" data-page="build" onclick="navigateTo('build', this)"><span class="icon">🔧</span> Montar Treino</button>
         <button class="nav-btn" data-page="ia" onclick="navigateTo('ia', this)"><span class="icon">🤖</span> Auto Treino</button>
@@ -86,10 +102,8 @@
         <div class="page" id="page-build">
             <h2>🔧 Montar Treino Manual</h2>
             <div class="grid-2">
-                <!-- Card da Biblioteca (com barra de pesquisa e filtros DENTRO) -->
                 <div class="card">
                     <h3>📚 Biblioteca de Exercícios</h3>
-                    <!-- Filtros -->
                     <div class="filter-tags" id="filterTags">
                         <button class="filter-tag active" data-filter="all">Todos</button>
                         <button class="filter-tag" data-filter="Pull">Pull</button>
@@ -108,14 +122,12 @@
                         <button class="filter-tag" data-filter="Aquecimento"> Aquecimento</button>
                         <button class="filter-tag" data-filter="Resfriamento"> Resfriamento</button>
                     </div>
-                    <!-- Barra de pesquisa -->
                     <div class="search-bar">
                         <input type="text" id="exerciseSearch" placeholder="🔍 Pesquisar exercícios..." oninput="filterExercises()">
                     </div>
                     <div style="max-height:450px;overflow-y:auto;" id="exerciseLibrary"></div>
                 </div>
 
-                <!-- Card de Montagem -->
                 <div class="card">
                     <h3>🏗️ Seu Treino (arraste ou clique)</h3>
                     <div class="drop-zone" id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
@@ -132,7 +144,6 @@
                 </div>
             </div>
 
-            <!-- Card de análise do treino -->
             <div class="card mt-2" id="workoutAnalysisCard" style="display:none;">
                 <h3>📊 Análise do Treino</h3>
                 <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
@@ -176,12 +187,17 @@
         <!-- ========== WORKOUT ========== -->
         <div class="page" id="page-workout">
             <h2>⏱️ Treinar Agora</h2>
-            <div class="card">
-                <h3>🎵 Música</h3>
-                <label>Cole qualquer link de música:</label>
-                <input type="url" id="musicUrl" placeholder="SoundCloud, YouTube, Spotify, MP3..." onchange="loadMusic()">
-                <div id="musicPlayerContainer"></div>
-            </div>
+          <div class="card">
+    <h3>🎵 Música</h3>
+    <div style="display:flex; gap:10px; margin-bottom:12px;">
+        <input type="text" id="musicSearch" placeholder="🔍 Buscar música (YouTube + SoundCloud)..." style="flex:1;" onkeydown="if(event.key==='Enter') searchAllMusic()">
+        <button class="btn btn-primary btn-sm" onclick="searchAllMusic()">Buscar</button>
+    </div>
+    <div id="musicSearchResults" style="margin-bottom:12px;"></div>
+    <label style="margin-top:8px;">Ou cole links diretos (um por linha ou separados por vírgula):</label>
+    <textarea id="musicUrl" placeholder="https://www.youtube.com/watch?v=...&#10;https://soundcloud.com/..." rows="2" onchange="loadMusic()" style="width:100%; resize:vertical;"></textarea>
+    <div id="musicPlayerContainer"></div>
+</div>
             <div class="card">
                 <h3>⏱️ Cronômetros</h3>
                 <div style="margin-bottom:12px;">
@@ -232,6 +248,12 @@
             </div>
             <div class="card mt-2"><h3>📜 Histórico</h3><div id="historyList" style="color:var(--text2);">Nenhum treino concluído ainda.</div></div>
             <button class="btn btn-danger btn-sm mt-2" onclick="resetAllProgress()">⚠️ Resetar Todo Progresso</button>
+        </div>
+        
+        <!-- ========== TUTORIAL DO EXERCÍCIO ========== -->
+        <div class="page" id="page-exercise">
+            <button class="btn btn-outline btn-sm mb-2" onclick="navigateTo('build', document.querySelector('[data-page=build]'))">← Voltar</button>
+            <div id="exerciseTutorialContent"></div>
         </div>
     </main>
 
