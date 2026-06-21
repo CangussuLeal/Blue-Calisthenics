@@ -55,7 +55,7 @@
     // ============ DATABASE EXPANDIDO ============
    const exerciseDB = [
     // ========== FORÇA ==========
-    { nome: "Australian Pull Up", nivel: "Iniciante", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Core"], tipo: "Pull", xp: 15, duracao: 45, video: "UaTnPqbK9ZA?si=nnFihl7wc1CxpUNz" },
+    { nome: "Australian Pull Up", nivel: "Iniciante", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Core"], tipo: "Pull", xp: 15, duracao: 45, video: "UaTnPqbK9ZA?si" },
     { nome: "Pull Up", nivel: "Iniciante", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Antebraço"], tipo: "Pull", xp: 20, duracao: 45, gif: "https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExZ2Yxa2JmZ3lwZjl3N2UyMDdkNXQyY25tcm11Njlhc3RmZnNjeTI2ZSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/2bgXRTNDcAxFIzH3B1/200w.webp" },
     { nome: "Chin Up", nivel: "Iniciante", grupo_principal: "Bíceps", grupos_secundarios: ["Dorsal", "Core"], tipo: "Pull", xp: 20, duracao: 45, gif: "https://fitnessprogramer.com/wp-content/uploads/2015/08/Chin-Up.gif" },
     { nome: "Archer Pull Up", nivel: "Intermediário", grupo_principal: "Costas", grupos_secundarios: ["Bíceps", "Ombro"], tipo: "Pull", xp: 35, duracao: 45, gif: "https://fitnessprogramer.com/wp-content/uploads/2021/02/Archer-Pull-Up.gif" },
