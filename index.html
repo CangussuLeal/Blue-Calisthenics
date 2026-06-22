@@ -155,6 +155,15 @@
                     <div><label for="iaDuration">Duração (minutos):</label><input type="number" id="iaDuration" value="30" min="10" max="120"></div>
                     <div><label for="iaNumExercises">Nº de Exercícios:</label><input type="number" id="iaNumExercises" value="5" min="3" max="10"></div>
                 </div>
+                <!-- Chave GIPHY (opcional) -->
+                <div class="mt-2">
+                    <label for="giphyApiKey">🔑 Chave da API do GIPHY (opcional):</label>
+                    <input type="password" id="giphyApiKey" placeholder="Cole sua chave aqui" onchange="saveGiphyApiKey()">
+                    <small style="color:var(--text2);"><a href="https://developers.giphy.com/" target="_blank" style="color:var(--blue);">Obter chave gratuita</a> — para ver GIFs animados nos tutoriais</small>
+                </div>
+                <!-- BOTÕES DE GERAR TREINO -->
+                <button class="btn btn-primary btn-lg mt-2" onclick="generateIATraining()">✨ Gerar Treino Automático</button>
+                <button class="btn btn-outline btn-lg mt-2" onclick="analyzeAndGenerate()">🧠 Analisar Lacunas e Gerar</button>
             </div>
             <div class="card" id="iaResultCard" style="display:none;">
                 <h3>📋 Treino Gerado</h3>
