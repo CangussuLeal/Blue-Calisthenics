@@ -154,13 +154,7 @@
                     <div><label for="iaFocus">Foco do Treino:</label><select id="iaFocus"><option value="Costas">Costas (Pull)</option><option value="Peitoral">Peitoral (Push)</option><option value="Ombros">Ombros</option><option value="Tríceps">Tríceps</option><option value="Core">Core / Abdômen</option><option value="Pernas">Pernas</option><option value="Full Body">Corpo Inteiro</option><option value="Flexibilidade">Flexibilidade/Mobilidade</option><option value="Front Lever">Front Lever</option><option value="Planche">Planche</option><option value="Handstand">Handstand</option><option value="Human Flag">Human Flag</option></select></div>
                     <div><label for="iaDuration">Duração (minutos):</label><input type="number" id="iaDuration" value="30" min="10" max="120"></div>
                     <div><label for="iaNumExercises">Nº de Exercícios:</label><input type="number" id="iaNumExercises" value="5" min="3" max="10"></div>
-                </div>
-                <!-- Chave GIPHY (opcional) -->
-                <div class="mt-2">
-                    <label for="giphyApiKey">🔑 Chave da API do GIPHY (opcional):</label>
-                    <input type="password" id="giphyApiKey" placeholder="Cole sua chave aqui" onchange="saveGiphyApiKey()">
-                    <small style="color:var(--text2);"><a href="https://developers.giphy.com/" target="_blank" style="color:var(--blue);">Obter chave gratuita</a> — para ver GIFs animados nos tutoriais</small>
-                </div>
+                </div>     
                 <!-- BOTÕES DE GERAR TREINO -->
                 <button class="btn btn-primary btn-lg mt-2" onclick="generateIATraining()">✨ Gerar Treino Automático</button>
                 <button class="btn btn-outline btn-lg mt-2" onclick="analyzeAndGenerate()">🧠 Analisar Lacunas e Gerar</button>
