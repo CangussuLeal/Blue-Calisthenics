@@ -194,7 +194,8 @@
     { nome: "Respiração Diafragmática", nivel: "Iniciante", grupo_principal: "Core", grupos_secundarios: [], tipo: "Resfriamento", xp: 5, duracao: 60, video: "78G08rKjUv8" },
     { nome: "Alongamento de Corpo Inteiro", nivel: "Iniciante", grupo_principal: "Corpo Inteiro", grupos_secundarios: [], tipo: "Resfriamento", xp: 5, duracao: 45, video: "eqVMAPM0od4" },
     { nome: "Savasana (Relaxamento)", nivel: "Iniciante", grupo_principal: "Corpo Inteiro", grupos_secundarios: [], tipo: "Resfriamento", xp: 5, duracao: 60, video: "fOdrW7Z-Rc4" }
-]
+];
+
     // ============ STATE ============
     let currentWorkout = [];
     let savedWorkouts = safeGetJSON('calisthenicsBlue_workouts', []);
@@ -517,6 +518,7 @@
         </div>`).join('') : '<p style="color:var(--text2);">Nenhum treino salvo.</p>';
         updateActiveWorkoutSelect();
         updateUpcomingWorkouts();
+        atualizarPlanSelects(); 
     }
 
     function updateActiveWorkoutSelect() {
@@ -687,193 +689,654 @@
         generateIATraining(lacunas);
     }
 
-    // ============ TUTORIAL DO EXERCÍCIO ============
-    // ============ TUTORIAL DO EXERCÍCIO ============
-function openExerciseTutorial(idx) {
-    const ex = exerciseDB[idx];
-    if (!ex) return;
-    
-    const isPull = ex.tipo === 'Pull' || ex.tipo === 'Front Lever';
-    const isPush = ex.tipo === 'Push' || ex.tipo === 'Planche' || ex.tipo === 'Ombros' || ex.tipo === 'Tríceps';
-    const isCore = ex.tipo === 'Core';
-    const isLegs = ex.tipo === 'Pernas';
-    const isHandstand = ex.tipo === 'Handstand';
-    const isFlag = ex.tipo === 'Human Flag';
-    const isStretch = ex.tipo === 'Alongamento' || ex.tipo === 'Resfriamento';
-    const isYoga = ex.tipo === 'Yoga';
-    const isWarmup = ex.tipo === 'Aquecimento';
-    
-    let steps = [];
-    if (isPull) {
-        steps = [
-            { title: 'Posição Inicial', desc: 'Segure a barra com pegada firme, mãos na largura dos ombros. Braços completamente estendidos.' },
-            { title: 'Ativação', desc: 'Contraia as escápulas (puxe os ombros para baixo e para trás). Ative o core e os glúteos.' },
-            { title: 'Execução', desc: 'Puxe o corpo para cima de forma controlada até o queixo ultrapassar a barra. Cotovelos próximos ao corpo.' },
-            { title: 'Finalização', desc: 'Desça lentamente até os braços ficarem totalmente estendidos. Mantenha a tensão nas costas.' }
-        ];
-    } else if (isPush) {
-        steps = [
-            { title: 'Posição Inicial', desc: 'Apoie as mãos no chão alinhadas com os ombros. Corpo reto como uma prancha.' },
-            { title: 'Ativação', desc: 'Contraia abdômen, glúteos e pernas. Mantenha o corpo totalmente alinhado.' },
-            { title: 'Execução', desc: 'Desça o corpo flexionando os cotovelos a 45°. Mantenha os cotovelos próximos ao tronco.' },
-            { title: 'Finalização', desc: 'Empurre o chão para voltar à posição inicial. Estenda completamente os braços.' }
-        ];
-    } else if (isCore) {
-        steps = [
-            { title: 'Posição Inicial', desc: 'Deite-se ou posicione-se conforme o exercício. Mantenha a lombar apoiada (ou neutra).' },
-            { title: 'Ativação', desc: 'Contraia profundamente o abdômen (como se fosse levar o umbigo às costas).' },
-            { title: 'Execução', desc: 'Realize o movimento de forma controlada, sem usar impulso. Foco na contração abdominal.' },
-            { title: 'Finalização', desc: 'Retorne à posição inicial mantendo a tensão no core. Não relaxe completamente.' }
-        ];
-    } else if (isLegs) {
-        steps = [
-            { title: 'Posição Inicial', desc: 'Fique em pé com os pés alinhados aos ombros. Coluna neutra, olhar para frente.' },
-            { title: 'Ativação', desc: 'Contraia o core e mantenha o peito aberto. Distribua o peso uniformemente.' },
-            { title: 'Execução', desc: 'Realize o movimento de forma controlada. Joelhos alinhados com os pés, sem ultrapassar a ponta.' },
-            { title: 'Finalização', desc: 'Volte à posição inicial empurrando o chão. Mantenha o controle durante todo o movimento.' }
-        ];
-    } else if (isHandstand) {
-        steps = [
-            { title: 'Posição Inicial', desc: 'Apoie as mãos no chão a 30 cm da parede. Dedos bem abertos e braços estendidos.' },
-            { title: 'Ativação', desc: 'Empurre o chão ativamente. Ative ombros, core e glúteos. Olhe para as mãos.' },
-            { title: 'Execução', desc: 'Eleve as pernas com controle, mantendo o corpo alinhado. Use a parede como apoio se necessário.' },
-            { title: 'Finalização', desc: 'Mantenha a posição com respiração controlada. Desça com controle absoluto.' }
-        ];
-    } else if (isFlag) {
-        steps = [
-            { title: 'Posição Inicial', desc: 'Segure a barra vertical: mão de cima pronada, mão de baixo supinada. Afaste os pés.' },
-            { title: 'Ativação', desc: 'Contraia intensamente ombros, costas e core. Empurre com a mão de baixo, puxe com a de cima.' },
-            { title: 'Execução', desc: 'Eleve o corpo lateralmente até ficar paralelo ao chão. Mantenha o corpo totalmente reto.' },
-            { title: 'Finalização', desc: 'Desça controladamente. Alterne os lados para equilibrar o treino.' }
-        ];
-    } else if (isStretch || isYoga) {
-        steps = [
-            { title: 'Posição Inicial', desc: 'Sente-se ou posicione-se confortavelmente. Respire profundamente.' },
-            { title: 'Alongamento', desc: 'Avance no alongamento até sentir tensão moderada (não dor). Mantenha a respiração.' },
-            { title: 'Manutenção', desc: 'Permaneça na posição por 20-30 segundos. Relaxe os músculos gradualmente.' },
-            { title: 'Finalização', desc: 'Solte lentamente. Repita se necessário. Nunca force além do limite.' }
-        ];
-    } else if (isWarmup) {
-        steps = [
-            { title: 'Posição Inicial', desc: 'Fique em pé, respire fundo. Prepare o corpo para o exercício.' },
-            { title: 'Ativação', desc: 'Movimente as articulações suavemente. Aumente a circulação gradualmente.' },
-            { title: 'Execução', desc: 'Realize o movimento de forma dinâmica, aumentando a amplitude aos poucos.' },
-            { title: 'Finalização', desc: 'Repita o movimento por 30 segundos. Sinta o corpo aquecido e preparado.' }
-        ];
+    // ============ PLANEJAMENTO SEMANAL (VERSÃO CORRIGIDA) ============
+let selectedWeekdays = new Set();
+let agendaSemanal = safeGetJSON('calisthenicsBlue_agenda', []);
+
+function toggleWeekday(btn) {
+    const day = parseInt(btn.dataset.day);
+    if (selectedWeekdays.has(day)) {
+        selectedWeekdays.delete(day);
+        btn.classList.remove('selected');
     } else {
-        steps = [
-            { title: 'Posição Inicial', desc: 'Posicione-se corretamente para o exercício.' },
-            { title: 'Ativação', desc: 'Ative os músculos principais antes de iniciar o movimento.' },
-            { title: 'Execução', desc: 'Realize o movimento completo com controle e amplitude.' },
-            { title: 'Finalização', desc: 'Retorne à posição inicial mantendo a tensão muscular.' }
-        ];
+        selectedWeekdays.add(day);
+        btn.classList.add('selected');
+    }
+}
+
+function salvarAgenda() {
+    const select = document.getElementById('planNomeSelect');
+    const customName = document.getElementById('planNomeCustom').value.trim();
+    const horario = document.getElementById('planHorario').value;
+    const duracao = parseInt(document.getElementById('planDuracao').value) || 60;
+    const workoutIndex = document.getElementById('planWorkoutIndex').value;
+    
+    let nome;
+    if (select.value !== '') {
+        const idx = parseInt(select.value);
+        nome = savedWorkouts[idx]?.name || 'Treino';
+    } else if (customName) {
+        nome = customName;
+    } else {
+        return showToast('⚠️ Selecione um treino ou digite um nome.', 'error');
     }
     
-    // Monta o HTML do tutorial
-    const tutorialHTML = `
-        <div class="exercise-tutorial-header">
-            <h2>${ex.nome}</h2>
-            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:10px 0;">
-                <span class="badge ${getBadgeClass(ex.nivel)}">${ex.nivel}</span>
-                <span class="badge" style="background:rgba(18,103,232,0.15); color:#1267e8;">${ex.xp} XP</span>
-                <span class="badge" style="background:rgba(18,103,232,0.1); color:#1267e8;">⏱️ ${ex.duracao || 45}s</span>
+    if (!horario) return showToast('⚠️ Defina um horário.', 'error');
+    if (selectedWeekdays.size === 0) return showToast('⚠️ Selecione pelo menos um dia.', 'error');
+    
+    const workoutName = workoutIndex ? savedWorkouts[parseInt(workoutIndex)]?.name || 'Lembrete de Treino' : 'Lembrete de Treino';
+    
+    const novoItem = {
+        id: Date.now(),
+        nome,
+        horario,
+        duracao,
+        workoutName,
+        workoutIndex: workoutIndex || null,
+        dias: [...selectedWeekdays]
+    };
+    
+    agendaSemanal.push(novoItem);
+    safeSetJSON('calisthenicsBlue_agenda', agendaSemanal);
+    
+    // Resetar campos
+    select.value = '';
+    document.getElementById('planNomeCustom').value = '';
+    document.getElementById('planNomeCustom').style.display = 'none';
+    document.getElementById('planWorkoutIndex').value = '';
+    selectedWeekdays.clear();
+    document.querySelectorAll('.weekday-btn').forEach(b => b.classList.remove('selected'));
+    
+    renderizarAgenda();
+    showToast('📅 Treino adicionado à agenda!', 'success');
+}
+
+function removerDaAgenda(id) {
+    agendaSemanal = agendaSemanal.filter(item => item.id !== id);
+    safeSetJSON('calisthenicsBlue_agenda', agendaSemanal);
+    renderizarAgenda();
+    showToast('🗑️ Item removido da agenda.', 'info');
+}
+
+function limparAgenda() {
+    if (confirm('Limpar toda a agenda semanal?')) {
+        agendaSemanal = [];
+        safeSetJSON('calisthenicsBlue_agenda', agendaSemanal);
+        renderizarAgenda();
+        showToast('🗑️ Agenda limpa!', 'info');
+    }
+}
+
+function renderizarAgenda() {
+    const card = document.getElementById('agendaSalvaCard');
+    const list = document.getElementById('agendaSalvaList');
+    
+    if (!card || !list) {
+        console.warn('Elementos da agenda não encontrados no DOM');
+        return;
+    }
+    
+    if (agendaSemanal.length === 0) {
+        card.style.display = 'none';
+        return;
+    }
+    
+    card.style.display = 'block';
+    
+    const nomesDias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    
+    list.innerHTML = agendaSemanal.map(item => `
+        <div class="agenda-item">
+            <div class="agenda-item-info">
+                <strong>${item.nome}</strong>
+                <div style="font-size:0.8rem; color:var(--text2);">
+                    ⏰ ${item.horario} • ⏱️ ${item.duracao}min • ${item.workoutName}
+                </div>
+                <div style="margin-top:6px;">
+                    ${item.dias.map(d => `<span class="agenda-dia-badge">${nomesDias[d]}</span>`).join('')}
+                </div>
             </div>
-            <p style="color:var(--text2);">${ex.grupo_principal}${ex.grupos_secundarios.length ? ' • ' + ex.grupos_secundarios.join(' • ') : ''}</p>
+            <button class="btn btn-danger btn-sm" onclick="removerDaAgenda(${item.id})">✕</button>
         </div>
+    `).join('');
+}
+
+function handlePlanNomeChange() {
+    const select = document.getElementById('planNomeSelect');
+    const customInput = document.getElementById('planNomeCustom');
+    const workoutSelect = document.getElementById('planWorkoutIndex');
+    
+    if (select.value === '') {
+        customInput.style.display = 'block';
+        workoutSelect.value = '';
+    } else {
+        customInput.style.display = 'none';
+        customInput.value = '';
+        workoutSelect.value = select.value;
+        const idx = parseInt(select.value);
+        if (!isNaN(idx) && savedWorkouts[idx]) {
+            document.getElementById('planDuracao').value = Math.max(10, Math.ceil(savedWorkouts[idx].exercises.length * 5));
+        }
+    }
+}
+
+function atualizarPlanSelects() {
+    const nomeSelect = document.getElementById('planNomeSelect');
+    const workoutSelect = document.getElementById('planWorkoutIndex');
+    
+    if (!nomeSelect || !workoutSelect) return;
+    
+    const optionsHTML = savedWorkouts.map((w, i) => `<option value="${i}">${w.name} (${w.exercises.length} ex.)</option>`).join('');
+    
+    nomeSelect.innerHTML = '<option value="">-- Digitar nome personalizado --</option>' + optionsHTML;
+    workoutSelect.innerHTML = '<option value="">-- Nenhum (apenas lembrete) --</option>' + optionsHTML;
+}
+
+function exportarGoogleCalendar() {
+    if (agendaSemanal.length === 0) return showToast('⚠️ Nenhum treino na agenda.', 'error');
+    
+    agendaSemanal.forEach(item => {
+        const hoje = new Date();
+        const diaAtual = hoje.getDay();
         
-        <div class="card" style="padding:0; overflow:hidden;" id="tutorialMediaCard">
-            ${ex.video ? `
-            <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
-                <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
-                        src="https://www.youtube.com/embed/${ex.video}?rel=0&showinfo=0&modestbranding=1"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen
-                        loading="lazy">
-                </iframe>
-            </div>
-            <div style="padding:8px; text-align:center; background:var(--card);">
-                <small style="color:var(--text2);">🎥 Demonstração em vídeo</small>
-            </div>
-            ` : ex.gif ? `
-            <div style="position:relative; width:100%; max-height:450px; display:flex; align-items:center; justify-content:center; background:#000;">
-                <img src="${ex.gif}" alt="${ex.nome}" 
-                     style="width:100%; height:auto; max-height:450px; object-fit:contain;" 
-                     onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'padding:40px; text-align:center; color:var(--text2);\\'>⚠️ Imagem/GIF não encontrado</div>';"
-                     loading="lazy">
-            </div>
-            <div style="padding:8px; text-align:center; background:var(--card);">
-                <small style="color:var(--text2);">Demonstração do exercício</small>
-            </div>
-            ` : `
-            <div style="padding:40px; text-align:center; color:var(--text2);">
-                <p>📷 Sem demonstração disponível para este exercício.</p>
-                <p style="font-size:0.8rem; margin-top:8px;">Adicione um GIF, imagem ou vídeo do YouTube no banco de dados.</p>
-            </div>
-            `}
-        </div>
+        item.dias.forEach(dia => {
+            let diasAte = dia - diaAtual;
+            if (diasAte < 0) diasAte += 7;
+            
+            const dataTreino = new Date(hoje);
+            dataTreino.setDate(dataTreino.getDate() + diasAte);
+            
+            const [hora, min] = item.horario.split(':');
+            const inicio = new Date(dataTreino);
+            inicio.setHours(parseInt(hora), parseInt(min), 0);
+            
+            const fim = new Date(inicio);
+            fim.setMinutes(fim.getMinutes() + item.duracao);
+            
+            const startStr = inicio.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            const endStr = fim.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            
+            window.open(`https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(item.nome)}&details=${encodeURIComponent('Treino: ' + item.workoutName)}&dates=${startStr}/${endStr}&recur=RRULE:FREQ=WEEKLY`, '_blank');
+        });
+    });
+    
+    showToast('📅 Abrindo Google Agenda...', 'success');
+}
+
+function baixarCalendario() {
+    if (agendaSemanal.length === 0) return showToast('⚠️ Nenhum treino na agenda.', 'error');
+    
+    let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Calisthenics Blue//PT\n';
+    
+    agendaSemanal.forEach(item => {
+        item.dias.forEach(dia => {
+            const hoje = new Date();
+            const diaAtual = hoje.getDay();
+            let diasAte = dia - diaAtual;
+            if (diasAte < 0) diasAte += 7;
+            
+            const dataTreino = new Date(hoje);
+            dataTreino.setDate(dataTreino.getDate() + diasAte);
+            
+            const [hora, min] = item.horario.split(':');
+            const inicio = new Date(dataTreino);
+            inicio.setHours(parseInt(hora), parseInt(min), 0);
+            
+            const fim = new Date(inicio);
+            fim.setMinutes(fim.getMinutes() + item.duracao);
+            
+            const formatarData = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+            
+            icsContent += 'BEGIN:VEVENT\n';
+            icsContent += `DTSTART:${formatarData(inicio)}\n`;
+            icsContent += `DTEND:${formatarData(fim)}\n`;
+            icsContent += `SUMMARY:${item.nome} - ${item.workoutName}\n`;
+            icsContent += `RRULE:FREQ=WEEKLY\n`;
+            icsContent += 'END:VEVENT\n';
+        });
+    });
+    
+    icsContent += 'END:VCALENDAR';
+    
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'treinos-calisthenics-blue.ics';
+    link.click();
+    
+    showToast('📥 Calendário baixado!', 'success');
+}
+// ============ PLANEJAMENTO SEMANAL INTELIGENTE ============
+let planoSemanalGerado = [];
+
+// Habilitar/desabilitar campos quando marcar o checkbox
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.dia-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const diaCard = this.closest('.dia-card');
+            const select = diaCard.querySelector('.grupo-select');
+            const horario = diaCard.querySelector('.horario-input');
+            
+            if (this.checked) {
+                select.disabled = false;
+                horario.disabled = false;
+                select.style.opacity = '1';
+                horario.style.opacity = '1';
+            } else {
+                select.disabled = true;
+                horario.disabled = true;
+                select.style.opacity = '0.5';
+                horario.style.opacity = '0.5';
+                select.value = '';
+            }
+        });
+    });
+});
+
+function gerarPlanoSemanal() {
+    const nivel = document.getElementById('planLevel').value;
+    const exerciciosPorDia = parseInt(document.getElementById('planExerciciosPorDia').value) || 5;
+    
+    // Coletar dias selecionados
+    const diasSelecionados = [];
+    document.querySelectorAll('.dia-checkbox:checked').forEach(checkbox => {
+        const dia = checkbox.dataset.dia;
+        const card = checkbox.closest('.dia-card');
+        const foco = card.querySelector('.grupo-select').value;
+        const horario = card.querySelector('.horario-input').value;
         
-        <div class="card">
-            <h3>📋 Passos de Execução</h3>
-            <div class="exercise-steps-list">
-                ${steps.map((step, i) => `
-                    <div class="step-item">
-                        <div class="step-marker">${i + 1}</div>
-                        <div class="step-content">
-                            <h4>${step.title}</h4>
-                            <p>${step.desc}</p>
-                        </div>
+        if (foco) {
+            diasSelecionados.push({ dia, foco, horario });
+        }
+    });
+    
+    if (diasSelecionados.length === 0) {
+        return showToast('⚠️ Selecione pelo menos um dia com grupo muscular.', 'error');
+    }
+    
+    // Gerar treino para cada dia
+    planoSemanalGerado = diasSelecionados.map(diaInfo => {
+        const treino = gerarTreinoParaDia(nivel, diaInfo.foco, exerciciosPorDia);
+        return {
+            ...diaInfo,
+            exercicios: treino,
+            totalXP: treino.reduce((s, e) => s + e.xp, 0)
+        };
+    });
+    
+    // Renderizar resultado
+    renderizarPlanoSemanal();
+    document.getElementById('planoSemanalCard').style.display = 'block';
+    showToast(`✅ Plano gerado para ${diasSelecionados.length} dias!`, 'success');
+}
+
+function gerarTreinoParaDia(nivel, foco, numExercicios) {
+    // Filtrar exercícios pelo nível e foco
+    let pool = exerciseDB.filter(e => {
+        const order = ['Iniciante','Intermediário','Avançado','Elite'];
+        return order.indexOf(e.nivel) <= order.indexOf(nivel);
+    });
+    
+    if (foco === 'Flexibilidade') {
+        pool = pool.filter(e => e.tipo === 'Alongamento' || e.tipo === 'Yoga');
+    } else if (foco !== 'Full Body') {
+        pool = pool.filter(e => 
+            e.grupo_principal === foco || 
+            e.tipo === foco || 
+            (e.grupos_secundarios || []).includes(foco)
+        );
+    }
+    
+    if (!pool.length) pool = exerciseDB.filter(e => e.nivel === nivel || e.nivel === 'Iniciante');
+    
+    // Calcular scores
+    pool.forEach(ex => {
+        ex.score = calcularScore(ex, nivel, foco, null);
+    });
+    pool.sort((a, b) => b.score - a.score);
+    
+    // Selecionar exercícios
+    let selecionados = [];
+    for (let ex of pool) {
+        if (selecionados.length >= numExercicios) break;
+        const countNoGrupo = selecionados.filter(s => s.grupo_principal === ex.grupo_principal).length;
+        if (countNoGrupo < 2) selecionados.push({...ex, series: 3});
+    }
+    
+    // Adicionar aquecimento e resfriamento
+    const aquecimento = getAquecimento().map(ex => ({...ex, series: 1}));
+    const resfriamento = getResfriamento([...new Set(selecionados.map(e => e.grupo_principal))])
+        .map(ex => ({...ex, series: 1}));
+    
+    return [...aquecimento, ...selecionados, ...resfriamento];
+}
+
+function renderizarPlanoSemanal() {
+    const container = document.getElementById('planoSemanalResult');
+    
+    container.innerHTML = planoSemanalGerado.map(diaInfo => `
+        <div class="plano-dia-card">
+            <h4>📅 ${diaInfo.dia} • ⏰ ${diaInfo.horario} • 🎯 ${diaInfo.foco}</h4>
+            <div style="margin-top:8px;">
+                ${diaInfo.exercicios.map((ex, i) => `
+                    <div class="plano-exercicio-item">
+                        <span>${i + 1}. ${ex.nome} ${ex.tipo === 'Aquecimento' ? '🔥' : ex.tipo === 'Resfriamento' ? '❄️' : ''}</span>
+                        <span style="color:var(--primary-light); font-size:0.8rem;">${ex.xp} XP • ${ex.series || 3}x</span>
                     </div>
                 `).join('')}
             </div>
-        </div>
-        
-        <div class="card">
-            <h3>💡 Dicas & Erros Comuns</h3>
-            <div class="tips-errors-grid">
-                <div>
-                    <h4 style="color:var(--success);">✅ Dicas</h4>
-                    <ul style="color:var(--text2); padding-left:20px;">
-                        <li>Mantenha a postura correta</li>
-                        <li>Respire durante o movimento</li>
-                        <li>Progrida gradualmente</li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 style="color:var(--danger);">❌ Erros Comuns</h4>
-                    <ul style="color:var(--text2); padding-left:20px;">
-                        <li>Não use impulso excessivo</li>
-                        <li>Evite arquear as costas</li>
-                        <li>Não prenda a respiração</li>
-                    </ul>
-                </div>
+            <div style="margin-top:8px; font-weight:600; color:var(--xp);">
+                Total: ${diaInfo.totalXP} XP
             </div>
         </div>
-        
-        <div class="card">
-            <h3>📈 Progressões</h3>
-            <div id="progressionList" style="color:var(--text2);">Carregando progressões...</div>
-        </div>
-        
-        <button class="btn btn-primary mt-2" onclick="addExerciseByClick(${idx})">➕ Adicionar ao Treino</button>
-    `;
-    
-    document.getElementById('exerciseTutorialContent').innerHTML = tutorialHTML;
-    navigateTo('exercise', null);
-    
-    // Carrega progressões
-    const progressoes = exerciseDB.filter(e => e.grupo_principal === ex.grupo_principal && e.nome !== ex.nome)
-        .sort((a,b) => a.xp - b.xp)
-        .slice(0, 4);
-    const progHTML = progressoes.length 
-        ? progressoes.map(p => `<span class="badge ${getBadgeClass(p.nivel)}" style="margin:4px;cursor:pointer;" onclick="openExerciseTutorial(${exerciseDB.indexOf(p)})">${p.nome}</span>`).join('')
-        : 'Nenhuma progressão encontrada.';
-    
-    // Aguarda o DOM atualizar antes de injetar as progressões
-    setTimeout(() => {
-        const progList = document.getElementById('progressionList');
-        if (progList) progList.innerHTML = progHTML;
-    }, 50);
+    `).join('');
 }
+
+function salvarPlanoSemanal() {
+    if (planoSemanalGerado.length === 0) {
+        return showToast('⚠️ Gere um plano primeiro.', 'error');
+    }
+    
+    planoSemanalGerado.forEach(diaInfo => {
+        const workoutName = `Treino de ${diaInfo.foco} (${diaInfo.dia})`;
+        savedWorkouts.push({
+            id: Date.now() + Math.random(),
+            name: workoutName,
+            exercises: [...diaInfo.exercicios],
+            createdAt: new Date().toISOString(),
+            totalXP: diaInfo.totalXP
+        });
+    });
+    
+    saveAllState();
+    renderSavedWorkouts();
+    updateXPDisplay();
+    showToast(`💾 ${planoSemanalGerado.length} treinos salvos!`, 'success');
+}
+
+function exportarPlanoGoogleCalendar() {
+    if (planoSemanalGerado.length === 0) {
+        return showToast('⚠️ Gere um plano primeiro.', 'error');
+    }
+    
+    const hoje = new Date();
+    const diaAtual = hoje.getDay(); // 0 = Domingo, 1 = Segunda...
+    
+    const diaMap = {
+        'Domingo': 0, 'Segunda': 1, 'Terça': 2, 'Quarta': 3,
+        'Quinta': 4, 'Sexta': 5, 'Sábado': 6
+    };
+    
+    planoSemanalGerado.forEach(diaInfo => {
+        const diaAlvo = diaMap[diaInfo.dia];
+        let diasAte = diaAlvo - diaAtual;
+        if (diasAte < 0) diasAte += 7;
+        
+        const dataTreino = new Date(hoje);
+        dataTreino.setDate(dataTreino.getDate() + diasAte);
+        
+        const [hora, min] = diaInfo.horario.split(':');
+        const inicio = new Date(dataTreino);
+        inicio.setHours(parseInt(hora), parseInt(min), 0);
+        
+        const duracao = Math.max(30, diaInfo.exercicios.length * 5);
+        const fim = new Date(inicio);
+        fim.setMinutes(fim.getMinutes() + duracao);
+        
+        const startStr = inicio.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        const endStr = fim.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        
+        const desc = diaInfo.exercicios.map((e, i) => `${i+1}. ${e.nome}`).join('\n');
+        
+        window.open(
+            `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Treino: ' + diaInfo.foco)}&details=${encodeURIComponent(desc)}&dates=${startStr}/${endStr}&recur=RRULE:FREQ=WEEKLY`,
+            '_blank'
+        );
+    });
+    
+    showToast('📅 Abrindo Google Calendar para cada dia...', 'success');
+}
+
+function baixarPlanoCalendario() {
+    if (planoSemanalGerado.length === 0) {
+        return showToast('⚠️ Gere um plano primeiro.', 'error');
+    }
+    
+    const hoje = new Date();
+    const diaAtual = hoje.getDay();
+    
+    const diaMap = {
+        'Domingo': 0, 'Segunda': 1, 'Terça': 2, 'Quarta': 3,
+        'Quinta': 4, 'Sexta': 5, 'Sábado': 6
+    };
+    
+    let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Calisthenics Blue//PT\n';
+    
+    planoSemanalGerado.forEach(diaInfo => {
+        const diaAlvo = diaMap[diaInfo.dia];
+        let diasAte = diaAlvo - diaAtual;
+        if (diasAte < 0) diasAte += 7;
+        
+        const dataTreino = new Date(hoje);
+        dataTreino.setDate(dataTreino.getDate() + diasAte);
+        
+        const [hora, min] = diaInfo.horario.split(':');
+        const inicio = new Date(dataTreino);
+        inicio.setHours(parseInt(hora), parseInt(min), 0);
+        
+        const duracao = Math.max(30, diaInfo.exercicios.length * 5);
+        const fim = new Date(inicio);
+        fim.setMinutes(fim.getMinutes() + duracao);
+        
+        const formatarData = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        const desc = diaInfo.exercicios.map((e, i) => `${i+1}. ${e.nome}`).join('\\n');
+        
+        icsContent += 'BEGIN:VEVENT\n';
+        icsContent += `DTSTART:${formatarData(inicio)}\n`;
+        icsContent += `DTEND:${formatarData(fim)}\n`;
+        icsContent += `SUMMARY:Treino de ${diaInfo.foco} - ${diaInfo.dia}\n`;
+        icsContent += `DESCRIPTION:${desc}\n`;
+        icsContent += `RRULE:FREQ=WEEKLY\n`;
+        icsContent += 'END:VEVENT\n';
+    });
+    
+    icsContent += 'END:VCALENDAR';
+    
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'plano-semanal-calisthenics.ics';
+    link.click();
+    
+    showToast('📥 Arquivo .ICS baixado!', 'success');
+}
+
+    // ============ TUTORIAL DO EXERCÍCIO ============
+    function openExerciseTutorial(idx) {
+        const ex = exerciseDB[idx];
+        if (!ex) return;
+        
+        const isPull = ex.tipo === 'Pull' || ex.tipo === 'Front Lever';
+        const isPush = ex.tipo === 'Push' || ex.tipo === 'Planche' || ex.tipo === 'Ombros' || ex.tipo === 'Tríceps';
+        const isCore = ex.tipo === 'Core';
+        const isLegs = ex.tipo === 'Pernas';
+        const isHandstand = ex.tipo === 'Handstand';
+        const isFlag = ex.tipo === 'Human Flag';
+        const isStretch = ex.tipo === 'Alongamento' || ex.tipo === 'Resfriamento';
+        const isYoga = ex.tipo === 'Yoga';
+        const isWarmup = ex.tipo === 'Aquecimento';
+        
+        let steps = [];
+        if (isPull) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Segure a barra com pegada firme, mãos na largura dos ombros. Braços completamente estendidos.' },
+                { title: 'Ativação', desc: 'Contraia as escápulas (puxe os ombros para baixo e para trás). Ative o core e os glúteos.' },
+                { title: 'Execução', desc: 'Puxe o corpo para cima de forma controlada até o queixo ultrapassar a barra. Cotovelos próximos ao corpo.' },
+                { title: 'Finalização', desc: 'Desça lentamente até os braços ficarem totalmente estendidos. Mantenha a tensão nas costas.' }
+            ];
+        } else if (isPush) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Apoie as mãos no chão alinhadas com os ombros. Corpo reto como uma prancha.' },
+                { title: 'Ativação', desc: 'Contraia abdômen, glúteos e pernas. Mantenha o corpo totalmente alinhado.' },
+                { title: 'Execução', desc: 'Desça o corpo flexionando os cotovelos a 45°. Mantenha os cotovelos próximos ao tronco.' },
+                { title: 'Finalização', desc: 'Empurre o chão para voltar à posição inicial. Estenda completamente os braços.' }
+            ];
+        } else if (isCore) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Deite-se ou posicione-se conforme o exercício. Mantenha a lombar apoiada (ou neutra).' },
+                { title: 'Ativação', desc: 'Contraia profundamente o abdômen (como se fosse levar o umbigo às costas).' },
+                { title: 'Execução', desc: 'Realize o movimento de forma controlada, sem usar impulso. Foco na contração abdominal.' },
+                { title: 'Finalização', desc: 'Retorne à posição inicial mantendo a tensão no core. Não relaxe completamente.' }
+            ];
+        } else if (isLegs) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Fique em pé com os pés alinhados aos ombros. Coluna neutra, olhar para frente.' },
+                { title: 'Ativação', desc: 'Contraia o core e mantenha o peito aberto. Distribua o peso uniformemente.' },
+                { title: 'Execução', desc: 'Realize o movimento de forma controlada. Joelhos alinhados com os pés, sem ultrapassar a ponta.' },
+                { title: 'Finalização', desc: 'Volte à posição inicial empurrando o chão. Mantenha o controle durante todo o movimento.' }
+            ];
+        } else if (isHandstand) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Apoie as mãos no chão a 30 cm da parede. Dedos bem abertos e braços estendidos.' },
+                { title: 'Ativação', desc: 'Empurre o chão ativamente. Ative ombros, core e glúteos. Olhe para as mãos.' },
+                { title: 'Execução', desc: 'Eleve as pernas com controle, mantendo o corpo alinhado. Use a parede como apoio se necessário.' },
+                { title: 'Finalização', desc: 'Mantenha a posição com respiração controlada. Desça com controle absoluto.' }
+            ];
+        } else if (isFlag) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Segure a barra vertical: mão de cima pronada, mão de baixo supinada. Afaste os pés.' },
+                { title: 'Ativação', desc: 'Contraia intensamente ombros, costas e core. Empurre com a mão de baixo, puxe com a de cima.' },
+                { title: 'Execução', desc: 'Eleve o corpo lateralmente até ficar paralelo ao chão. Mantenha o corpo totalmente reto.' },
+                { title: 'Finalização', desc: 'Desça controladamente. Alterne os lados para equilibrar o treino.' }
+            ];
+        } else if (isStretch || isYoga) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Sente-se ou posicione-se confortavelmente. Respire profundamente.' },
+                { title: 'Alongamento', desc: 'Avance no alongamento até sentir tensão moderada (não dor). Mantenha a respiração.' },
+                { title: 'Manutenção', desc: 'Permaneça na posição por 20-30 segundos. Relaxe os músculos gradualmente.' },
+                { title: 'Finalização', desc: 'Solte lentamente. Repita se necessário. Nunca force além do limite.' }
+            ];
+        } else if (isWarmup) {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Fique em pé, respire fundo. Prepare o corpo para o exercício.' },
+                { title: 'Ativação', desc: 'Movimente as articulações suavemente. Aumente a circulação gradualmente.' },
+                { title: 'Execução', desc: 'Realize o movimento de forma dinâmica, aumentando a amplitude aos poucos.' },
+                { title: 'Finalização', desc: 'Repita o movimento por 30 segundos. Sinta o corpo aquecido e preparado.' }
+            ];
+        } else {
+            steps = [
+                { title: 'Posição Inicial', desc: 'Posicione-se corretamente para o exercício.' },
+                { title: 'Ativação', desc: 'Ative os músculos principais antes de iniciar o movimento.' },
+                { title: 'Execução', desc: 'Realize o movimento completo com controle e amplitude.' },
+                { title: 'Finalização', desc: 'Retorne à posição inicial mantendo a tensão muscular.' }
+            ];
+        }
+        
+        // Monta o HTML do tutorial
+        const tutorialHTML = `
+            <div class="exercise-tutorial-header">
+                <h2>${ex.nome}</h2>
+                <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:10px 0;">
+                    <span class="badge ${getBadgeClass(ex.nivel)}">${ex.nivel}</span>
+                    <span class="badge" style="background:rgba(18,103,232,0.15); color:#1267e8;">${ex.xp} XP</span>
+                    <span class="badge" style="background:rgba(18,103,232,0.1); color:#1267e8;">⏱️ ${ex.duracao || 45}s</span>
+                </div>
+                <p style="color:var(--text2);">${ex.grupo_principal}${ex.grupos_secundarios.length ? ' • ' + ex.grupos_secundarios.join(' • ') : ''}</p>
+            </div>
+            
+            <div class="card" style="padding:0; overflow:hidden;" id="tutorialMediaCard">
+                ${ex.video ? `
+                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+                    <iframe style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
+                            src="https://www.youtube.com/embed/${ex.video}?rel=0&showinfo=0&modestbranding=1"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen
+                            loading="lazy">
+                    </iframe>
+                </div>
+                <div style="padding:8px; text-align:center; background:var(--card);">
+                    <small style="color:var(--text2);">🎥 Demonstração em vídeo</small>
+                </div>
+                ` : ex.gif ? `
+                <div style="position:relative; width:100%; max-height:450px; display:flex; align-items:center; justify-content:center; background:#000;">
+                    <img src="${ex.gif}" alt="${ex.nome}" 
+                         style="width:100%; height:auto; max-height:450px; object-fit:contain;" 
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=\\'padding:40px; text-align:center; color:var(--text2);\\'>⚠️ Imagem/GIF não encontrado</div>';"
+                         loading="lazy">
+                </div>
+                <div style="padding:8px; text-align:center; background:var(--card);">
+                    <small style="color:var(--text2);">Demonstração do exercício</small>
+                </div>
+                ` : `
+                <div style="padding:40px; text-align:center; color:var(--text2);">
+                    <p>📷 Sem demonstração disponível para este exercício.</p>
+                    <p style="font-size:0.8rem; margin-top:8px;">Adicione um GIF, imagem ou vídeo do YouTube no banco de dados.</p>
+                </div>
+                `}
+            </div>
+            
+            <div class="card">
+                <h3>📋 Passos de Execução</h3>
+                <div class="exercise-steps-list">
+                    ${steps.map((step, i) => `
+                        <div class="step-item">
+                            <div class="step-marker">${i + 1}</div>
+                            <div class="step-content">
+                                <h4>${step.title}</h4>
+                                <p>${step.desc}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>💡 Dicas & Erros Comuns</h3>
+                <div class="tips-errors-grid">
+                    <div>
+                        <h4 style="color:var(--success);">✅ Dicas</h4>
+                        <ul style="color:var(--text2); padding-left:20px;">
+                            <li>Mantenha a postura correta</li>
+                            <li>Respire durante o movimento</li>
+                            <li>Progrida gradualmente</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color:var(--danger);">❌ Erros Comuns</h4>
+                        <ul style="color:var(--text2); padding-left:20px;">
+                            <li>Não use impulso excessivo</li>
+                            <li>Evite arquear as costas</li>
+                            <li>Não prenda a respiração</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📈 Progressões</h3>
+                <div id="progressionList" style="color:var(--text2);">Carregando progressões...</div>
+            </div>
+            
+            <button class="btn btn-primary mt-2" onclick="addExerciseByClick(${idx})">➕ Adicionar ao Treino</button>
+        `;
+        
+        document.getElementById('exerciseTutorialContent').innerHTML = tutorialHTML;
+        navigateTo('exercise', null);
+        
+        // Carrega progressões
+        const progressoes = exerciseDB.filter(e => e.grupo_principal === ex.grupo_principal && e.nome !== ex.nome)
+            .sort((a,b) => a.xp - b.xp)
+            .slice(0, 4);
+        const progHTML = progressoes.length 
+            ? progressoes.map(p => `<span class="badge ${getBadgeClass(p.nivel)}" style="margin:4px;cursor:pointer;" onclick="openExerciseTutorial(${exerciseDB.indexOf(p)})">${p.nome}</span>`).join('')
+            : 'Nenhuma progressão encontrada.';
+        
+        // Aguarda o DOM atualizar antes de injetar as progressões
+        setTimeout(() => {
+            const progList = document.getElementById('progressionList');
+            if (progList) progList.innerHTML = progHTML;
+        }, 50);
+    }
 
     // ============ TREINO ATIVO ============
     function loadActiveWorkout() {
@@ -1382,6 +1845,24 @@ function openExerciseTutorial(idx) {
     window.updateProfilePic = updateProfilePic;
     window.editProfileName = editProfileName;
     window.toggleTheme = toggleTheme;
+    window.toggleWeekday = toggleWeekday;
+    window.salvarAgenda = salvarAgenda;
+    window.removerDaAgenda = removerDaAgenda;
+    window.limparAgenda = limparAgenda;
+    window.exportarGoogleCalendar = exportarGoogleCalendar;
+    window.baixarCalendario = baixarCalendario;
+    window.handlePlanNomeChange = handlePlanNomeChange;
+    window.toggleWeekday = toggleWeekday;
+    window.salvarAgenda = salvarAgenda;
+    window.removerDaAgenda = removerDaAgenda;
+    window.limparAgenda = limparAgenda;
+    window.exportarGoogleCalendar = exportarGoogleCalendar;
+    window.baixarCalendario = baixarCalendario;
+    window.handlePlanNomeChange = handlePlanNomeChange;
+    window.gerarPlanoSemanal = gerarPlanoSemanal;
+    window.salvarPlanoSemanal = salvarPlanoSemanal;
+    window.exportarPlanoGoogleCalendar = exportarPlanoGoogleCalendar;
+    window.baixarPlanoCalendario = baixarPlanoCalendario;
 
     // ============ INIT ============
     document.getElementById('filterTags').addEventListener('click', e => {
@@ -1406,5 +1887,7 @@ function openExerciseTutorial(idx) {
     updateStopwatchDisplay();
     loadUserProfile();
     loadTheme();
+    renderizarAgenda();
+    atualizarPlanSelects(); 
     console.log('💪 Calisthenics Blue pronto!');
 })();

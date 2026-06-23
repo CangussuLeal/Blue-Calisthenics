@@ -143,22 +143,24 @@
                 </div>
             </div>
             <div class="card mt-2" id="savedWorkoutsSection"><h3>💾 Treinos Salvos</h3><div id="savedWorkoutsList" style="color:var(--text2);">Nenhum treino salvo ainda.</div></div>
-        </div>
+        </div><!-- FIM DO PAGE-BUILD -->
 
-        <!-- ========== AUTO TREINO ========== -->
+        <!-- ========== AUTO TREINO (ÚNICA SEÇÃO CORRIGIDA) ========== -->
         <div class="page" id="page-ia">
             <h2>🤖 Criação de Treino Automatizado</h2>
+            
+            <!-- GERADOR DE TREINO ÚNICO -->
             <div class="card">
+                <h3>🎯 Gerar Um Treino</h3>
                 <div class="grid-2">
                     <div><label for="iaLevel">Seu Nível:</label><select id="iaLevel"><option value="Iniciante">Iniciante</option><option value="Intermediário" selected>Intermediário</option><option value="Avançado">Avançado</option><option value="Elite">Elite</option></select></div>
                     <div><label for="iaFocus">Foco do Treino:</label><select id="iaFocus"><option value="Costas">Costas (Pull)</option><option value="Peitoral">Peitoral (Push)</option><option value="Ombros">Ombros</option><option value="Tríceps">Tríceps</option><option value="Core">Core / Abdômen</option><option value="Pernas">Pernas</option><option value="Full Body">Corpo Inteiro</option><option value="Flexibilidade">Flexibilidade/Mobilidade</option><option value="Front Lever">Front Lever</option><option value="Planche">Planche</option><option value="Handstand">Handstand</option><option value="Human Flag">Human Flag</option></select></div>
-                    <div><label for="iaDuration">Duração (minutos):</label><input type="number" id="iaDuration" value="30" min="10" max="120"></div>
                     <div><label for="iaNumExercises">Nº de Exercícios:</label><input type="number" id="iaNumExercises" value="5" min="3" max="10"></div>
-                </div>     
-                <!-- BOTÕES DE GERAR TREINO -->
-                <button class="btn btn-primary btn-lg mt-2" onclick="generateIATraining()">✨ Gerar Treino Automático</button>
+                </div>
+                <button class="btn btn-primary btn-lg mt-2" onclick="generateIATraining()">✨ Gerar Treino</button>
                 <button class="btn btn-outline btn-lg mt-2" onclick="analyzeAndGenerate()">🧠 Analisar Lacunas e Gerar</button>
             </div>
+            
             <div class="card" id="iaResultCard" style="display:none;">
                 <h3>📋 Treino Gerado</h3>
                 <div id="iaResult"></div>
@@ -167,7 +169,219 @@
                     <button class="btn btn-outline" onclick="exportIAToCalendar()">📅 Google Agenda</button>
                 </div>
             </div>
-        </div>
+
+            <!-- ========== PLANEJAMENTO SEMANAL INTELIGENTE ========== -->
+            <div class="card mt-2">
+                <h3>📅 Planejamento Semanal Inteligente</h3>
+                <p style="color:var(--text2); margin-bottom:12px;">
+                    Gere treinos para a semana inteira! Selecione os dias e grupos musculares desejados.
+                </p>
+                
+                <div class="grid-2">
+                    <div>
+                        <label for="planLevel">Nível dos Treinos:</label>
+                        <select id="planLevel">
+                            <option value="Iniciante">Iniciante</option>
+                            <option value="Intermediário" selected>Intermediário</option>
+                            <option value="Avançado">Avançado</option>
+                            <option value="Elite">Elite</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="planExerciciosPorDia">Exercícios por dia:</label>
+                        <input type="number" id="planExerciciosPorDia" value="5" min="3" max="10">
+                    </div>
+                </div>
+                
+                <div style="margin-top:16px;">
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">Selecione os Dias e Grupos:</label>
+                    <div class="semana-grid" style="display:grid; gap:12px;">
+                        <!-- Segunda -->
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                <input type="checkbox" id="dia-seg" class="dia-checkbox" data-dia="Segunda" style="width:18px; height:18px; cursor:pointer;">
+                                <label for="dia-seg" style="font-weight:700; cursor:pointer;">Segunda-feira</label>
+                            </div>
+                            <select class="grupo-select" data-dia="Segunda" style="width:100%;" disabled>
+                                <option value="">-- Selecione o foco --</option>
+                                <option value="Costas">Costas (Pull)</option>
+                                <option value="Peitoral">Peitoral (Push)</option>
+                                <option value="Ombros">Ombros</option>
+                                <option value="Tríceps">Tríceps/Braços</option>
+                                <option value="Core">Core / Abdômen</option>
+                                <option value="Pernas">Pernas</option>
+                                <option value="Full Body">Corpo Inteiro</option>
+                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
+                                <option value="Front Lever">Front Lever</option>
+                                <option value="Planche">Planche</option>
+                                <option value="Handstand">Handstand</option>
+                                <option value="Human Flag">Human Flag</option>
+                            </select>
+                            <input type="time" class="horario-input" data-dia="Segunda" value="07:00" style="width:100%; margin-top:6px;" disabled>
+                        </div>
+                        
+                        <!-- Terça -->
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                <input type="checkbox" id="dia-ter" class="dia-checkbox" data-dia="Terça" style="width:18px; height:18px; cursor:pointer;">
+                                <label for="dia-ter" style="font-weight:700; cursor:pointer;">Terça-feira</label>
+                            </div>
+                            <select class="grupo-select" data-dia="Terça" style="width:100%;" disabled>
+                                <option value="">-- Selecione o foco --</option>
+                                <option value="Costas">Costas (Pull)</option>
+                                <option value="Peitoral">Peitoral (Push)</option>
+                                <option value="Ombros">Ombros</option>
+                                <option value="Tríceps">Tríceps/Braços</option>
+                                <option value="Core">Core / Abdômen</option>
+                                <option value="Pernas">Pernas</option>
+                                <option value="Full Body">Corpo Inteiro</option>
+                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
+                                <option value="Front Lever">Front Lever</option>
+                                <option value="Planche">Planche</option>
+                                <option value="Handstand">Handstand</option>
+                                <option value="Human Flag">Human Flag</option>
+                            </select>
+                            <input type="time" class="horario-input" data-dia="Terça" value="07:00" style="width:100%; margin-top:6px;" disabled>
+                        </div>
+                        
+                        <!-- Quarta -->
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                <input type="checkbox" id="dia-qua" class="dia-checkbox" data-dia="Quarta" style="width:18px; height:18px; cursor:pointer;">
+                                <label for="dia-qua" style="font-weight:700; cursor:pointer;">Quarta-feira</label>
+                            </div>
+                            <select class="grupo-select" data-dia="Quarta" style="width:100%;" disabled>
+                                <option value="">-- Selecione o foco --</option>
+                                <option value="Costas">Costas (Pull)</option>
+                                <option value="Peitoral">Peitoral (Push)</option>
+                                <option value="Ombros">Ombros</option>
+                                <option value="Tríceps">Tríceps/Braços</option>
+                                <option value="Core">Core / Abdômen</option>
+                                <option value="Pernas">Pernas</option>
+                                <option value="Full Body">Corpo Inteiro</option>
+                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
+                                <option value="Front Lever">Front Lever</option>
+                                <option value="Planche">Planche</option>
+                                <option value="Handstand">Handstand</option>
+                                <option value="Human Flag">Human Flag</option>
+                            </select>
+                            <input type="time" class="horario-input" data-dia="Quarta" value="07:00" style="width:100%; margin-top:6px;" disabled>
+                        </div>
+                        
+                        <!-- Quinta -->
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                <input type="checkbox" id="dia-qui" class="dia-checkbox" data-dia="Quinta" style="width:18px; height:18px; cursor:pointer;">
+                                <label for="dia-qui" style="font-weight:700; cursor:pointer;">Quinta-feira</label>
+                            </div>
+                            <select class="grupo-select" data-dia="Quinta" style="width:100%;" disabled>
+                                <option value="">-- Selecione o foco --</option>
+                                <option value="Costas">Costas (Pull)</option>
+                                <option value="Peitoral">Peitoral (Push)</option>
+                                <option value="Ombros">Ombros</option>
+                                <option value="Tríceps">Tríceps/Braços</option>
+                                <option value="Core">Core / Abdômen</option>
+                                <option value="Pernas">Pernas</option>
+                                <option value="Full Body">Corpo Inteiro</option>
+                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
+                                <option value="Front Lever">Front Lever</option>
+                                <option value="Planche">Planche</option>
+                                <option value="Handstand">Handstand</option>
+                                <option value="Human Flag">Human Flag</option>
+                            </select>
+                            <input type="time" class="horario-input" data-dia="Quinta" value="07:00" style="width:100%; margin-top:6px;" disabled>
+                        </div>
+                        
+                        <!-- Sexta -->
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                <input type="checkbox" id="dia-sex" class="dia-checkbox" data-dia="Sexta" style="width:18px; height:18px; cursor:pointer;">
+                                <label for="dia-sex" style="font-weight:700; cursor:pointer;">Sexta-feira</label>
+                            </div>
+                            <select class="grupo-select" data-dia="Sexta" style="width:100%;" disabled>
+                                <option value="">-- Selecione o foco --</option>
+                                <option value="Costas">Costas (Pull)</option>
+                                <option value="Peitoral">Peitoral (Push)</option>
+                                <option value="Ombros">Ombros</option>
+                                <option value="Tríceps">Tríceps/Braços</option>
+                                <option value="Core">Core / Abdômen</option>
+                                <option value="Pernas">Pernas</option>
+                                <option value="Full Body">Corpo Inteiro</option>
+                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
+                                <option value="Front Lever">Front Lever</option>
+                                <option value="Planche">Planche</option>
+                                <option value="Handstand">Handstand</option>
+                                <option value="Human Flag">Human Flag</option>
+                            </select>
+                            <input type="time" class="horario-input" data-dia="Sexta" value="07:00" style="width:100%; margin-top:6px;" disabled>
+                        </div>
+                        
+                        <!-- Sábado -->
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                <input type="checkbox" id="dia-sab" class="dia-checkbox" data-dia="Sábado" style="width:18px; height:18px; cursor:pointer;">
+                                <label for="dia-sab" style="font-weight:700; cursor:pointer;">Sábado</label>
+                            </div>
+                            <select class="grupo-select" data-dia="Sábado" style="width:100%;" disabled>
+                                <option value="">-- Selecione o foco --</option>
+                                <option value="Costas">Costas (Pull)</option>
+                                <option value="Peitoral">Peitoral (Push)</option>
+                                <option value="Ombros">Ombros</option>
+                                <option value="Tríceps">Tríceps/Braços</option>
+                                <option value="Core">Core / Abdômen</option>
+                                <option value="Pernas">Pernas</option>
+                                <option value="Full Body">Corpo Inteiro</option>
+                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
+                                <option value="Front Lever">Front Lever</option>
+                                <option value="Planche">Planche</option>
+                                <option value="Handstand">Handstand</option>
+                                <option value="Human Flag">Human Flag</option>
+                            </select>
+                            <input type="time" class="horario-input" data-dia="Sábado" value="09:00" style="width:100%; margin-top:6px;" disabled>
+                        </div>
+                        
+                        <!-- Domingo -->
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
+                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                                <input type="checkbox" id="dia-dom" class="dia-checkbox" data-dia="Domingo" style="width:18px; height:18px; cursor:pointer;">
+                                <label for="dia-dom" style="font-weight:700; cursor:pointer;">Domingo</label>
+                            </div>
+                            <select class="grupo-select" data-dia="Domingo" style="width:100%;" disabled>
+                                <option value="">-- Selecione o foco --</option>
+                                <option value="Costas">Costas (Pull)</option>
+                                <option value="Peitoral">Peitoral (Push)</option>
+                                <option value="Ombros">Ombros</option>
+                                <option value="Tríceps">Tríceps/Braços</option>
+                                <option value="Core">Core / Abdômen</option>
+                                <option value="Pernas">Pernas</option>
+                                <option value="Full Body">Corpo Inteiro</option>
+                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
+                                <option value="Front Lever">Front Lever</option>
+                                <option value="Planche">Planche</option>
+                                <option value="Handstand">Handstand</option>
+                                <option value="Human Flag">Human Flag</option>
+                            </select>
+                            <input type="time" class="horario-input" data-dia="Domingo" value="09:00" style="width:100%; margin-top:6px;" disabled>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn btn-primary btn-lg" onclick="gerarPlanoSemanal()">🚀 Gerar Plano da Semana</button>
+                </div>
+            </div>
+            
+            <!-- RESULTADO DO PLANO SEMANAL -->
+            <div class="card mt-2" id="planoSemanalCard" style="display:none;">
+                <h3>📋 Plano Semanal Gerado</h3>
+                <div id="planoSemanalResult"></div>
+                <div class="flex gap-2 mt-2 flex-wrap">
+                    <button class="btn btn-success" onclick="salvarPlanoSemanal()">💾 Salvar Todos os Treinos</button>
+                    <button class="btn btn-outline" onclick="exportarPlanoGoogleCalendar()">📅 Exportar para Google Calendar</button>
+                    <button class="btn btn-outline" onclick="baixarPlanoCalendario()">📥 Baixar .ICS</button>
+                </div>
+            </div>
+        </div><!-- FIM DO PAGE-IA -->
 
         <!-- ========== WORKOUT ========== -->
         <div class="page" id="page-workout">

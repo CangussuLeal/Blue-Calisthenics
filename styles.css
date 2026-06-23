@@ -775,3 +775,122 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
         width: 100% !important;
     }
 }
+/* Estilo para os botões de dia da semana */
+.weekday-btn {
+    padding: 8px 16px;
+    border: 2px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--surface);
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    min-width: 50px;
+}
+
+.weekday-btn:hover {
+    border-color: var(--primary);
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+
+.weekday-btn.selected {
+    background: var(--primary);
+    border-color: var(--primary-light);
+    color: white;
+    box-shadow: 0 0 12px rgba(18, 103, 232, 0.4);
+}
+
+/* Estilo para os badges de dia na agenda */
+.agenda-dia-badge {
+    display: inline-block;
+    padding: 3px 8px;
+    background: var(--primary);
+    color: white;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+/* Estilo para item da agenda */
+.agenda-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+}
+
+.agenda-item:hover {
+    border-color: var(--primary);
+    background: var(--primary-dark);
+}
+
+.agenda-item-info {
+    flex: 1;
+}
+/* Planejamento Semanal */
+.semana-grid {
+    display: grid;
+    gap: 12px;
+}
+
+.dia-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    transition: all 0.2s;
+}
+
+.dia-card:hover {
+    border-color: var(--primary);
+}
+
+.dia-checkbox:checked + label {
+    color: var(--primary-light);
+}
+
+.dia-checkbox:checked ~ select,
+.dia-checkbox:checked ~ input {
+    border-color: var(--primary);
+}
+
+.grupo-select:disabled,
+.horario-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Resultado do plano semanal */
+.plano-dia-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px;
+    margin-bottom: 8px;
+}
+
+.plano-dia-card h4 {
+    color: var(--primary-light);
+    margin-bottom: 8px;
+}
+
+.plano-exercicio-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
+}
+
+.plano-exercicio-item:last-child {
+    border-bottom: none;
+}
