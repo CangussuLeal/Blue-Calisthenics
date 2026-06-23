@@ -894,3 +894,852 @@ hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
 .plano-exercicio-item:last-child {
     border-bottom: none;
 }
+/* Chips de seleção de foco */
+.foco-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.foco-chip:hover {
+    border-color: var(--primary);
+    background: var(--primary-dark);
+}
+
+.foco-chip:has(input:checked) {
+    background: var(--primary);
+    border-color: var(--primary-light);
+    color: white;
+}
+
+.foco-chip input[type="checkbox"] {
+    accent-color: var(--primary);
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+/* Lista de treinos salvos */
+.treinos-saved-list {
+    max-height: 120px;
+    overflow-y: auto;
+    margin-bottom: 8px;
+}
+
+.treino-chip {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+}
+
+.treino-chip:hover {
+    border-color: var(--primary);
+}
+
+.treino-chip:has(input:checked) {
+    background: var(--primary);
+    border-color: var(--primary-light);
+    color: white;
+}
+
+.treino-chip .treino-xp {
+    font-size: 0.7rem;
+    opacity: 0.8;
+    margin-left: auto;
+}
+
+/* Melhorias visuais */
+.dia-card {
+    transition: all 0.3s;
+}
+
+.dia-card:has(.dia-checkbox:checked) {
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 12px rgba(18, 103, 232, 0.1);
+}
+/* ============ CRONÔMETROS - TEMA CLARO E ESCURO ============ */
+
+/* Container dos cronômetros */
+.timer-display {
+    font-family: 'Courier New', 'SF Mono', 'Fira Code', monospace;
+    font-size: 4.5rem;
+    font-weight: 800;
+    text-align: center;
+    padding: 25px 20px;
+    margin: 16px 0;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 20px;
+    color: var(--primary);
+    letter-spacing: 4px;
+    text-shadow: none;
+    box-shadow: 
+        inset 0 2px 8px rgba(0, 0, 0, 0.06),
+        0 4px 16px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Tema escuro - efeito neon */
+[data-theme="dark"] .timer-display,
+.dark-theme .timer-display,
+body.dark-theme .timer-display {
+    background: linear-gradient(135deg, #0a0e1a 0%, #111827 50%, #0f172a 100%);
+    border-color: var(--border);
+    color: var(--primary-light);
+    text-shadow: 
+        0 0 20px rgba(18, 103, 232, 0.5),
+        0 0 40px rgba(18, 103, 232, 0.3),
+        0 0 80px rgba(18, 103, 232, 0.15);
+    box-shadow: 
+        inset 0 2px 10px rgba(0, 0, 0, 0.4),
+        0 4px 20px rgba(0, 0, 0, 0.3),
+        0 0 40px rgba(18, 103, 232, 0.1);
+}
+
+/* Efeito de brilho no topo */
+.timer-display::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 5%;
+    width: 90%;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(18, 103, 232, 0.25) 20%, 
+        rgba(18, 103, 232, 0.4) 50%, 
+        rgba(18, 103, 232, 0.25) 80%, 
+        transparent 100%
+    );
+}
+
+[data-theme="dark"] .timer-display::before,
+.dark-theme .timer-display::before,
+body.dark-theme .timer-display::before {
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(18, 103, 232, 0.6) 20%, 
+        rgba(18, 103, 232, 0.8) 50%, 
+        rgba(18, 103, 232, 0.6) 80%, 
+        transparent 100%
+    );
+}
+
+/* Efeito de reflexo */
+.timer-display::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 50%;
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.06) 0%, 
+        transparent 100%
+    );
+    pointer-events: none;
+}
+
+[data-theme="dark"] .timer-display::after,
+.dark-theme .timer-display::after,
+body.dark-theme .timer-display::after {
+    background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.03) 0%, 
+        transparent 100%
+    );
+}
+
+/* ========== CRONÔMETRO TOTAL (VERDE) ========== */
+#stopwatchDisplay {
+    color: #00a854;
+}
+
+[data-theme="dark"] #stopwatchDisplay,
+.dark-theme #stopwatchDisplay,
+body.dark-theme #stopwatchDisplay {
+    color: var(--xp);
+    text-shadow: 
+        0 0 20px rgba(0, 200, 100, 0.5),
+        0 0 40px rgba(0, 200, 100, 0.3),
+        0 0 80px rgba(0, 200, 100, 0.15);
+    box-shadow: 
+        inset 0 2px 10px rgba(0, 0, 0, 0.4),
+        0 4px 20px rgba(0, 0, 0, 0.3),
+        0 0 40px rgba(0, 200, 100, 0.1);
+}
+
+[data-theme="dark"] #stopwatchDisplay::before,
+.dark-theme #stopwatchDisplay::before,
+body.dark-theme #stopwatchDisplay::before {
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(0, 200, 100, 0.6) 20%, 
+        rgba(0, 200, 100, 0.8) 50%, 
+        rgba(0, 200, 100, 0.6) 80%, 
+        transparent 100%
+    );
+}
+
+/* ========== CONTAINER DOS CONTROLES ========== */
+.timer-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 14px;
+    background: var(--surface2);
+    border-radius: 16px;
+    border: 1px solid var(--border);
+}
+
+/* ========== INPUT DE SEGUNDOS ========== */
+#timerSeconds {
+    font-family: 'Courier New', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    color: var(--text);
+    width: 80px !important;
+    transition: all 0.2s ease;
+    letter-spacing: 1px;
+}
+
+#timerSeconds:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(18, 103, 232, 0.15);
+    background: var(--surface);
+}
+
+[data-theme="dark"] #timerSeconds:focus,
+.dark-theme #timerSeconds:focus,
+body.dark-theme #timerSeconds:focus {
+    box-shadow: 0 0 0 3px rgba(18, 103, 232, 0.3);
+    background: rgba(18, 103, 232, 0.08);
+}
+
+/* ========== BOTÕES ========== */
+.timer-controls .btn {
+    padding: 10px 20px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efeito ripple ao clicar */
+.timer-controls .btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.25);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.timer-controls .btn:active::after {
+    width: 300px;
+    height: 300px;
+}
+
+/* ========== BOTÃO INICIAR (AZUL) ========== */
+#timerStartBtn {
+    background: var(--primary);
+    border: none;
+    color: white;
+    box-shadow: 0 4px 12px rgba(18, 103, 232, 0.2);
+    font-weight: 700;
+}
+
+#timerStartBtn:hover {
+    background: #0d4fb8;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(18, 103, 232, 0.3);
+}
+
+[data-theme="dark"] #timerStartBtn,
+.dark-theme #timerStartBtn,
+body.dark-theme #timerStartBtn {
+    background: linear-gradient(135deg, #1267e8, #0d4fb8);
+    box-shadow: 0 4px 15px rgba(18, 103, 232, 0.3);
+}
+
+[data-theme="dark"] #timerStartBtn:hover,
+.dark-theme #timerStartBtn:hover,
+body.dark-theme #timerStartBtn:hover {
+    box-shadow: 0 6px 20px rgba(18, 103, 232, 0.45);
+}
+
+#timerStartBtn:disabled {
+    background: #94a3b8;
+    box-shadow: none;
+    transform: none;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+[data-theme="dark"] #timerStartBtn:disabled,
+.dark-theme #timerStartBtn:disabled,
+body.dark-theme #timerStartBtn:disabled {
+    background: linear-gradient(135deg, #4a5568, #2d3748);
+}
+
+/* ========== BOTÃO INICIAR TOTAL (VERDE) ========== */
+#stopwatchStartBtn {
+    background: #00a854;
+    border: none;
+    color: white;
+    box-shadow: 0 4px 12px rgba(0, 168, 84, 0.2);
+    font-weight: 700;
+}
+
+#stopwatchStartBtn:hover {
+    background: #008c44;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 168, 84, 0.3);
+}
+
+[data-theme="dark"] #stopwatchStartBtn,
+.dark-theme #stopwatchStartBtn,
+body.dark-theme #stopwatchStartBtn {
+    background: linear-gradient(135deg, #00c864, #009a4e);
+    box-shadow: 0 4px 15px rgba(0, 200, 100, 0.3);
+}
+
+[data-theme="dark"] #stopwatchStartBtn:hover,
+.dark-theme #stopwatchStartBtn:hover,
+body.dark-theme #stopwatchStartBtn:hover {
+    box-shadow: 0 6px 20px rgba(0, 200, 100, 0.45);
+}
+
+#stopwatchStartBtn:disabled {
+    background: #94a3b8;
+    box-shadow: none;
+    transform: none;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+[data-theme="dark"] #stopwatchStartBtn:disabled,
+.dark-theme #stopwatchStartBtn:disabled,
+body.dark-theme #stopwatchStartBtn:disabled {
+    background: linear-gradient(135deg, #4a5568, #2d3748);
+}
+
+/* ========== BOTÃO PAUSAR ========== */
+.timer-controls .btn-outline {
+    border: 2px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-weight: 600;
+}
+
+.timer-controls .btn-outline:hover {
+    border-color: var(--primary);
+    background: rgba(18, 103, 232, 0.05);
+    color: var(--primary);
+    transform: translateY(-2px);
+}
+
+[data-theme="dark"] .timer-controls .btn-outline,
+.dark-theme .timer-controls .btn-outline,
+body.dark-theme .timer-controls .btn-outline {
+    background: transparent;
+}
+
+[data-theme="dark"] .timer-controls .btn-outline:hover,
+.dark-theme .timer-controls .btn-outline:hover,
+body.dark-theme .timer-controls .btn-outline:hover {
+    background: rgba(18, 103, 232, 0.1);
+}
+
+/* ========== BOTÃO RESET ========== */
+.timer-controls .btn-danger {
+    background: transparent;
+    border: 2px solid #e53e3e;
+    color: #e53e3e;
+    font-weight: 600;
+}
+
+.timer-controls .btn-danger:hover {
+    background: #e53e3e;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(229, 62, 62, 0.3);
+}
+
+/* ========== LABELS DOS CRONÔMETROS ========== */
+.timer-section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    padding: 6px 14px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    color: var(--text);
+}
+
+.timer-section-label .icon-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    animation: pulse-dot 2s infinite;
+}
+
+.timer-section-label.primary .icon-dot {
+    background: var(--primary);
+    box-shadow: 0 0 6px var(--primary);
+}
+
+[data-theme="dark"] .timer-section-label.primary .icon-dot,
+.dark-theme .timer-section-label.primary .icon-dot,
+body.dark-theme .timer-section-label.primary .icon-dot {
+    box-shadow: 0 0 10px var(--primary-light);
+}
+
+.timer-section-label.success .icon-dot {
+    background: #00a854;
+    box-shadow: 0 0 6px rgba(0, 168, 84, 0.5);
+}
+
+[data-theme="dark"] .timer-section-label.success .icon-dot,
+.dark-theme .timer-section-label.success .icon-dot,
+body.dark-theme .timer-section-label.success .icon-dot {
+    box-shadow: 0 0 10px rgba(0, 200, 100, 0.7);
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(1.4); }
+}
+
+/* ========== DIVISOR ENTRE CRONÔMETROS ========== */
+.timer-divider {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        var(--border) 20%, 
+        var(--primary) 50%, 
+        var(--border) 80%, 
+        transparent 100%
+    );
+    margin: 24px 0;
+    opacity: 0.6;
+}
+
+[data-theme="dark"] .timer-divider,
+.dark-theme .timer-divider,
+body.dark-theme .timer-divider {
+    opacity: 0.4;
+}
+
+/* ========== ANIMAÇÃO DE ALERTA ========== */
+@keyframes timer-alert-light {
+    0%, 100% { 
+        border-color: #e53e3e;
+        background: #fff5f5;
+        box-shadow: inset 0 2px 8px rgba(229, 62, 62, 0.1), 0 0 20px rgba(229, 62, 62, 0.15);
+    }
+    50% { 
+        border-color: #e53e3e;
+        background: #fff;
+        box-shadow: inset 0 2px 8px rgba(229, 62, 62, 0.05), 0 0 35px rgba(229, 62, 62, 0.25);
+    }
+}
+
+@keyframes timer-alert-dark {
+    0%, 100% { 
+        border-color: #ff4444;
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.4), 0 0 30px rgba(255, 50, 50, 0.6);
+    }
+    50% { 
+        border-color: #ff4444;
+        box-shadow: inset 0 2px 10px rgba(0,0,0,0.4), 0 0 60px rgba(255, 50, 50, 0.9);
+    }
+}
+
+.timer-display.alert {
+    animation: timer-alert-light 0.6s infinite;
+    color: #e53e3e !important;
+}
+
+[data-theme="dark"] .timer-display.alert,
+.dark-theme .timer-display.alert,
+body.dark-theme .timer-display.alert {
+    animation: timer-alert-dark 0.6s infinite;
+    color: #ff4444 !important;
+    text-shadow: 0 0 20px rgba(255, 50, 50, 0.7), 0 0 40px rgba(255, 50, 50, 0.5) !important;
+}
+
+/* ========== MODO TOGGLE ========== */
+#timerModeToggle {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    border: 2px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+}
+
+#timerModeToggle:hover {
+    border-color: var(--primary);
+    background: rgba(18, 103, 232, 0.05);
+    color: var(--primary);
+    transform: scale(1.05);
+}
+
+[data-theme="dark"] #timerModeToggle:hover,
+.dark-theme #timerModeToggle:hover,
+body.dark-theme #timerModeToggle:hover {
+    background: rgba(18, 103, 232, 0.1);
+}
+
+/* ========== RESPONSIVO ========== */
+@media (max-width: 600px) {
+    .timer-display {
+        font-size: 3rem;
+        padding: 18px 12px;
+        letter-spacing: 2px;
+    }
+    
+    .timer-controls {
+        gap: 6px;
+        padding: 10px;
+    }
+    
+    .timer-controls .btn {
+        padding: 8px 14px;
+        font-size: 0.8rem;
+        border-radius: 10px;
+    }
+    
+    #timerSeconds {
+        font-size: 1rem;
+        padding: 8px 10px;
+        width: 65px !important;
+    }
+}
+/* ============ INPUT DE HORÁRIO - PLANEJAMENTO SEMANAL ============ */
+
+/* Container do input de horário */
+.horario-input {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px 16px;
+    font-family: 'SF Mono', 'Courier New', 'Fira Code', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-align: center;
+    background: var(--surface);
+    border: 2px solid var(--border);
+    border-radius: 14px;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Ícone de relógio via background (funciona como indicador visual) */
+.horario-input::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0);
+    opacity: 0.7;
+    transition: all 0.3s ease;
+    padding: 4px;
+    border-radius: 8px;
+    background-color: rgba(18, 103, 232, 0.06);
+}
+
+.horario-input::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+    background-color: rgba(18, 103, 232, 0.12);
+    transform: scale(1.1);
+}
+
+/* Tema escuro - ícone do calendário */
+[data-theme="dark"] .horario-input::-webkit-calendar-picker-indicator,
+.dark-theme .horario-input::-webkit-calendar-picker-indicator,
+body.dark-theme .horario-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    background-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .horario-input::-webkit-calendar-picker-indicator:hover,
+.dark-theme .horario-input::-webkit-calendar-picker-indicator:hover,
+body.dark-theme .horario-input::-webkit-calendar-picker-indicator:hover {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Estados do input */
+.horario-input:hover {
+    border-color: var(--primary);
+    box-shadow: 0 2px 12px rgba(18, 103, 232, 0.1);
+    transform: translateY(-1px);
+}
+
+.horario-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 
+        0 0 0 4px rgba(18, 103, 232, 0.1),
+        0 4px 16px rgba(18, 103, 232, 0.12);
+    background: var(--surface);
+    color: var(--primary);
+}
+
+[data-theme="dark"] .horario-input:focus,
+.dark-theme .horario-input:focus,
+body.dark-theme .horario-input:focus {
+    box-shadow: 
+        0 0 0 4px rgba(18, 103, 232, 0.2),
+        0 4px 20px rgba(18, 103, 232, 0.2);
+}
+
+/* Quando desabilitado */
+.horario-input:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    background: var(--surface2);
+    border-style: dashed;
+    transform: none;
+    box-shadow: none;
+    color: var(--text2);
+}
+
+.horario-input:disabled:hover {
+    border-color: var(--border);
+    transform: none;
+    box-shadow: none;
+}
+
+/* ========== LABEL DO HORÁRIO ========== */
+.horario-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text2);
+    margin-bottom: 4px;
+    transition: color 0.3s ease;
+}
+
+.horario-label::before {
+    content: '🕐';
+    font-size: 1rem;
+}
+
+/* Quando o input está em foco, destacar o label */
+.horario-input:focus + .horario-label,
+.horario-wrapper:focus-within .horario-label {
+    color: var(--primary);
+}
+
+/* ========== WRAPPER DO HORÁRIO (opcional, para grupo) ========== */
+.horario-wrapper {
+    position: relative;
+    margin-top: 6px;
+}
+
+.horario-wrapper::before {
+    content: '⏰';
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.horario-wrapper:focus-within::before {
+    opacity: 1;
+}
+
+/* Ajuste do padding quando tem ícone */
+.horario-wrapper .horario-input {
+    padding-left: 44px;
+}
+
+/* ========== DIA CARD - MELHORIAS ========== */
+.dia-card {
+    transition: all 0.3s ease;
+}
+
+.dia-card:has(.dia-checkbox:checked) {
+    border-color: var(--primary) !important;
+    box-shadow: 0 4px 16px rgba(18, 103, 232, 0.08);
+    background: linear-gradient(135deg, 
+        var(--surface) 0%, 
+        rgba(18, 103, 232, 0.02) 100%
+    );
+}
+
+[data-theme="dark"] .dia-card:has(.dia-checkbox:checked),
+.dark-theme .dia-card:has(.dia-checkbox:checked),
+body.dark-theme .dia-card:has(.dia-checkbox:checked) {
+    box-shadow: 0 4px 20px rgba(18, 103, 232, 0.12);
+    background: linear-gradient(135deg, 
+        var(--surface) 0%, 
+        rgba(18, 103, 232, 0.04) 100%
+    );
+}
+
+/* Animação de entrada da config */
+.dia-config {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+        max-height: 0;
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+        max-height: 500px;
+    }
+}
+
+/* ========== PRESETS DE HORÁRIO (SUGESTÕES RÁPIDAS) ========== */
+.horario-presets {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+}
+
+.horario-preset {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 14px;
+    border: 1.5px solid var(--border);
+    background: var(--surface2);
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.horario-preset:hover {
+    border-color: var(--primary);
+    background: rgba(18, 103, 232, 0.06);
+    color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.horario-preset.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+[data-theme="dark"] .horario-preset:hover,
+.dark-theme .horario-preset:hover,
+body.dark-theme .horario-preset:hover {
+    background: rgba(18, 103, 232, 0.15);
+}
+
+/* ========== RELÓGIO ANALÓGICO DECORATIVO (OPCIONAL) ========== */
+.relogio-decorativo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 14px;
+    background: var(--surface2);
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+}
+
+.relogio-decorativo .relogio-icone {
+    font-size: 1.4rem;
+    animation: ticTac 2s infinite;
+}
+
+@keyframes ticTac {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(8deg); }
+    75% { transform: rotate(-8deg); }
+}
+
+.relogio-decorativo .relogio-texto {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text2);
+}
+
+/* ========== RESPONSIVO ========== */
+@media (max-width: 600px) {
+    .horario-input {
+        font-size: 1rem;
+        padding: 10px 12px;
+        letter-spacing: 1px;
+        border-radius: 12px;
+    }
+    
+    .horario-presets {
+        gap: 4px;
+    }
+    
+    .horario-preset {
+        padding: 3px 8px;
+        font-size: 0.7rem;
+    }
+    
+    .horario-wrapper::before {
+        left: 10px;
+        font-size: 1rem;
+    }
+    
+    .horario-wrapper .horario-input {
+        padding-left: 36px;
+    }
+}

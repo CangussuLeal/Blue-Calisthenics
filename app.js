@@ -689,6 +689,111 @@
         generateIATraining(lacunas);
     }
 
+    // ============ PRESETS DE HORÁRIO PARA PLANEJAMENTO SEMANAL ============
+
+// Função que cria os botões de presets de horário em cada dia
+function setupHorarioPresets() {
+    document.querySelectorAll('.dia-card').forEach(card => {
+        const horarioInput = card.querySelector('.horario-input');
+        if (!horarioInput) return;
+        
+        // Verificar se já existe presets neste card (evitar duplicação)
+        if (card.querySelector('.horario-presets')) return;
+        
+        // Criar container de presets
+        const presetsDiv = document.createElement('div');
+        presetsDiv.className = 'horario-presets';
+        
+        // Lista de horários sugeridos
+        const presets = [
+            { label: '🌅 06:00', value: '06:00' },
+            { label: '🌅 07:00', value: '07:00' },
+            { label: '☀️ 08:00', value: '08:00' },
+            { label: '☀️ 12:00', value: '12:00' },
+            { label: '🌤️ 17:00', value: '17:00' },
+            { label: '🌆 19:00', value: '19:00' },
+            { label: '🌙 21:00', value: '21:00' }
+        ];
+        
+        presets.forEach(preset => {
+            const btn = document.createElement('button');
+            btn.type = 'button'; // Importante: evitar submit de formulário
+            btn.className = 'horario-preset';
+            btn.textContent = preset.label;
+            
+            // Marcar como active se já for o valor atual
+            if (horarioInput.value === preset.value) {
+                btn.classList.add('active');
+            }
+            
+            // Evento de clique
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                horarioInput.value = preset.value;
+                
+                // Atualizar classes active em todos os presets deste card
+                presetsDiv.querySelectorAll('.horario-preset').forEach(b => {
+                    b.classList.remove('active');
+                });
+                btn.classList.add('active');
+                
+                // Disparar evento change para garantir que outros listeners sejam notificados
+                horarioInput.dispatchEvent(new Event('change', { bubbles: true }));
+            });
+            
+            presetsDiv.appendChild(btn);
+        });
+        
+        // Inserir após o input de horário
+        horarioInput.insertAdjacentElement('afterend', presetsDiv);
+        
+        // Atualizar active quando mudar manualmente o horário
+        horarioInput.addEventListener('change', function() {
+            presetsDiv.querySelectorAll('.horario-preset').forEach(btn => {
+                const presetValue = btn.textContent.replace(/[^\d:]/g, ''); // Extrair apenas números e :
+                btn.classList.toggle('active', presetValue === horarioInput.value);
+            });
+        });
+    });
+}
+
+// Configurar para rodar quando a página IA for aberta
+function initHorarioPresets() {
+    const pageIa = document.getElementById('page-ia');
+    if (!pageIa) return;
+    
+    // Usar MutationObserver para detectar quando a página IA ficar ativa
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.target.classList.contains('active')) {
+                // Pequeno delay para garantir que o DOM esteja pronto
+                setTimeout(setupHorarioPresets, 150);
+            }
+        });
+    });
+    
+    observer.observe(pageIa, { 
+        attributes: true, 
+        attributeFilter: ['class'] 
+    });
+    
+    // Também rodar imediatamente caso a página já esteja ativa
+    if (pageIa.classList.contains('active')) {
+        setTimeout(setupHorarioPresets, 150);
+    }
+}
+
+// Inicializar quando o DOM estiver pronto
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHorarioPresets);
+} else {
+    // DOM já está pronto
+    initHorarioPresets();
+}
+
+// Expor globalmente
+window.setupHorarioPresets = setupHorarioPresets;
+
     // ============ PLANEJAMENTO SEMANAL (VERSÃO CORRIGIDA) ============
 let selectedWeekdays = new Set();
 let agendaSemanal = safeGetJSON('calisthenicsBlue_agenda', []);
@@ -909,80 +1014,210 @@ function baixarCalendario() {
 // ============ PLANEJAMENTO SEMANAL INTELIGENTE ============
 let planoSemanalGerado = [];
 
-// Habilitar/desabilitar campos quando marcar o checkbox
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.dia-checkbox').forEach(checkbox => {
-        checkbox.addEventListener('change', function() {
-            const diaCard = this.closest('.dia-card');
-            const select = diaCard.querySelector('.grupo-select');
-            const horario = diaCard.querySelector('.horario-input');
-            
-            if (this.checked) {
-                select.disabled = false;
-                horario.disabled = false;
-                select.style.opacity = '1';
-                horario.style.opacity = '1';
-            } else {
-                select.disabled = true;
-                horario.disabled = true;
-                select.style.opacity = '0.5';
-                horario.style.opacity = '0.5';
-                select.value = '';
-            }
-        });
-    });
-});
+// Função chamada quando marca/desmarca o checkbox do dia
+function toggleDiaConfig(checkbox) {
+    const dia = checkbox.dataset.dia;
+    const diaCard = checkbox.closest('.dia-card');
+    const configDiv = diaCard.querySelector('.dia-config');
+    
+    if (checkbox.checked) {
+        configDiv.style.display = 'block';
+        // Carregar treinos salvos para este dia
+        carregarTreinosSalvosNoDia(dia);
+    } else {
+        configDiv.style.display = 'none';
+        // Limpar seleções
+        const focoCheckboxes = diaCard.querySelectorAll('.foco-checkbox');
+        focoCheckboxes.forEach(cb => cb.checked = false);
+        const treinoCheckboxes = diaCard.querySelectorAll('.treino-checkbox');
+        treinoCheckboxes.forEach(cb => cb.checked = false);
+    }
+}
 
+// Função para alternar entre modo foco, treino ou ambos
+function toggleModoDia(modoSelect) {
+    const dia = modoSelect.dataset.dia;
+    const diaCard = modoSelect.closest('.dia-card');
+    const focoContainer = diaCard.querySelector('.foco-container');
+    const treinoContainer = diaCard.querySelector('.treino-container');
+    const modo = modoSelect.value;
+    
+    if (modo === 'foco') {
+        focoContainer.style.display = 'block';
+        treinoContainer.style.display = 'none';
+    } else if (modo === 'treino') {
+        focoContainer.style.display = 'none';
+        treinoContainer.style.display = 'block';
+    } else if (modo === 'ambos') {
+        focoContainer.style.display = 'block';
+        treinoContainer.style.display = 'block';
+    }
+}
+
+// Carregar lista de treinos salvos dentro de cada dia
+function carregarTreinosSalvosNoDia(dia) {
+    const listaContainer = document.querySelector(`.treinos-saved-list[data-dia="${dia}"]`);
+    if (!listaContainer) return;
+    
+    if (savedWorkouts.length === 0) {
+        listaContainer.innerHTML = '<p style="color:var(--text2); font-size:0.8rem;">Nenhum treino salvo ainda. Crie treinos na aba "Montar Treino".</p>';
+        return;
+    }
+    
+    listaContainer.innerHTML = savedWorkouts.map((w, i) => `
+        <label class="treino-chip">
+            <input type="checkbox" class="treino-checkbox" data-dia="${dia}" value="${i}">
+            <span>${w.name}</span>
+            <span class="treino-xp">${w.totalXP || 0} XP • ${w.exercises.length} ex.</span>
+        </label>
+    `).join('');
+}
+
+// Atualizar TODAS as listas de treinos salvos quando houver mudanças
+function atualizarTodasListasTreinos() {
+    document.querySelectorAll('.treinos-saved-list').forEach(lista => {
+        const dia = lista.dataset.dia;
+        if (dia) carregarTreinosSalvosNoDia(dia);
+    });
+}
+
+// Função principal: Gerar o plano semanal
 function gerarPlanoSemanal() {
     const nivel = document.getElementById('planLevel').value;
     const exerciciosPorDia = parseInt(document.getElementById('planExerciciosPorDia').value) || 5;
     
-    // Coletar dias selecionados
+    // Coletar todos os dias marcados
     const diasSelecionados = [];
+    const diasNomes = {
+        'seg': 'Segunda-feira',
+        'ter': 'Terça-feira',
+        'qua': 'Quarta-feira',
+        'qui': 'Quinta-feira',
+        'sex': 'Sexta-feira',
+        'sab': 'Sábado',
+        'dom': 'Domingo'
+    };
+    
     document.querySelectorAll('.dia-checkbox:checked').forEach(checkbox => {
         const dia = checkbox.dataset.dia;
-        const card = checkbox.closest('.dia-card');
-        const foco = card.querySelector('.grupo-select').value;
-        const horario = card.querySelector('.horario-input').value;
+        const diaCard = checkbox.closest('.dia-card');
+        const modo = diaCard.querySelector('.modo-select').value;
+        const horario = diaCard.querySelector('.horario-input').value;
         
-        if (foco) {
-            diasSelecionados.push({ dia, foco, horario });
+        // Coletar focos selecionados
+        const focos = [];
+        diaCard.querySelectorAll('.foco-checkbox:checked').forEach(cb => {
+            focos.push(cb.value);
+        });
+        
+        // Coletar treinos selecionados
+        const treinosSelecionados = [];
+        diaCard.querySelectorAll('.treino-checkbox:checked').forEach(cb => {
+            const idx = parseInt(cb.value);
+            if (!isNaN(idx) && savedWorkouts[idx]) {
+                treinosSelecionados.push(idx);
+            }
+        });
+        
+        // Validar se há algo selecionado
+        if (modo === 'foco' && focos.length === 0) {
+            showToast(`⚠️ Selecione pelo menos um foco para ${diasNomes[dia]}.`, 'error');
+            return;
         }
+        if (modo === 'treino' && treinosSelecionados.length === 0) {
+            showToast(`⚠️ Selecione pelo menos um treino para ${diasNomes[dia]}.`, 'error');
+            return;
+        }
+        if (modo === 'ambos' && focos.length === 0 && treinosSelecionados.length === 0) {
+            showToast(`⚠️ Selecione algo para ${diasNomes[dia]}.`, 'error');
+            return;
+        }
+        
+        diasSelecionados.push({
+            dia: diasNomes[dia],
+            diaKey: dia,
+            modo,
+            horario,
+            focos,
+            treinosSelecionados
+        });
     });
     
     if (diasSelecionados.length === 0) {
-        return showToast('⚠️ Selecione pelo menos um dia com grupo muscular.', 'error');
+        return showToast('⚠️ Selecione pelo menos um dia da semana.', 'error');
     }
     
-    // Gerar treino para cada dia
-    planoSemanalGerado = diasSelecionados.map(diaInfo => {
-        const treino = gerarTreinoParaDia(nivel, diaInfo.foco, exerciciosPorDia);
-        return {
-            ...diaInfo,
-            exercicios: treino,
-            totalXP: treino.reduce((s, e) => s + e.xp, 0)
-        };
+    // Gerar os treinos
+    planoSemanalGerado = [];
+    
+    diasSelecionados.forEach(diaInfo => {
+        let exerciciosDoDia = [];
+        
+        // Adicionar treinos salvos (se selecionados)
+        if (diaInfo.modo === 'treino' || diaInfo.modo === 'ambos') {
+            diaInfo.treinosSelecionados.forEach(idx => {
+                const treinoSalvo = savedWorkouts[idx];
+                if (treinoSalvo) {
+                    exerciciosDoDia = [...exerciciosDoDia, ...treinoSalvo.exercises];
+                }
+            });
+        }
+        
+        // Gerar treinos por foco (se selecionados)
+        if (diaInfo.modo === 'foco' || diaInfo.modo === 'ambos') {
+            diaInfo.focos.forEach(foco => {
+                const exerciciosFoco = gerarTreinoParaDia(nivel, foco, exerciciosPorDia);
+                exerciciosDoDia = [...exerciciosDoDia, ...exerciciosFoco];
+            });
+        }
+        
+        // Remover duplicatas (baseado no nome do exercício)
+        const exerciciosUnicos = [];
+        const nomesVistos = new Set();
+        exerciciosDoDia.forEach(ex => {
+            if (!nomesVistos.has(ex.nome)) {
+                nomesVistos.add(ex.nome);
+                exerciciosUnicos.push(ex);
+            }
+        });
+        
+        if (exerciciosUnicos.length > 0) {
+            planoSemanalGerado.push({
+                dia: diaInfo.dia,
+                horario: diaInfo.horario,
+                modo: diaInfo.modo,
+                exercicios: exerciciosUnicos,
+                totalXP: exerciciosUnicos.reduce((s, e) => s + (e.xp || 0), 0)
+            });
+        }
     });
+    
+    if (planoSemanalGerado.length === 0) {
+        return showToast('⚠️ Não foi possível gerar nenhum treino.', 'error');
+    }
     
     // Renderizar resultado
     renderizarPlanoSemanal();
     document.getElementById('planoSemanalCard').style.display = 'block';
-    showToast(`✅ Plano gerado para ${diasSelecionados.length} dias!`, 'success');
+    showToast(`✅ Plano gerado para ${planoSemanalGerado.length} dias!`, 'success');
+    
+    // Scroll até o resultado
+    document.getElementById('planoSemanalCard').scrollIntoView({ behavior: 'smooth' });
 }
 
+// Gerar treino automático para um foco específico
 function gerarTreinoParaDia(nivel, foco, numExercicios) {
-    // Filtrar exercícios pelo nível e foco
     let pool = exerciseDB.filter(e => {
-        const order = ['Iniciante','Intermediário','Avançado','Elite'];
+        const order = ['Iniciante', 'Intermediário', 'Avançado', 'Elite'];
         return order.indexOf(e.nivel) <= order.indexOf(nivel);
     });
     
     if (foco === 'Flexibilidade') {
         pool = pool.filter(e => e.tipo === 'Alongamento' || e.tipo === 'Yoga');
     } else if (foco !== 'Full Body') {
-        pool = pool.filter(e => 
-            e.grupo_principal === foco || 
-            e.tipo === foco || 
+        pool = pool.filter(e =>
+            e.grupo_principal === foco ||
+            e.tipo === foco ||
             (e.grupos_secundarios || []).includes(foco)
         );
     }
@@ -991,84 +1226,96 @@ function gerarTreinoParaDia(nivel, foco, numExercicios) {
     
     // Calcular scores
     pool.forEach(ex => {
-        ex.score = calcularScore(ex, nivel, foco, null);
+        ex._score = calcularScore(ex, nivel, foco, null);
     });
-    pool.sort((a, b) => b.score - a.score);
+    pool.sort((a, b) => b._score - a._score);
     
     // Selecionar exercícios
     let selecionados = [];
     for (let ex of pool) {
         if (selecionados.length >= numExercicios) break;
         const countNoGrupo = selecionados.filter(s => s.grupo_principal === ex.grupo_principal).length;
-        if (countNoGrupo < 2) selecionados.push({...ex, series: 3});
+        if (countNoGrupo < 2) selecionados.push({ ...ex, series: 3 });
     }
     
     // Adicionar aquecimento e resfriamento
-    const aquecimento = getAquecimento().map(ex => ({...ex, series: 1}));
+    const aquecimento = getAquecimento().map(ex => ({ ...ex, series: 1 }));
     const resfriamento = getResfriamento([...new Set(selecionados.map(e => e.grupo_principal))])
-        .map(ex => ({...ex, series: 1}));
+        .map(ex => ({ ...ex, series: 1 }));
     
     return [...aquecimento, ...selecionados, ...resfriamento];
 }
 
+// Renderizar o plano semanal gerado
 function renderizarPlanoSemanal() {
     const container = document.getElementById('planoSemanalResult');
     
     container.innerHTML = planoSemanalGerado.map(diaInfo => `
         <div class="plano-dia-card">
-            <h4>📅 ${diaInfo.dia} • ⏰ ${diaInfo.horario} • 🎯 ${diaInfo.foco}</h4>
+            <h4>📅 ${diaInfo.dia} • ⏰ ${diaInfo.horario} • ${diaInfo.modo === 'foco' ? '🎯 Automático' : diaInfo.modo === 'treino' ? '💾 Treino Salvo' : '🔀 Misto'}</h4>
             <div style="margin-top:8px;">
                 ${diaInfo.exercicios.map((ex, i) => `
                     <div class="plano-exercicio-item">
                         <span>${i + 1}. ${ex.nome} ${ex.tipo === 'Aquecimento' ? '🔥' : ex.tipo === 'Resfriamento' ? '❄️' : ''}</span>
-                        <span style="color:var(--primary-light); font-size:0.8rem;">${ex.xp} XP • ${ex.series || 3}x</span>
+                        <span style="color:var(--primary-light); font-size:0.8rem;">${ex.xp || 0} XP • ${ex.series || 3}x</span>
                     </div>
                 `).join('')}
             </div>
             <div style="margin-top:8px; font-weight:600; color:var(--xp);">
-                Total: ${diaInfo.totalXP} XP
+                Total: ${diaInfo.totalXP} XP • ${diaInfo.exercicios.length} exercícios
             </div>
         </div>
     `).join('');
 }
 
+// Salvar todos os treinos do plano
 function salvarPlanoSemanal() {
     if (planoSemanalGerado.length === 0) {
         return showToast('⚠️ Gere um plano primeiro.', 'error');
     }
     
+    let salvos = 0;
     planoSemanalGerado.forEach(diaInfo => {
-        const workoutName = `Treino de ${diaInfo.foco} (${diaInfo.dia})`;
+        const workoutName = `Treino de ${diaInfo.dia} (${diaInfo.horario})`;
+        
+        // Verificar se já existe um treino com esse nome
+        const existe = savedWorkouts.some(w => w.name === workoutName);
+        const nomeFinal = existe ? `${workoutName} - ${Date.now().toString().slice(-4)}` : workoutName;
+        
         savedWorkouts.push({
             id: Date.now() + Math.random(),
-            name: workoutName,
+            name: nomeFinal,
             exercises: [...diaInfo.exercicios],
             createdAt: new Date().toISOString(),
             totalXP: diaInfo.totalXP
         });
+        salvos++;
     });
     
     saveAllState();
     renderSavedWorkouts();
     updateXPDisplay();
-    showToast(`💾 ${planoSemanalGerado.length} treinos salvos!`, 'success');
+    showToast(`💾 ${salvos} treinos salvos com sucesso!`, 'success');
 }
 
+// Exportar para Google Calendar
 function exportarPlanoGoogleCalendar() {
     if (planoSemanalGerado.length === 0) {
         return showToast('⚠️ Gere um plano primeiro.', 'error');
     }
     
     const hoje = new Date();
-    const diaAtual = hoje.getDay(); // 0 = Domingo, 1 = Segunda...
+    const diaAtual = hoje.getDay();
     
     const diaMap = {
-        'Domingo': 0, 'Segunda': 1, 'Terça': 2, 'Quarta': 3,
-        'Quinta': 4, 'Sexta': 5, 'Sábado': 6
+        'Domingo': 0, 'Segunda-feira': 1, 'Terça-feira': 2, 'Quarta-feira': 3,
+        'Quinta-feira': 4, 'Sexta-feira': 5, 'Sábado': 6
     };
     
     planoSemanalGerado.forEach(diaInfo => {
         const diaAlvo = diaMap[diaInfo.dia];
+        if (diaAlvo === undefined) return;
+        
         let diasAte = diaAlvo - diaAtual;
         if (diasAte < 0) diasAte += 7;
         
@@ -1086,10 +1333,10 @@ function exportarPlanoGoogleCalendar() {
         const startStr = inicio.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
         const endStr = fim.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
         
-        const desc = diaInfo.exercicios.map((e, i) => `${i+1}. ${e.nome}`).join('\n');
+        const desc = diaInfo.exercicios.map((e, i) => `${i + 1}. ${e.nome}`).join('\n');
         
         window.open(
-            `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Treino: ' + diaInfo.foco)}&details=${encodeURIComponent(desc)}&dates=${startStr}/${endStr}&recur=RRULE:FREQ=WEEKLY`,
+            `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent('Treino: ' + diaInfo.dia)}&details=${encodeURIComponent(desc)}&dates=${startStr}/${endStr}&recur=RRULE:FREQ=WEEKLY`,
             '_blank'
         );
     });
@@ -1097,6 +1344,7 @@ function exportarPlanoGoogleCalendar() {
     showToast('📅 Abrindo Google Calendar para cada dia...', 'success');
 }
 
+// Baixar arquivo .ICS
 function baixarPlanoCalendario() {
     if (planoSemanalGerado.length === 0) {
         return showToast('⚠️ Gere um plano primeiro.', 'error');
@@ -1106,14 +1354,16 @@ function baixarPlanoCalendario() {
     const diaAtual = hoje.getDay();
     
     const diaMap = {
-        'Domingo': 0, 'Segunda': 1, 'Terça': 2, 'Quarta': 3,
-        'Quinta': 4, 'Sexta': 5, 'Sábado': 6
+        'Domingo': 0, 'Segunda-feira': 1, 'Terça-feira': 2, 'Quarta-feira': 3,
+        'Quinta-feira': 4, 'Sexta-feira': 5, 'Sábado': 6
     };
     
     let icsContent = 'BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Calisthenics Blue//PT\n';
     
     planoSemanalGerado.forEach(diaInfo => {
         const diaAlvo = diaMap[diaInfo.dia];
+        if (diaAlvo === undefined) return;
+        
         let diasAte = diaAlvo - diaAtual;
         if (diasAte < 0) diasAte += 7;
         
@@ -1129,12 +1379,12 @@ function baixarPlanoCalendario() {
         fim.setMinutes(fim.getMinutes() + duracao);
         
         const formatarData = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
-        const desc = diaInfo.exercicios.map((e, i) => `${i+1}. ${e.nome}`).join('\\n');
+        const desc = diaInfo.exercicios.map((e, i) => `${i + 1}. ${e.nome}`).join('\\n');
         
         icsContent += 'BEGIN:VEVENT\n';
         icsContent += `DTSTART:${formatarData(inicio)}\n`;
         icsContent += `DTEND:${formatarData(fim)}\n`;
-        icsContent += `SUMMARY:Treino de ${diaInfo.foco} - ${diaInfo.dia}\n`;
+        icsContent += `SUMMARY:Treino de ${diaInfo.dia}\n`;
         icsContent += `DESCRIPTION:${desc}\n`;
         icsContent += `RRULE:FREQ=WEEKLY\n`;
         icsContent += 'END:VEVENT\n';
@@ -1150,6 +1400,40 @@ function baixarPlanoCalendario() {
     
     showToast('📥 Arquivo .ICS baixado!', 'success');
 }
+
+// Expor funções globalmente
+window.toggleDiaConfig = toggleDiaConfig;
+window.toggleModoDia = toggleModoDia;
+window.gerarPlanoSemanal = gerarPlanoSemanal;
+window.salvarPlanoSemanal = salvarPlanoSemanal;
+window.exportarPlanoGoogleCalendar = exportarPlanoGoogleCalendar;
+window.baixarPlanoCalendario = baixarPlanoCalendario;
+
+// Atualizar listas de treinos quando a página IA for aberta
+const observerIa = new MutationObserver(() => {
+    const pageIa = document.getElementById('page-ia');
+    if (pageIa && pageIa.classList.contains('active')) {
+        atualizarTodasListasTreinos();
+    }
+});
+
+const pageIaElement = document.getElementById('page-ia');
+if (pageIaElement) {
+    observerIa.observe(pageIaElement, { attributes: true, attributeFilter: ['class'] });
+}
+
+// Também atualizar quando salvar um treino novo (hook no saveWorkout existente)
+const originalSaveWorkout = saveWorkout;
+saveWorkout = function() {
+    originalSaveWorkout();
+    atualizarTodasListasTreinos();
+};
+
+const originalDeleteWorkout = deleteWorkout;
+deleteWorkout = function(i) {
+    originalDeleteWorkout(i);
+    atualizarTodasListasTreinos();
+};
 
     // ============ TUTORIAL DO EXERCÍCIO ============
     function openExerciseTutorial(idx) {

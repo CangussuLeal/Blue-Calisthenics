@@ -12,7 +12,6 @@
     <aside class="sidebar" id="sidebar">
         <div class="logo"><span class="logo-icon"></span> CALISTHENICS BLUE</div>
         
-        <!-- Perfil do usuário -->
         <div class="anime-coach" id="userProfile">
             <label for="profilePicInput" style="cursor:pointer;">
                 <img id="profilePic" src="https://i.imgur.com/3qK9J0t.png" alt="Sua foto" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23ddd%22/><text x=%2225%22 y=%2255%22 font-size=%2218%22 fill=%22%23999%22>Foto</text></svg>'">
@@ -23,9 +22,7 @@
             <small style="color:var(--text2); font-size:0.7rem;">Clique na foto ou no nome para editar</small>
         </div>
         <div style="text-align:center; margin-bottom:12px;">
-            <button class="btn btn-sm btn-outline" onclick="toggleTheme()" id="themeToggleBtn" style="width:100%;">
-                🌙 Tema Escuro
-            </button>
+            <button class="btn btn-sm btn-outline" onclick="toggleTheme()" id="themeToggleBtn" style="width:100%;">🌙 Tema Escuro</button>
         </div>
         <button class="nav-btn active" data-page="home" onclick="navigateTo('home', this)"><span class="icon">🏠</span> Dashboard</button>
         <button class="nav-btn" data-page="build" onclick="navigateTo('build', this)"><span class="icon">🔧</span> Montar Treino</button>
@@ -52,7 +49,6 @@
             </div>
             <div class="card mt-2"><h3>📅 Próximos Treinos</h3><div id="upcomingWorkouts" style="color:var(--text2);">Nenhum treino agendado.</div></div>
 
-            <!-- ========== CARROSSEL DE IMAGENS (ANIME) ========== -->
             <div class="card mt-2" style="padding:0; overflow:hidden;">
                 <div class="carrossel-container">
                     <div class="carrossel-counter" id="carrosselCounter">1 / 4</div>
@@ -85,7 +81,7 @@
                 </div>
                 <small style="display:block; text-align:center; padding:10px; color:var(--text2);">Wallpapers de anime para inspiração</small>
             </div>
-        </div><!-- FIM DO PAGE-HOME -->
+        </div>
 
         <!-- ========== BUILD ========== -->
         <div class="page" id="page-build">
@@ -143,9 +139,9 @@
                 </div>
             </div>
             <div class="card mt-2" id="savedWorkoutsSection"><h3>💾 Treinos Salvos</h3><div id="savedWorkoutsList" style="color:var(--text2);">Nenhum treino salvo ainda.</div></div>
-        </div><!-- FIM DO PAGE-BUILD -->
+        </div>
 
-        <!-- ========== AUTO TREINO (ÚNICA SEÇÃO CORRIGIDA) ========== -->
+        <!-- ========== AUTO TREINO ========== -->
         <div class="page" id="page-ia">
             <h2>🤖 Criação de Treino Automatizado</h2>
             
@@ -174,12 +170,12 @@
             <div class="card mt-2">
                 <h3>📅 Planejamento Semanal Inteligente</h3>
                 <p style="color:var(--text2); margin-bottom:12px;">
-                    Gere treinos para a semana inteira! Selecione os dias e grupos musculares desejados.
+                    Monte sua semana! Escolha entre gerar treinos por <strong>foco muscular</strong> ou usar <strong>treinos que você já criou</strong>.
                 </p>
                 
                 <div class="grid-2">
                     <div>
-                        <label for="planLevel">Nível dos Treinos:</label>
+                        <label for="planLevel">Nível (para focos automáticos):</label>
                         <select id="planLevel">
                             <option value="Iniciante">Iniciante</option>
                             <option value="Intermediário" selected>Intermediário</option>
@@ -188,181 +184,288 @@
                         </select>
                     </div>
                     <div>
-                        <label for="planExerciciosPorDia">Exercícios por dia:</label>
+                        <label for="planExerciciosPorDia">Exercícios por dia (automático):</label>
                         <input type="number" id="planExerciciosPorDia" value="5" min="3" max="10">
                     </div>
                 </div>
                 
                 <div style="margin-top:16px;">
-                    <label style="display:block; margin-bottom:8px; font-weight:600;">Selecione os Dias e Grupos:</label>
+                    <label style="display:block; margin-bottom:8px; font-weight:600;">🗓️ Selecione os Dias e configure cada um:</label>
                     <div class="semana-grid" style="display:grid; gap:12px;">
+                        
                         <!-- Segunda -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
-                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                                <input type="checkbox" id="dia-seg" class="dia-checkbox" data-dia="Segunda" style="width:18px; height:18px; cursor:pointer;">
-                                <label for="dia-seg" style="font-weight:700; cursor:pointer;">Segunda-feira</label>
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                <input type="checkbox" id="dia-seg" class="dia-checkbox" data-dia="seg" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
+                                <label for="dia-seg" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Segunda-feira</label>
                             </div>
-                            <select class="grupo-select" data-dia="Segunda" style="width:100%;" disabled>
-                                <option value="">-- Selecione o foco --</option>
-                                <option value="Costas">Costas (Pull)</option>
-                                <option value="Peitoral">Peitoral (Push)</option>
-                                <option value="Ombros">Ombros</option>
-                                <option value="Tríceps">Tríceps/Braços</option>
-                                <option value="Core">Core / Abdômen</option>
-                                <option value="Pernas">Pernas</option>
-                                <option value="Full Body">Corpo Inteiro</option>
-                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
-                                <option value="Front Lever">Front Lever</option>
-                                <option value="Planche">Planche</option>
-                                <option value="Handstand">Handstand</option>
-                                <option value="Human Flag">Human Flag</option>
-                            </select>
-                            <input type="time" class="horario-input" data-dia="Segunda" value="07:00" style="width:100%; margin-top:6px;" disabled>
+                            <div class="dia-config" data-dia="seg" style="display:none;">
+                                <select class="modo-select" data-dia="seg" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
+                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
+                                    <option value="treino">💾 Usar Treino Salvo</option>
+                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
+                                </select>
+                                <div class="foco-container" data-dia="seg">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares (selecione um ou mais):</label>
+                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Costas"> Costas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Peitoral"> Peitoral</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Ombros"> Ombros</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Tríceps"> Tríceps</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Core"> Core</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Pernas"> Pernas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Full Body"> Full Body</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Flexibilidade"> Flexibilidade</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Front Lever"> Front Lever</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Planche"> Planche</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Handstand"> Handstand</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Human Flag"> Human Flag</label>
+                                    </div>
+                                </div>
+                                <div class="treino-container" data-dia="seg" style="display:none;">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos (selecione um ou mais):</label>
+                                    <div class="treinos-saved-list" data-dia="seg" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
+                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
+                                    </div>
+                                </div>
+                                <input type="time" class="horario-input" data-dia="seg" value="07:00" style="width:100%; margin-top:6px;">
+                            </div>
                         </div>
                         
                         <!-- Terça -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
-                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                                <input type="checkbox" id="dia-ter" class="dia-checkbox" data-dia="Terça" style="width:18px; height:18px; cursor:pointer;">
-                                <label for="dia-ter" style="font-weight:700; cursor:pointer;">Terça-feira</label>
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                <input type="checkbox" id="dia-ter" class="dia-checkbox" data-dia="ter" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
+                                <label for="dia-ter" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Terça-feira</label>
                             </div>
-                            <select class="grupo-select" data-dia="Terça" style="width:100%;" disabled>
-                                <option value="">-- Selecione o foco --</option>
-                                <option value="Costas">Costas (Pull)</option>
-                                <option value="Peitoral">Peitoral (Push)</option>
-                                <option value="Ombros">Ombros</option>
-                                <option value="Tríceps">Tríceps/Braços</option>
-                                <option value="Core">Core / Abdômen</option>
-                                <option value="Pernas">Pernas</option>
-                                <option value="Full Body">Corpo Inteiro</option>
-                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
-                                <option value="Front Lever">Front Lever</option>
-                                <option value="Planche">Planche</option>
-                                <option value="Handstand">Handstand</option>
-                                <option value="Human Flag">Human Flag</option>
-                            </select>
-                            <input type="time" class="horario-input" data-dia="Terça" value="07:00" style="width:100%; margin-top:6px;" disabled>
+                            <div class="dia-config" data-dia="ter" style="display:none;">
+                                <select class="modo-select" data-dia="ter" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
+                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
+                                    <option value="treino">💾 Usar Treino Salvo</option>
+                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
+                                </select>
+                                <div class="foco-container" data-dia="ter">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
+                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Costas"> Costas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Peitoral"> Peitoral</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Ombros"> Ombros</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Tríceps"> Tríceps</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Core"> Core</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Pernas"> Pernas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Full Body"> Full Body</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Flexibilidade"> Flexibilidade</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Front Lever"> Front Lever</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Planche"> Planche</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Handstand"> Handstand</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Human Flag"> Human Flag</label>
+                                    </div>
+                                </div>
+                                <div class="treino-container" data-dia="ter" style="display:none;">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
+                                    <div class="treinos-saved-list" data-dia="ter" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
+                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
+                                    </div>
+                                </div>
+                                <input type="time" class="horario-input" data-dia="ter" value="07:00" style="width:100%; margin-top:6px;">
+                            </div>
                         </div>
                         
                         <!-- Quarta -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
-                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                                <input type="checkbox" id="dia-qua" class="dia-checkbox" data-dia="Quarta" style="width:18px; height:18px; cursor:pointer;">
-                                <label for="dia-qua" style="font-weight:700; cursor:pointer;">Quarta-feira</label>
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                <input type="checkbox" id="dia-qua" class="dia-checkbox" data-dia="qua" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
+                                <label for="dia-qua" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Quarta-feira</label>
                             </div>
-                            <select class="grupo-select" data-dia="Quarta" style="width:100%;" disabled>
-                                <option value="">-- Selecione o foco --</option>
-                                <option value="Costas">Costas (Pull)</option>
-                                <option value="Peitoral">Peitoral (Push)</option>
-                                <option value="Ombros">Ombros</option>
-                                <option value="Tríceps">Tríceps/Braços</option>
-                                <option value="Core">Core / Abdômen</option>
-                                <option value="Pernas">Pernas</option>
-                                <option value="Full Body">Corpo Inteiro</option>
-                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
-                                <option value="Front Lever">Front Lever</option>
-                                <option value="Planche">Planche</option>
-                                <option value="Handstand">Handstand</option>
-                                <option value="Human Flag">Human Flag</option>
-                            </select>
-                            <input type="time" class="horario-input" data-dia="Quarta" value="07:00" style="width:100%; margin-top:6px;" disabled>
+                            <div class="dia-config" data-dia="qua" style="display:none;">
+                                <select class="modo-select" data-dia="qua" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
+                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
+                                    <option value="treino">💾 Usar Treino Salvo</option>
+                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
+                                </select>
+                                <div class="foco-container" data-dia="qua">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
+                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Costas"> Costas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Peitoral"> Peitoral</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Ombros"> Ombros</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Tríceps"> Tríceps</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Core"> Core</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Pernas"> Pernas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Full Body"> Full Body</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Flexibilidade"> Flexibilidade</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Front Lever"> Front Lever</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Planche"> Planche</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Handstand"> Handstand</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Human Flag"> Human Flag</label>
+                                    </div>
+                                </div>
+                                <div class="treino-container" data-dia="qua" style="display:none;">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
+                                    <div class="treinos-saved-list" data-dia="qua" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
+                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
+                                    </div>
+                                </div>
+                                <input type="time" class="horario-input" data-dia="qua" value="07:00" style="width:100%; margin-top:6px;">
+                            </div>
                         </div>
                         
                         <!-- Quinta -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
-                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                                <input type="checkbox" id="dia-qui" class="dia-checkbox" data-dia="Quinta" style="width:18px; height:18px; cursor:pointer;">
-                                <label for="dia-qui" style="font-weight:700; cursor:pointer;">Quinta-feira</label>
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                <input type="checkbox" id="dia-qui" class="dia-checkbox" data-dia="qui" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
+                                <label for="dia-qui" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Quinta-feira</label>
                             </div>
-                            <select class="grupo-select" data-dia="Quinta" style="width:100%;" disabled>
-                                <option value="">-- Selecione o foco --</option>
-                                <option value="Costas">Costas (Pull)</option>
-                                <option value="Peitoral">Peitoral (Push)</option>
-                                <option value="Ombros">Ombros</option>
-                                <option value="Tríceps">Tríceps/Braços</option>
-                                <option value="Core">Core / Abdômen</option>
-                                <option value="Pernas">Pernas</option>
-                                <option value="Full Body">Corpo Inteiro</option>
-                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
-                                <option value="Front Lever">Front Lever</option>
-                                <option value="Planche">Planche</option>
-                                <option value="Handstand">Handstand</option>
-                                <option value="Human Flag">Human Flag</option>
-                            </select>
-                            <input type="time" class="horario-input" data-dia="Quinta" value="07:00" style="width:100%; margin-top:6px;" disabled>
+                            <div class="dia-config" data-dia="qui" style="display:none;">
+                                <select class="modo-select" data-dia="qui" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
+                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
+                                    <option value="treino">💾 Usar Treino Salvo</option>
+                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
+                                </select>
+                                <div class="foco-container" data-dia="qui">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
+                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Costas"> Costas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Peitoral"> Peitoral</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Ombros"> Ombros</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Tríceps"> Tríceps</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Core"> Core</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Pernas"> Pernas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Full Body"> Full Body</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Flexibilidade"> Flexibilidade</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Front Lever"> Front Lever</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Planche"> Planche</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Handstand"> Handstand</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Human Flag"> Human Flag</label>
+                                    </div>
+                                </div>
+                                <div class="treino-container" data-dia="qui" style="display:none;">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
+                                    <div class="treinos-saved-list" data-dia="qui" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
+                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
+                                    </div>
+                                </div>
+                                <input type="time" class="horario-input" data-dia="qui" value="07:00" style="width:100%; margin-top:6px;">
+                            </div>
                         </div>
                         
                         <!-- Sexta -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
-                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                                <input type="checkbox" id="dia-sex" class="dia-checkbox" data-dia="Sexta" style="width:18px; height:18px; cursor:pointer;">
-                                <label for="dia-sex" style="font-weight:700; cursor:pointer;">Sexta-feira</label>
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                <input type="checkbox" id="dia-sex" class="dia-checkbox" data-dia="sex" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
+                                <label for="dia-sex" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Sexta-feira</label>
                             </div>
-                            <select class="grupo-select" data-dia="Sexta" style="width:100%;" disabled>
-                                <option value="">-- Selecione o foco --</option>
-                                <option value="Costas">Costas (Pull)</option>
-                                <option value="Peitoral">Peitoral (Push)</option>
-                                <option value="Ombros">Ombros</option>
-                                <option value="Tríceps">Tríceps/Braços</option>
-                                <option value="Core">Core / Abdômen</option>
-                                <option value="Pernas">Pernas</option>
-                                <option value="Full Body">Corpo Inteiro</option>
-                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
-                                <option value="Front Lever">Front Lever</option>
-                                <option value="Planche">Planche</option>
-                                <option value="Handstand">Handstand</option>
-                                <option value="Human Flag">Human Flag</option>
-                            </select>
-                            <input type="time" class="horario-input" data-dia="Sexta" value="07:00" style="width:100%; margin-top:6px;" disabled>
+                            <div class="dia-config" data-dia="sex" style="display:none;">
+                                <select class="modo-select" data-dia="sex" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
+                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
+                                    <option value="treino">💾 Usar Treino Salvo</option>
+                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
+                                </select>
+                                <div class="foco-container" data-dia="sex">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
+                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Costas"> Costas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Peitoral"> Peitoral</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Ombros"> Ombros</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Tríceps"> Tríceps</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Core"> Core</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Pernas"> Pernas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Full Body"> Full Body</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Flexibilidade"> Flexibilidade</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Front Lever"> Front Lever</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Planche"> Planche</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Handstand"> Handstand</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Human Flag"> Human Flag</label>
+                                    </div>
+                                </div>
+                                <div class="treino-container" data-dia="sex" style="display:none;">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
+                                    <div class="treinos-saved-list" data-dia="sex" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
+                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
+                                    </div>
+                                </div>
+                                <input type="time" class="horario-input" data-dia="sex" value="07:00" style="width:100%; margin-top:6px;">
+                            </div>
                         </div>
                         
                         <!-- Sábado -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
-                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                                <input type="checkbox" id="dia-sab" class="dia-checkbox" data-dia="Sábado" style="width:18px; height:18px; cursor:pointer;">
-                                <label for="dia-sab" style="font-weight:700; cursor:pointer;">Sábado</label>
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                <input type="checkbox" id="dia-sab" class="dia-checkbox" data-dia="sab" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
+                                <label for="dia-sab" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Sábado</label>
                             </div>
-                            <select class="grupo-select" data-dia="Sábado" style="width:100%;" disabled>
-                                <option value="">-- Selecione o foco --</option>
-                                <option value="Costas">Costas (Pull)</option>
-                                <option value="Peitoral">Peitoral (Push)</option>
-                                <option value="Ombros">Ombros</option>
-                                <option value="Tríceps">Tríceps/Braços</option>
-                                <option value="Core">Core / Abdômen</option>
-                                <option value="Pernas">Pernas</option>
-                                <option value="Full Body">Corpo Inteiro</option>
-                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
-                                <option value="Front Lever">Front Lever</option>
-                                <option value="Planche">Planche</option>
-                                <option value="Handstand">Handstand</option>
-                                <option value="Human Flag">Human Flag</option>
-                            </select>
-                            <input type="time" class="horario-input" data-dia="Sábado" value="09:00" style="width:100%; margin-top:6px;" disabled>
+                            <div class="dia-config" data-dia="sab" style="display:none;">
+                                <select class="modo-select" data-dia="sab" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
+                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
+                                    <option value="treino">💾 Usar Treino Salvo</option>
+                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
+                                </select>
+                                <div class="foco-container" data-dia="sab">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
+                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Costas"> Costas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Peitoral"> Peitoral</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Ombros"> Ombros</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Tríceps"> Tríceps</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Core"> Core</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Pernas"> Pernas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Full Body"> Full Body</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Flexibilidade"> Flexibilidade</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Front Lever"> Front Lever</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Planche"> Planche</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Handstand"> Handstand</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Human Flag"> Human Flag</label>
+                                    </div>
+                                </div>
+                                <div class="treino-container" data-dia="sab" style="display:none;">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
+                                    <div class="treinos-saved-list" data-dia="sab" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
+                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
+                                    </div>
+                                </div>
+                                <input type="time" class="horario-input" data-dia="sab" value="09:00" style="width:100%; margin-top:6px;">
+                            </div>
                         </div>
                         
                         <!-- Domingo -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:12px;">
-                            <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
-                                <input type="checkbox" id="dia-dom" class="dia-checkbox" data-dia="Domingo" style="width:18px; height:18px; cursor:pointer;">
-                                <label for="dia-dom" style="font-weight:700; cursor:pointer;">Domingo</label>
+                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
+                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                <input type="checkbox" id="dia-dom" class="dia-checkbox" data-dia="dom" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
+                                <label for="dia-dom" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Domingo</label>
                             </div>
-                            <select class="grupo-select" data-dia="Domingo" style="width:100%;" disabled>
-                                <option value="">-- Selecione o foco --</option>
-                                <option value="Costas">Costas (Pull)</option>
-                                <option value="Peitoral">Peitoral (Push)</option>
-                                <option value="Ombros">Ombros</option>
-                                <option value="Tríceps">Tríceps/Braços</option>
-                                <option value="Core">Core / Abdômen</option>
-                                <option value="Pernas">Pernas</option>
-                                <option value="Full Body">Corpo Inteiro</option>
-                                <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
-                                <option value="Front Lever">Front Lever</option>
-                                <option value="Planche">Planche</option>
-                                <option value="Handstand">Handstand</option>
-                                <option value="Human Flag">Human Flag</option>
-                            </select>
-                            <input type="time" class="horario-input" data-dia="Domingo" value="09:00" style="width:100%; margin-top:6px;" disabled>
+                            <div class="dia-config" data-dia="dom" style="display:none;">
+                                <select class="modo-select" data-dia="dom" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
+                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
+                                    <option value="treino">💾 Usar Treino Salvo</option>
+                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
+                                </select>
+                                <div class="foco-container" data-dia="dom">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
+                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Costas"> Costas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Peitoral"> Peitoral</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Ombros"> Ombros</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Tríceps"> Tríceps</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Core"> Core</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Pernas"> Pernas</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Full Body"> Full Body</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Flexibilidade"> Flexibilidade</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Front Lever"> Front Lever</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Planche"> Planche</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Handstand"> Handstand</label>
+                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Human Flag"> Human Flag</label>
+                                    </div>
+                                </div>
+                                <div class="treino-container" data-dia="dom" style="display:none;">
+                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
+                                    <div class="treinos-saved-list" data-dia="dom" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
+                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
+                                    </div>
+                                </div>
+                                <input type="time" class="horario-input" data-dia="dom" value="09:00" style="width:100%; margin-top:6px;">
+                            </div>
                         </div>
+                        
                     </div>
                 </div>
                 
