@@ -539,24 +539,7 @@
             
         </section><!-- /progress -->
 
-        <!-- DEBUG - Remover depois -->
-<div id="debugInfo" style="position:fixed; bottom:10px; left:10px; background:black; color:lime; padding:10px; font-size:12px; z-index:9999; max-width:300px; border-radius:8px;">
-    Carregando diagnóstico...
-</div>
-<script>
-    setTimeout(() => {
-        const debug = document.getElementById('debugInfo');
-        debug.innerHTML = `
-            <b>🧪 Diagnóstico:</b><br>
-            CSS carregados: ${document.styleSheets.length}<br>
-            Body classes: ${document.body.className}<br>
-            Sidebar: ${document.getElementById('sidebar') ? '✅' : '❌'}<br>
-            Perfil: ${document.getElementById('profileName')?.textContent || '❌'}<br>
-            Page ativa: ${document.querySelector('.page.active')?.id || '❌'}<br>
-            exerciseDB: ${typeof exerciseDB !== 'undefined' ? '✅ ' + exerciseDB.length : '❌'}
-        `;
-    }, 1000);
-</script>
+        
         
     </main>
 
