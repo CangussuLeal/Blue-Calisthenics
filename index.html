@@ -3,92 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calisthenics Blue - Monte Seus Treinos</title>
+    <title>Calisthenics Blue - Seu App de Treinos</title>
+    
+    <!-- Fontes -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- CSS Principal -->
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button class="mobile-menu-btn" onclick="toggleSidebar()" title="Menu">☰</button>
+    
+    <!-- ==================== HEADER MOBILE ==================== -->
+    <header class="mobile-header">
+        <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <span class="mobile-logo">CALISTHENICS BLUE</span>
+        <button class="theme-toggle-mobile" onclick="toggleTheme()" aria-label="Alternar tema">
+            🌙
+        </button>
+    </header>
 
+    <!-- ==================== SIDEBAR ==================== -->
     <aside class="sidebar" id="sidebar">
-        <div class="logo"><span class="logo-icon"></span> CALISTHENICS BLUE</div>
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon"></span>
+                <span class="logo-text">CALISTHENICS BLUE</span>
+            </div>
+            <button class="close-sidebar" onclick="toggleSidebar()">✕</button>
+        </div>
         
-        <div class="anime-coach" id="userProfile">
-            <label for="profilePicInput" style="cursor:pointer;">
-                <img id="profilePic" src="https://i.imgur.com/3qK9J0t.png" alt="Sua foto" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23ddd%22/><text x=%2225%22 y=%2255%22 font-size=%2218%22 fill=%22%23999%22>Foto</text></svg>'">
-            </label>
-            <input type="file" id="profilePicInput" accept="image/*" style="display:none;" onchange="updateProfilePic(event)">
-            <h3 id="profileName" onclick="editProfileName()" style="cursor:pointer;">AKIRA</h3>
-            <p id="profileTitle">Especialista em Pull</p>
-            <small style="color:var(--text2); font-size:0.7rem;">Clique na foto ou no nome para editar</small>
-        </div>
-        <div style="text-align:center; margin-bottom:12px;">
-            <button class="btn btn-sm btn-outline" onclick="toggleTheme()" id="themeToggleBtn" style="width:100%;">🌙 Tema Escuro</button>
-        </div>
-        <button class="nav-btn active" data-page="home" onclick="navigateTo('home', this)"><span class="icon">🏠</span> Dashboard</button>
-        <button class="nav-btn" data-page="build" onclick="navigateTo('build', this)"><span class="icon">🔧</span> Montar Treino</button>
-        <button class="nav-btn" data-page="ia" onclick="navigateTo('ia', this)"><span class="icon">🤖</span> Auto Treino</button>
-        <button class="nav-btn" data-page="workout" onclick="navigateTo('workout', this)"><span class="icon">⏱️</span> Treinar Agora</button>
-        <button class="nav-btn" data-page="progress" onclick="navigateTo('progress', this)"><span class="icon">📊</span> Progresso</button>
-        <div class="xp-badge">
-            <div class="level">NÍVEL <span id="userLevel">1</span></div>
-            <div class="xp-value"><span id="userXP">0</span> XP</div>
-            <div class="xp-bar"><div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div></div>
-            <div style="font-size:0.7rem;color:var(--text2);margin-top:4px;"><span id="xpNext">100</span> XP para nível <span id="xpNextLevel">2</span></div>
+        <!-- Perfil do Usuário -->
+        <section class="user-profile" id="userProfile">
+            <div class="profile-avatar-wrapper">
+                <label for="profilePicInput" class="avatar-label">
+                    <img id="profilePic" 
+                         src="https://i.imgur.com/3qK9J0t.png" 
+                         alt="Foto de perfil" 
+                         class="profile-avatar"
+                         onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22><rect width=%22100%22 height=%22100%22 fill=%22%23333%22/><text x=%2225%22 y=%2255%22 font-size=%2218%22 fill=%22%23999%22>📷</text></svg>'">
+                    <div class="avatar-overlay">📷</div>
+                </label>
+                <input type="file" id="profilePicInput" accept="image/*" style="display:none;" onchange="updateProfilePic(event)">
+            </div>
+            
+            <h3 id="profileName" onclick="editProfileName()" class="profile-name">AKIRA</h3>
+            <p id="profileTitle" class="profile-title">Especialista em Pull</p>
+            <small class="profile-hint">Clique na foto ou nome para editar</small>
+        </section>
+        
+        <!-- Navegação -->
+        <nav class="sidebar-nav">
+            <button class="nav-btn active" data-page="home" onclick="navigateTo('home', this)">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">Dashboard</span>
+            </button>
+            <button class="nav-btn" data-page="build" onclick="navigateTo('build', this)">
+                <span class="nav-icon">🔧</span>
+                <span class="nav-text">Montar Treino</span>
+            </button>
+            <button class="nav-btn" data-page="ia" onclick="navigateTo('ia', this)">
+                <span class="nav-icon">🤖</span>
+                <span class="nav-text">Auto Treino</span>
+            </button>
+            <button class="nav-btn" data-page="workout" onclick="navigateTo('workout', this)">
+                <span class="nav-icon">⏱️</span>
+                <span class="nav-text">Treinar Agora</span>
+            </button>
+            <button class="nav-btn" data-page="progress" onclick="navigateTo('progress', this)">
+                <span class="nav-icon">📊</span>
+                <span class="nav-text">Progresso</span>
+            </button>
+        </nav>
+        
+        <!-- Tema -->
+        <button class="theme-toggle-sidebar" onclick="toggleTheme()" id="themeToggleBtn">
+            🌙 Tema Escuro
+        </button>
+        
+        <!-- XP Card -->
+        <div class="xp-card">
+            <div class="xp-header">
+                <span class="xp-label">NÍVEL <strong id="userLevel">1</strong></span>
+                <span class="xp-value"><strong id="userXP">0</strong> XP</span>
+            </div>
+            <div class="xp-bar">
+                <div class="xp-bar-fill" id="xpBarFill" style="width:0%"></div>
+            </div>
+            <div class="xp-next">
+                <span id="xpNext">100</span> XP para nível <span id="xpNextLevel">2</span>
+            </div>
         </div>
     </aside>
 
-    <main class="main" id="mainContent">
-        <!-- ========== HOME ========== -->
-        <div class="page active" id="page-home">
-            <h2>🏠 Dashboard</h2>
-            <div class="grid-2">
-                <div class="card"><h3>📋 Treinos Salvos</h3><p id="savedWorkoutsCount" style="font-size:2rem;font-weight:800;color:var(--primary-light);">0</p><p style="color:var(--text2);">Treinos no seu plano</p><button class="btn btn-primary mt-2" onclick="navigateTo('build', document.querySelector('[data-page=build]'))">➕ Criar Novo Treino</button></div>
-                <div class="card"><h3>🔥 Streak Atual</h3><p style="font-size:2rem;font-weight:800;color:var(--gold);" id="streakDays">0</p><p style="color:var(--text2);">Dias consecutivos treinando</p><button class="btn btn-outline btn-sm mt-2" onclick="registerTrainingDay()">✅ Registrar Treino Hoje</button></div>
-                <div class="card"><h3>🏆 Total de Exercícios</h3><p style="font-size:2rem;font-weight:800;color:var(--xp);" id="totalExercisesDone">0</p><p style="color:var(--text2);">Exercícios concluídos</p></div>
-                <div class="card"><h3>🎯 Nível do Atleta</h3><p style="font-size:2rem;font-weight:800;color:var(--accent);" id="athleteLevel">Iniciante</p><p style="color:var(--text2);">Baseado no seu XP total</p></div>
-            </div>
-            <div class="card mt-2"><h3>📅 Próximos Treinos</h3><div id="upcomingWorkouts" style="color:var(--text2);">Nenhum treino agendado.</div></div>
+    <!-- Overlay para fechar sidebar no mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-            <div class="card mt-2" style="padding:0; overflow:hidden;">
-                <div class="carrossel-container">
-                    <div class="carrossel-counter" id="carrosselCounter">1 / 4</div>
-                    <div class="carrossel-slides" id="carrosselSlides">
-                        <div class="carrossel-slide active">
-                            <img src="https://images3.alphacoders.com/132/thumbbig-1323165.webp" alt="Anime treino 1">
-                            <div class="carrossel-overlay"><h3>Foco absoluto</h3><p>Seu treino, sua jornada</p></div>
-                        </div>
-                        <div class="carrossel-slide">
-                            <img src="https://images.alphacoders.com/135/thumbbig-1352220.webp" alt="Anime treino 2">
-                            <div class="carrossel-overlay"><h3>Além dos limites</h3><p>Calistenia é arte</p></div>
-                        </div>
-                        <div class="carrossel-slide">
-                            <img src="https://images8.alphacoders.com/135/thumbbig-1352217.webp" alt="Anime treino 3">
-                            <div class="carrossel-overlay"><h3>Disciplina diária</h3><p>Evolua um pouco a cada dia</p></div>
-                        </div>
-                        <div class="carrossel-slide">
-                            <img src="https://images2.alphacoders.com/135/thumbbig-1359482.webp" alt="Anime treino 4">
-                            <div class="carrossel-overlay"><h3>Espírito inquebrável</h3><p>Nunca desista</p></div>
+    <!-- ==================== CONTEÚDO PRINCIPAL ==================== -->
+    <main class="main-content" id="mainContent">
+        
+        <!-- ==================== DASHBOARD ==================== -->
+        <section class="page active" id="page-home">
+            
+            <!-- Hero Banner -->
+            <div class="hero-banner">
+                <div class="hero-slider" id="heroSlider">
+                    <div class="hero-slide active" style="background-image: url('https://images3.alphacoders.com/132/thumbbig-1323165.webp')">
+                        <div class="hero-content">
+                            <h1 class="hero-title">Foco Absoluto</h1>
+                            <p class="hero-subtitle">Seu treino, sua jornada. Evolua a cada dia.</p>
                         </div>
                     </div>
-                    <button class="carrossel-btn carrossel-prev" onclick="mudarSlide(-1)">❮</button>
-                    <button class="carrossel-btn carrossel-next" onclick="mudarSlide(1)">❯</button>
-                    <div class="carrossel-progress" id="carrosselProgress">
-                        <div class="progress-bar active" onclick="slideAtual(0)"><div class="progress-bar-fill" style="width:100%"></div></div>
-                        <div class="progress-bar" onclick="slideAtual(1)"><div class="progress-bar-fill" style="width:0%"></div></div>
-                        <div class="progress-bar" onclick="slideAtual(2)"><div class="progress-bar-fill" style="width:0%"></div></div>
-                        <div class="progress-bar" onclick="slideAtual(3)"><div class="progress-bar-fill" style="width:0%"></div></div>
+                    <div class="hero-slide" style="background-image: url('https://images.alphacoders.com/135/thumbbig-1352220.webp')">
+                        <div class="hero-content">
+                            <h1 class="hero-title">Além dos Limites</h1>
+                            <p class="hero-subtitle">Calistenia é arte. Domine seu corpo.</p>
+                        </div>
+                    </div>
+                    <div class="hero-slide" style="background-image: url('https://images8.alphacoders.com/135/thumbbig-1352217.webp')">
+                        <div class="hero-content">
+                            <h1 class="hero-title">Disciplina Diária</h1>
+                            <p class="hero-subtitle">Pequenos passos, grandes resultados.</p>
+                        </div>
+                    </div>
+                    <div class="hero-slide" style="background-image: url('https://images2.alphacoders.com/135/thumbbig-1359482.webp')">
+                        <div class="hero-content">
+                            <h1 class="hero-title">Espírito Inquebrável</h1>
+                            <p class="hero-subtitle">Nunca desista dos seus objetivos.</p>
+                        </div>
                     </div>
                 </div>
-                <small style="display:block; text-align:center; padding:10px; color:var(--text2);">Wallpapers de anime para inspiração</small>
+                
+                <button class="hero-nav hero-prev" onclick="mudarSlide(-1)">❮</button>
+                <button class="hero-nav hero-next" onclick="mudarSlide(1)">❯</button>
+                
+                <div class="hero-indicators">
+                    <span class="hero-dot active" onclick="slideAtual(0)"></span>
+                    <span class="hero-dot" onclick="slideAtual(1)"></span>
+                    <span class="hero-dot" onclick="slideAtual(2)"></span>
+                    <span class="hero-dot" onclick="slideAtual(3)"></span>
+                </div>
+                
+                <div class="hero-counter" id="carrosselCounter">1 / 4</div>
             </div>
-        </div>
+            
+            <!-- Cards de Status -->
+            <div class="stats-grid">
+                <article class="stat-card">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="savedWorkoutsCount">0</span>
+                        <span class="stat-label">Treinos Salvos</span>
+                    </div>
+                    <button class="stat-action" onclick="navigateTo('build', document.querySelector('[data-page=build]'))">
+                        ➕ Criar Novo
+                    </button>
+                </article>
+                
+                <article class="stat-card">
+                    <div class="stat-icon">🔥</div>
+                    <div class="stat-info">
+                        <span class="stat-value highlight" id="streakDays">0</span>
+                        <span class="stat-label">Dias de Streak</span>
+                    </div>
+                    <button class="stat-action" onclick="registerTrainingDay()">
+                        ✅ Registrar Hoje
+                    </button>
+                </article>
+                
+                <article class="stat-card">
+                    <div class="stat-icon">🏆</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="totalExercisesDone">0</span>
+                        <span class="stat-label">Exercícios Feitos</span>
+                    </div>
+                </article>
+                
+                <article class="stat-card">
+                    <div class="stat-icon">🎯</div>
+                    <div class="stat-info">
+                        <span class="stat-value highlight" id="athleteLevel">Iniciante</span>
+                        <span class="stat-label">Nível do Atleta</span>
+                    </div>
+                </article>
+            </div>
+            
+            <!-- Próximos Treinos -->
+            <section class="card upcoming-section">
+                <h2 class="card-title">📅 Próximos Treinos</h2>
+                <div id="upcomingWorkouts" class="upcoming-list">
+                    <p class="empty-state">Nenhum treino agendado ainda.</p>
+                </div>
+            </section>
+            
+        </section><!-- /home -->
 
-        <!-- ========== BUILD ========== -->
-        <div class="page" id="page-build">
-            <h2>🔧 Montar Treino Manual</h2>
-            <div class="grid-2">
+        <!-- ==================== MONTAR TREINO ==================== -->
+        <section class="page" id="page-build">
+            <h2 class="page-title">🔧 Montar Seu Treino</h2>
+            
+            <div class="build-grid">
                 <div class="card">
-                    <h3>📚 Biblioteca de Exercícios</h3>
+                    <h3 class="card-title">📚 Biblioteca de Exercícios</h3>
+                    
                     <div class="filter-tags" id="filterTags">
                         <button class="filter-tag active" data-filter="all">Todos</button>
                         <button class="filter-tag" data-filter="Pull">Pull</button>
@@ -102,79 +224,142 @@
                         <button class="filter-tag" data-filter="Handstand">Handstand</button>
                         <button class="filter-tag" data-filter="Human Flag">Human Flag</button>
                         <button class="filter-tag" data-filter="Corpo Inteiro">Corpo Inteiro</button>
-                        <button class="filter-tag" data-filter="Alongamento"> Alongamento</button>
-                        <button class="filter-tag" data-filter="Yoga"> Yoga</button>
-                        <button class="filter-tag" data-filter="Aquecimento"> Aquecimento</button>
-                        <button class="filter-tag" data-filter="Resfriamento"> Resfriamento</button>
+                        <button class="filter-tag" data-filter="Alongamento">Alongamento</button>
+                        <button class="filter-tag" data-filter="Yoga">Yoga</button>
+                        <button class="filter-tag" data-filter="Aquecimento">Aquecimento</button>
+                        <button class="filter-tag" data-filter="Resfriamento">Resfriamento</button>
                     </div>
-                    <div class="search-bar"><input type="text" id="exerciseSearch" placeholder="🔍 Pesquisar exercícios..." oninput="filterExercises()"></div>
-                    <div style="max-height:450px;overflow-y:auto;" id="exerciseLibrary"></div>
+                    
+                    <div class="search-box">
+                        <input type="text" id="exerciseSearch" placeholder="🔍 Pesquisar exercícios..." oninput="filterExercises()">
+                    </div>
+                    
+                    <div class="exercise-library" id="exerciseLibrary"></div>
                 </div>
+                
                 <div class="card">
-                    <h3>🏗️ Seu Treino (arraste ou clique)</h3>
-                    <div class="drop-zone" id="dropZone" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
-                        <div class="placeholder" id="dropPlaceholder">Arraste exercícios ou clique neles</div>
+                    <h3 class="card-title">🏗️ Seu Treino</h3>
+                    <p class="card-hint">Arraste exercícios ou clique no botão ➕</p>
+                    
+                    <div class="drop-zone" id="dropZone" 
+                         ondragover="handleDragOver(event)" 
+                         ondragleave="handleDragLeave(event)" 
+                         ondrop="handleDrop(event)">
+                        <div class="drop-placeholder" id="dropPlaceholder">
+                            <span class="placeholder-icon">🎯</span>
+                            <p>Arraste os exercícios aqui</p>
+                        </div>
                         <div id="chosenExercises"></div>
                     </div>
-                    <div class="mt-2"><label for="workoutName">Nome do Treino:</label><input type="text" id="workoutName" placeholder="Ex: Treino de Costas Intenso"></div>
-                    <div class="flex gap-2 mt-2 flex-wrap">
-                        <button class="btn btn-primary" id="saveWorkoutBtn" onclick="saveWorkout()">💾 Salvar Treino</button>
-                        <button class="btn btn-outline btn-sm" id="cancelEditBtn" onclick="cancelEditWorkout()" style="display:none;">✖ Cancelar Edição</button>
-                        <button class="btn btn-outline" onclick="exportToGoogleCalendar()">📅 Google Agenda</button>
-                        <button class="btn btn-danger btn-sm" onclick="clearWorkout()">🗑️ Limpar</button>
+                    
+                    <div class="input-group">
+                        <label for="workoutName">Nome do Treino:</label>
+                        <input type="text" id="workoutName" placeholder="Ex: Treino de Costas Intenso">
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="saveWorkoutBtn" onclick="saveWorkout()">
+                            💾 Salvar Treino
+                        </button>
+                        <button class="btn btn-outline" id="cancelEditBtn" onclick="cancelEditWorkout()" style="display:none;">
+                            ✖ Cancelar Edição
+                        </button>
+                        <button class="btn btn-outline" onclick="exportToGoogleCalendar()">
+                            📅 Google Agenda
+                        </button>
+                        <button class="btn btn-danger" onclick="clearWorkout()">
+                            🗑️ Limpar
+                        </button>
                     </div>
                 </div>
             </div>
-            <div class="card mt-2" id="workoutAnalysisCard" style="display:none;">
-                <h3>📊 Análise do Treino</h3>
-                <div style="display:flex; align-items:center; gap:20px; flex-wrap:wrap;">
-                    <div style="position:relative; width:120px; height:120px;">
-                        <canvas id="gaugeCanvas" width="120" height="120"></canvas>
-                        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); text-align:center;">
-                            <span id="gaugeScore" style="font-size:2rem; font-weight:800; color:var(--text);">0</span>
-                            <span style="font-size:0.7rem; color:var(--text2);">/100</span>
-                        </div>
-                    </div>
-                    <div id="analysisFeedback" style="flex:1; min-width:200px;"></div>
-                </div>
-            </div>
-            <div class="card mt-2" id="savedWorkoutsSection"><h3>💾 Treinos Salvos</h3><div id="savedWorkoutsList" style="color:var(--text2);">Nenhum treino salvo ainda.</div></div>
-        </div>
-
-        <!-- ========== AUTO TREINO ========== -->
-        <div class="page" id="page-ia">
-            <h2>🤖 Criação de Treino Automatizado</h2>
             
-            <!-- GERADOR DE TREINO ÚNICO -->
+            <section class="card saved-section">
+                <h3 class="card-title">💾 Treinos Salvos</h3>
+                <div id="savedWorkoutsList" class="saved-list">
+                    <p class="empty-state">Nenhum treino salvo ainda.</p>
+                </div>
+            </section>
+            
+        </section><!-- /build -->
+
+        <!-- ==================== AUTO TREINO (IA) ==================== -->
+        <section class="page" id="page-ia">
+            <h2 class="page-title">🤖 Criação Automatizada</h2>
+            
+            <!-- Gerador de Treino Único -->
             <div class="card">
-                <h3>🎯 Gerar Um Treino</h3>
-                <div class="grid-2">
-                    <div><label for="iaLevel">Seu Nível:</label><select id="iaLevel"><option value="Iniciante">Iniciante</option><option value="Intermediário" selected>Intermediário</option><option value="Avançado">Avançado</option><option value="Elite">Elite</option></select></div>
-                    <div><label for="iaFocus">Foco do Treino:</label><select id="iaFocus"><option value="Costas">Costas (Pull)</option><option value="Peitoral">Peitoral (Push)</option><option value="Ombros">Ombros</option><option value="Tríceps">Tríceps</option><option value="Core">Core / Abdômen</option><option value="Pernas">Pernas</option><option value="Full Body">Corpo Inteiro</option><option value="Flexibilidade">Flexibilidade/Mobilidade</option><option value="Front Lever">Front Lever</option><option value="Planche">Planche</option><option value="Handstand">Handstand</option><option value="Human Flag">Human Flag</option></select></div>
-                    <div><label for="iaNumExercises">Nº de Exercícios:</label><input type="number" id="iaNumExercises" value="5" min="3" max="10"></div>
+                <h3 class="card-title">🎯 Gerar Um Treino</h3>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="iaLevel">Seu Nível:</label>
+                        <select id="iaLevel">
+                            <option value="Iniciante">Iniciante</option>
+                            <option value="Intermediário" selected>Intermediário</option>
+                            <option value="Avançado">Avançado</option>
+                            <option value="Elite">Elite</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="iaFocus">Foco do Treino:</label>
+                        <select id="iaFocus">
+                            <option value="Costas">Costas (Pull)</option>
+                            <option value="Peitoral">Peitoral (Push)</option>
+                            <option value="Ombros">Ombros</option>
+                            <option value="Tríceps">Tríceps</option>
+                            <option value="Core">Core / Abdômen</option>
+                            <option value="Pernas">Pernas</option>
+                            <option value="Full Body">Corpo Inteiro</option>
+                            <option value="Flexibilidade">Flexibilidade/Mobilidade</option>
+                            <option value="Front Lever">Front Lever</option>
+                            <option value="Planche">Planche</option>
+                            <option value="Handstand">Handstand</option>
+                            <option value="Human Flag">Human Flag</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="iaNumExercises">Nº de Exercícios:</label>
+                        <input type="number" id="iaNumExercises" value="5" min="3" max="10">
+                    </div>
                 </div>
-                <button class="btn btn-primary btn-lg mt-2" onclick="generateIATraining()">✨ Gerar Treino</button>
-                <button class="btn btn-outline btn-lg mt-2" onclick="analyzeAndGenerate()">🧠 Analisar Lacunas e Gerar</button>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary btn-lg" onclick="generateIATraining()">
+                        ✨ Gerar Treino
+                    </button>
+                    <button class="btn btn-outline btn-lg" onclick="analyzeAndGenerate()">
+                        🧠 Analisar Lacunas e Gerar
+                    </button>
+                </div>
             </div>
             
-            <div class="card" id="iaResultCard" style="display:none;">
-                <h3>📋 Treino Gerado</h3>
-                <div id="iaResult"></div>
-                <div class="flex gap-2 mt-2 flex-wrap">
-                    <button class="btn btn-success" onclick="useIATraining()">✅ Usar Este Treino</button>
-                    <button class="btn btn-outline" onclick="exportIAToCalendar()">📅 Google Agenda</button>
+            <!-- Resultado IA -->
+            <div class="card result-card" id="iaResultCard" style="display:none;">
+                <h3 class="card-title">📋 Treino Gerado</h3>
+                <div id="iaResult" class="result-content"></div>
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="useIATraining()">
+                        ✅ Usar Este Treino
+                    </button>
+                    <button class="btn btn-outline" onclick="exportIAToCalendar()">
+                        📅 Google Agenda
+                    </button>
                 </div>
             </div>
-
-            <!-- ========== PLANEJAMENTO SEMANAL INTELIGENTE ========== -->
-            <div class="card mt-2">
-                <h3>📅 Planejamento Semanal Inteligente</h3>
-                <p style="color:var(--text2); margin-bottom:12px;">
-                    Monte sua semana! Escolha entre gerar treinos por <strong>foco muscular</strong> ou usar <strong>treinos que você já criou</strong>.
+            
+            <!-- ========== PLANEJAMENTO SEMANAL ========== -->
+            <div class="card weekly-plan-card">
+                <h3 class="card-title">📅 Planejamento Semanal Inteligente</h3>
+                <p class="card-description">
+                    Monte sua semana! Escolha entre gerar treinos por <strong>foco muscular</strong>, 
+                    usar <strong>treinos que você já criou</strong> ou combinar ambos.
                 </p>
                 
-                <div class="grid-2">
-                    <div>
+                <div class="form-grid">
+                    <div class="form-group">
                         <label for="planLevel">Nível (para focos automáticos):</label>
                         <select id="planLevel">
                             <option value="Iniciante">Iniciante</option>
@@ -183,378 +368,184 @@
                             <option value="Elite">Elite</option>
                         </select>
                     </div>
-                    <div>
+                    
+                    <div class="form-group">
                         <label for="planExerciciosPorDia">Exercícios por dia (automático):</label>
                         <input type="number" id="planExerciciosPorDia" value="5" min="3" max="10">
                     </div>
                 </div>
                 
-                <div style="margin-top:16px;">
-                    <label style="display:block; margin-bottom:8px; font-weight:600;">🗓️ Selecione os Dias e configure cada um:</label>
-                    <div class="semana-grid" style="display:grid; gap:12px;">
-                        
-                        <!-- Segunda -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
-                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                                <input type="checkbox" id="dia-seg" class="dia-checkbox" data-dia="seg" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
-                                <label for="dia-seg" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Segunda-feira</label>
-                            </div>
-                            <div class="dia-config" data-dia="seg" style="display:none;">
-                                <select class="modo-select" data-dia="seg" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
-                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
-                                    <option value="treino">💾 Usar Treino Salvo</option>
-                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
-                                </select>
-                                <div class="foco-container" data-dia="seg">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares (selecione um ou mais):</label>
-                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Costas"> Costas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Peitoral"> Peitoral</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Ombros"> Ombros</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Tríceps"> Tríceps</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Core"> Core</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Pernas"> Pernas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Full Body"> Full Body</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Flexibilidade"> Flexibilidade</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Front Lever"> Front Lever</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Planche"> Planche</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Handstand"> Handstand</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="seg" value="Human Flag"> Human Flag</label>
-                                    </div>
-                                </div>
-                                <div class="treino-container" data-dia="seg" style="display:none;">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos (selecione um ou mais):</label>
-                                    <div class="treinos-saved-list" data-dia="seg" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
-                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
-                                    </div>
-                                </div>
-                                <input type="time" class="horario-input" data-dia="seg" value="07:00" style="width:100%; margin-top:6px;">
-                            </div>
-                        </div>
-                        
-                        <!-- Terça -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
-                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                                <input type="checkbox" id="dia-ter" class="dia-checkbox" data-dia="ter" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
-                                <label for="dia-ter" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Terça-feira</label>
-                            </div>
-                            <div class="dia-config" data-dia="ter" style="display:none;">
-                                <select class="modo-select" data-dia="ter" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
-                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
-                                    <option value="treino">💾 Usar Treino Salvo</option>
-                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
-                                </select>
-                                <div class="foco-container" data-dia="ter">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
-                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Costas"> Costas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Peitoral"> Peitoral</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Ombros"> Ombros</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Tríceps"> Tríceps</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Core"> Core</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Pernas"> Pernas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Full Body"> Full Body</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Flexibilidade"> Flexibilidade</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Front Lever"> Front Lever</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Planche"> Planche</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Handstand"> Handstand</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="ter" value="Human Flag"> Human Flag</label>
-                                    </div>
-                                </div>
-                                <div class="treino-container" data-dia="ter" style="display:none;">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
-                                    <div class="treinos-saved-list" data-dia="ter" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
-                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
-                                    </div>
-                                </div>
-                                <input type="time" class="horario-input" data-dia="ter" value="07:00" style="width:100%; margin-top:6px;">
-                            </div>
-                        </div>
-                        
-                        <!-- Quarta -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
-                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                                <input type="checkbox" id="dia-qua" class="dia-checkbox" data-dia="qua" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
-                                <label for="dia-qua" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Quarta-feira</label>
-                            </div>
-                            <div class="dia-config" data-dia="qua" style="display:none;">
-                                <select class="modo-select" data-dia="qua" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
-                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
-                                    <option value="treino">💾 Usar Treino Salvo</option>
-                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
-                                </select>
-                                <div class="foco-container" data-dia="qua">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
-                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Costas"> Costas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Peitoral"> Peitoral</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Ombros"> Ombros</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Tríceps"> Tríceps</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Core"> Core</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Pernas"> Pernas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Full Body"> Full Body</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Flexibilidade"> Flexibilidade</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Front Lever"> Front Lever</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Planche"> Planche</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Handstand"> Handstand</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qua" value="Human Flag"> Human Flag</label>
-                                    </div>
-                                </div>
-                                <div class="treino-container" data-dia="qua" style="display:none;">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
-                                    <div class="treinos-saved-list" data-dia="qua" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
-                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
-                                    </div>
-                                </div>
-                                <input type="time" class="horario-input" data-dia="qua" value="07:00" style="width:100%; margin-top:6px;">
-                            </div>
-                        </div>
-                        
-                        <!-- Quinta -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
-                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                                <input type="checkbox" id="dia-qui" class="dia-checkbox" data-dia="qui" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
-                                <label for="dia-qui" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Quinta-feira</label>
-                            </div>
-                            <div class="dia-config" data-dia="qui" style="display:none;">
-                                <select class="modo-select" data-dia="qui" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
-                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
-                                    <option value="treino">💾 Usar Treino Salvo</option>
-                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
-                                </select>
-                                <div class="foco-container" data-dia="qui">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
-                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Costas"> Costas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Peitoral"> Peitoral</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Ombros"> Ombros</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Tríceps"> Tríceps</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Core"> Core</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Pernas"> Pernas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Full Body"> Full Body</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Flexibilidade"> Flexibilidade</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Front Lever"> Front Lever</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Planche"> Planche</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Handstand"> Handstand</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="qui" value="Human Flag"> Human Flag</label>
-                                    </div>
-                                </div>
-                                <div class="treino-container" data-dia="qui" style="display:none;">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
-                                    <div class="treinos-saved-list" data-dia="qui" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
-                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
-                                    </div>
-                                </div>
-                                <input type="time" class="horario-input" data-dia="qui" value="07:00" style="width:100%; margin-top:6px;">
-                            </div>
-                        </div>
-                        
-                        <!-- Sexta -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
-                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                                <input type="checkbox" id="dia-sex" class="dia-checkbox" data-dia="sex" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
-                                <label for="dia-sex" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Sexta-feira</label>
-                            </div>
-                            <div class="dia-config" data-dia="sex" style="display:none;">
-                                <select class="modo-select" data-dia="sex" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
-                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
-                                    <option value="treino">💾 Usar Treino Salvo</option>
-                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
-                                </select>
-                                <div class="foco-container" data-dia="sex">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
-                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Costas"> Costas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Peitoral"> Peitoral</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Ombros"> Ombros</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Tríceps"> Tríceps</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Core"> Core</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Pernas"> Pernas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Full Body"> Full Body</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Flexibilidade"> Flexibilidade</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Front Lever"> Front Lever</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Planche"> Planche</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Handstand"> Handstand</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sex" value="Human Flag"> Human Flag</label>
-                                    </div>
-                                </div>
-                                <div class="treino-container" data-dia="sex" style="display:none;">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
-                                    <div class="treinos-saved-list" data-dia="sex" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
-                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
-                                    </div>
-                                </div>
-                                <input type="time" class="horario-input" data-dia="sex" value="07:00" style="width:100%; margin-top:6px;">
-                            </div>
-                        </div>
-                        
-                        <!-- Sábado -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
-                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                                <input type="checkbox" id="dia-sab" class="dia-checkbox" data-dia="sab" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
-                                <label for="dia-sab" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Sábado</label>
-                            </div>
-                            <div class="dia-config" data-dia="sab" style="display:none;">
-                                <select class="modo-select" data-dia="sab" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
-                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
-                                    <option value="treino">💾 Usar Treino Salvo</option>
-                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
-                                </select>
-                                <div class="foco-container" data-dia="sab">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
-                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Costas"> Costas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Peitoral"> Peitoral</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Ombros"> Ombros</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Tríceps"> Tríceps</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Core"> Core</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Pernas"> Pernas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Full Body"> Full Body</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Flexibilidade"> Flexibilidade</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Front Lever"> Front Lever</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Planche"> Planche</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Handstand"> Handstand</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="sab" value="Human Flag"> Human Flag</label>
-                                    </div>
-                                </div>
-                                <div class="treino-container" data-dia="sab" style="display:none;">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
-                                    <div class="treinos-saved-list" data-dia="sab" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
-                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
-                                    </div>
-                                </div>
-                                <input type="time" class="horario-input" data-dia="sab" value="09:00" style="width:100%; margin-top:6px;">
-                            </div>
-                        </div>
-                        
-                        <!-- Domingo -->
-                        <div class="dia-card" style="background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px;">
-                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                                <input type="checkbox" id="dia-dom" class="dia-checkbox" data-dia="dom" onchange="toggleDiaConfig(this)" style="width:20px; height:20px; cursor:pointer;">
-                                <label for="dia-dom" style="font-weight:700; font-size:1.05rem; cursor:pointer;">Domingo</label>
-                            </div>
-                            <div class="dia-config" data-dia="dom" style="display:none;">
-                                <select class="modo-select" data-dia="dom" onchange="toggleModoDia(this)" style="width:100%; margin-bottom:8px;">
-                                    <option value="foco">🎯 Por Foco Muscular (Automático)</option>
-                                    <option value="treino">💾 Usar Treino Salvo</option>
-                                    <option value="ambos">🔀 Foco + Treino Salvo</option>
-                                </select>
-                                <div class="foco-container" data-dia="dom">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Grupos Musculares:</label>
-                                    <div style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Costas"> Costas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Peitoral"> Peitoral</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Ombros"> Ombros</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Tríceps"> Tríceps</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Core"> Core</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Pernas"> Pernas</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Full Body"> Full Body</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Flexibilidade"> Flexibilidade</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Front Lever"> Front Lever</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Planche"> Planche</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Handstand"> Handstand</label>
-                                        <label class="foco-chip"><input type="checkbox" class="foco-checkbox" data-dia="dom" value="Human Flag"> Human Flag</label>
-                                    </div>
-                                </div>
-                                <div class="treino-container" data-dia="dom" style="display:none;">
-                                    <label style="font-size:0.8rem; color:var(--text2); display:block; margin-bottom:4px;">Treinos Salvos:</label>
-                                    <div class="treinos-saved-list" data-dia="dom" style="max-height:120px; overflow-y:auto; margin-bottom:8px;">
-                                        <p style="color:var(--text2); font-size:0.8rem;">Carregando treinos salvos...</p>
-                                    </div>
-                                </div>
-                                <input type="time" class="horario-input" data-dia="dom" value="09:00" style="width:100%; margin-top:6px;">
-                            </div>
-                        </div>
-                        
-                    </div>
+                <label style="display:block; margin: 20px 0 12px; font-weight:700; font-size:1rem;">
+                    🗓️ Selecione os Dias e configure cada um:
+                </label>
+                
+                <div class="week-grid" id="semanaGrid">
+                    <!-- Os dias serão gerados dinamicamente pelo JavaScript -->
                 </div>
                 
-                <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
-                    <button class="btn btn-primary btn-lg" onclick="gerarPlanoSemanal()">🚀 Gerar Plano da Semana</button>
+                <button class="btn btn-primary btn-lg btn-full" onclick="gerarPlanoSemanal()" style="margin-top:20px;">
+                    🚀 Gerar Plano da Semana
+                </button>
+            </div>
+            
+            <!-- Resultado do Plano Semanal -->
+            <div class="card result-card" id="planoSemanalCard" style="display:none;">
+                <h3 class="card-title">📋 Plano Semanal Gerado</h3>
+                <div id="planoSemanalResult" class="result-content"></div>
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="salvarPlanoSemanal()">
+                        💾 Salvar Todos os Treinos
+                    </button>
+                    <button class="btn btn-outline" onclick="exportarPlanoGoogleCalendar()">
+                        📅 Exportar para Google Calendar
+                    </button>
+                    <button class="btn btn-outline" onclick="baixarPlanoCalendario()">
+                        📥 Baixar .ICS
+                    </button>
                 </div>
             </div>
             
-            <!-- RESULTADO DO PLANO SEMANAL -->
-            <div class="card mt-2" id="planoSemanalCard" style="display:none;">
-                <h3>📋 Plano Semanal Gerado</h3>
-                <div id="planoSemanalResult"></div>
-                <div class="flex gap-2 mt-2 flex-wrap">
-                    <button class="btn btn-success" onclick="salvarPlanoSemanal()">💾 Salvar Todos os Treinos</button>
-                    <button class="btn btn-outline" onclick="exportarPlanoGoogleCalendar()">📅 Exportar para Google Calendar</button>
-                    <button class="btn btn-outline" onclick="baixarPlanoCalendario()">📥 Baixar .ICS</button>
-                </div>
-            </div>
-        </div><!-- FIM DO PAGE-IA -->
+        </section><!-- /ia -->
 
-        <!-- ========== WORKOUT ========== -->
-        <div class="page" id="page-workout">
-            <h2>⏱️ Treinar Agora</h2>
+        <!-- ==================== TREINAR AGORA ==================== -->
+        <section class="page" id="page-workout">
+            <h2 class="page-title">⏱️ Treinar Agora</h2>
+            
             <div class="card">
-                <h3>🎵 Música</h3>
-                <label>Cole links diretos (um por linha ou separados por vírgula):</label>
-                <textarea id="musicUrl" placeholder="https://www.youtube.com/watch?v=...&#10;https://soundcloud.com/..." rows="2" onchange="loadMusic()" style="width:100%; resize:vertical;"></textarea>
+                <h3 class="card-title">🎵 Música</h3>
+                <div class="form-group">
+                    <label>Cole links diretos (um por linha ou separados por vírgula):</label>
+                    <textarea id="musicUrl" 
+                              placeholder="https://www.youtube.com/watch?v=...&#10;https://soundcloud.com/..." 
+                              rows="2" 
+                              onchange="loadMusic()"></textarea>
+                </div>
                 <div id="musicPlayerContainer"></div>
             </div>
+            
             <div class="card">
-                <h3>⏱️ Cronômetros</h3>
-                <div style="margin-bottom:12px;">
-                    <label style="font-weight:600;font-size:0.8rem;color:var(--primary-light);">⏳ Exercício Atual</label>
-                    <div style="display:flex; align-items:center; gap:8px; margin:6px 0;">
-                        <span style="font-size:0.8rem;color:var(--text2);">Modo:</span>
-                        <button class="btn btn-sm btn-outline" id="timerModeToggle" onclick="toggleTimerMode()" style="font-size:0.75rem;">⬇️ Regressivo</button>
+                <h3 class="card-title">⏱️ Cronômetros</h3>
+                
+                <div class="timer-section">
+                    <label class="timer-label">⏳ Exercício Atual</label>
+                    
+                    <div class="timer-mode">
+                        <span>Modo:</span>
+                        <button class="btn btn-sm btn-outline" id="timerModeToggle" onclick="toggleTimerMode()">
+                            ⬇️ Regressivo
+                        </button>
                     </div>
+                    
                     <div class="timer-display" id="timerDisplay">00:00</div>
+                    
                     <div class="timer-controls">
-                        <input type="number" id="timerSeconds" value="60" min="5" max="600" style="width:80px;text-align:center;">
+                        <input type="number" id="timerSeconds" value="60" min="5" max="600" class="timer-input">
                         <button class="btn btn-primary" id="timerStartBtn" onclick="startTimer()">▶️ Iniciar</button>
                         <button class="btn btn-outline" onclick="pauseTimer()">⏸️ Pausar</button>
-                        <button class="btn btn-danger btn-sm" onclick="resetTimer()">🔄 Reset</button>
+                        <button class="btn btn-danger" onclick="resetTimer()">🔄 Reset</button>
                     </div>
                 </div>
-                <hr style="border-color:var(--border); margin:12px 0;">
-                <div>
-                    <label style="font-weight:600;font-size:0.8rem;color:var(--xp);">🕒 Tempo Total de Treino</label>
-                    <div class="timer-display" id="stopwatchDisplay" style="color:var(--xp);">00:00</div>
+                
+                <hr class="divider">
+                
+                <div class="timer-section">
+                    <label class="timer-label stopwatch-label">🕒 Tempo Total de Treino</label>
+                    
+                    <div class="timer-display stopwatch-display" id="stopwatchDisplay">00:00</div>
+                    
                     <div class="timer-controls">
                         <button class="btn btn-success" id="stopwatchStartBtn" onclick="startStopwatch()">▶️ Iniciar</button>
                         <button class="btn btn-outline" onclick="pauseStopwatch()">⏸️ Pausar</button>
-                        <button class="btn btn-danger btn-sm" onclick="resetStopwatch()">🔄 Reset</button>
+                        <button class="btn btn-danger" onclick="resetStopwatch()">🔄 Reset</button>
                     </div>
                 </div>
             </div>
-            <div class="card mt-2">
-                <h3>🏋️ Treino Ativo</h3>
-                <select id="activeWorkoutSelect" onchange="loadActiveWorkout()" class="mb-2"><option value="">-- Selecione um treino salvo --</option></select>
-                <div id="activeWorkoutDisplay"><p style="color:var(--text2);">Selecione um treino para começar.</p></div>
-                <div id="currentExerciseHighlight" style="display:none;"></div>
-                <div class="flex gap-2 flex-wrap mt-2">
-                    <button class="btn btn-success btn-sm" id="completeExerciseBtn" onclick="completeCurrentExercise()" disabled>✅ Concluir Exercício Atual</button>
-                    <button class="btn btn-outline btn-sm" onclick="skipExercise()">⏭️ Pular</button>
+            
+            <div class="card">
+                <h3 class="card-title">🏋️ Treino Ativo</h3>
+                
+                <div class="form-group">
+                    <select id="activeWorkoutSelect" onchange="loadActiveWorkout()">
+                        <option value="">-- Selecione um treino salvo --</option>
+                    </select>
+                </div>
+                
+                <div id="activeWorkoutDisplay">
+                    <p class="empty-state">Selecione um treino para começar.</p>
+                </div>
+                
+                <div id="currentExerciseHighlight" class="current-exercise" style="display:none;"></div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" id="completeExerciseBtn" onclick="completeCurrentExercise()" disabled>
+                        ✅ Concluir Exercício Atual
+                    </button>
+                    <button class="btn btn-outline" onclick="skipExercise()">
+                        ⏭️ Pular
+                    </button>
                 </div>
             </div>
-        </div>
+            
+        </section><!-- /workout -->
 
-        <!-- ========== PROGRESS ========== -->
-        <div class="page" id="page-progress">
-            <h2>📊 Progresso & Gamificação</h2>
-            <div class="grid-2">
-                <div class="card text-center"><h3>🏅 XP Total</h3><p style="font-size:3rem;font-weight:800;color:var(--gold);" id="progressXP">0</p></div>
-                <div class="card text-center"><h3>⭐ Nível</h3><p style="font-size:3rem;font-weight:800;color:var(--accent);" id="progressLevel">1</p></div>
-                <div class="card text-center"><h3>📅 Dias Treinados</h3><p style="font-size:3rem;font-weight:800;color:var(--success);" id="progressDays">0</p></div>
-                <div class="card text-center"><h3>💪 Exercícios Totais</h3><p style="font-size:3rem;font-weight:800;color:var(--primary-light);" id="progressTotalEx">0</p></div>
+        <!-- ==================== PROGRESSO ==================== -->
+        <section class="page" id="page-progress">
+            <h2 class="page-title">📊 Progresso & Gamificação</h2>
+            
+            <div class="stats-grid">
+                <article class="stat-card stat-lg">
+                    <div class="stat-icon">🏅</div>
+                    <div class="stat-info">
+                        <span class="stat-value xp-value" id="progressXP">0</span>
+                        <span class="stat-label">XP Total</span>
+                    </div>
+                </article>
+                
+                <article class="stat-card stat-lg">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-info">
+                        <span class="stat-value level-value" id="progressLevel">1</span>
+                        <span class="stat-label">Nível</span>
+                    </div>
+                </article>
+                
+                <article class="stat-card stat-lg">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="progressDays">0</span>
+                        <span class="stat-label">Dias Treinados</span>
+                    </div>
+                </article>
+                
+                <article class="stat-card stat-lg">
+                    <div class="stat-icon">💪</div>
+                    <div class="stat-info">
+                        <span class="stat-value" id="progressTotalEx">0</span>
+                        <span class="stat-label">Exercícios Totais</span>
+                    </div>
+                </article>
             </div>
-            <div class="card mt-2"><h3>📜 Histórico</h3><div id="historyList" style="color:var(--text2);">Nenhum treino concluído ainda.</div></div>
-            <button class="btn btn-danger btn-sm mt-2" onclick="resetAllProgress()">⚠️ Resetar Todo Progresso</button>
-        </div>
+            
+            <section class="card">
+                <h3 class="card-title">📜 Histórico</h3>
+                <div id="historyList">
+                    <p class="empty-state">Nenhum treino concluído ainda.</p>
+                </div>
+            </section>
+            
+            <button class="btn btn-danger btn-sm btn-reset" onclick="resetAllProgress()">
+                ⚠️ Resetar Todo Progresso
+            </button>
+            
+        </section><!-- /progress -->
         
-        <!-- ========== TUTORIAL DO EXERCÍCIO ========== -->
-        <div class="page" id="page-exercise">
-            <button class="btn btn-outline btn-sm mb-2" onclick="navigateTo('build', document.querySelector('[data-page=build]'))">← Voltar</button>
-            <div id="exerciseTutorialContent"></div>
-        </div>
     </main>
 
-    <div id="toastContainer"></div>
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Scripts -->
+    <script src="exercises-db.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
